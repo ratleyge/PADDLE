@@ -1,0 +1,78 @@
+  
+@font-face {  
+  src: url(Ohio-Collegiate.ttf);
+  font-family: "Ohio-Collegiate";
+}
+
+.ohio-state {
+	font-family: 'Ohio-Collegiate';
+	letter-spacing: 2px;
+	color: #ffffff;
+}
+  
+  body {
+    padding-top: 70px !important;
+    color: #ffffff !important;
+  }
+  
+  
+  .datatables {
+    color: #ffffff !important;
+  }
+  
+  .center-container {
+    display: grid;
+    place-items: center;
+    text-align: center;
+  }
+
+  .navbar {
+    font-size: 20px !important;
+    height: 50px;
+  }
+
+  .navbar-brand {
+    font-size: 30px !important;
+  }
+
+  .navbar-default {
+    background-color: #00425A !important;
+  }
+  
+  .navbar-nav>.active>a {
+    height: 50px;
+  }
+  
+  .navbar-nav>.active>a:hover {
+    height: 50px;
+  }
+  
+  .navbar-nav>li>a:hover {
+    height: 50px;
+  }
+  
+  .customNavbar-title {
+    font-family: 'Ohio-Collegiate';
+    letter-spacing: 2px;
+  }
+      
+
+  .about {
+    position: absolute;
+    top: 50%;
+    text-align: center;
+    line-height: 2;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .btn {
+    color: white !important;
+    background-color: #00425A !important;
+  }
+  
+  
+  div#relevelRow {
+    display: flex !important;
+    align-items: center !important;
+  }

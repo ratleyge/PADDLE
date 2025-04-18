@@ -1,0 +1,202 @@
+ZipCode,county,state,Retirement
+35079,Blount County,AL,79
+35094,Jefferson County,AL,64.5
+35160,Talladega County,AL,44
+36426,Escambia County,AL,60
+85142,Maricopa County,AZ,25.5
+85253,Maricopa County,AZ,74.5
+85254,Maricopa County,AZ,69
+85748,Pima County,AZ,94
+72032,Faulkner County,AR,90
+90210,Los Angeles County,CA,48
+90604,Los Angeles County,CA,56.00000000000001
+91739,San Bernardino County,CA,61.5
+92106,San Diego County,CA,62
+92253,Riverside County,CA,10
+92270,Riverside County,CA,7.5
+92354,San Bernardino County,CA,70.5
+92660,Orange County,CA,38
+92677,Orange County,CA,11
+92804,Orange County,CA,19.5
+95117,Santa Clara County,CA,94.5
+80218,Denver County,CO,80.5
+81082,Las Animas County,CO,73.5
+06033,Hartford County,CT,82
+06111,Hartford County,CT,75.5
+06426,Middlesex County,CT,98
+06477,New Haven County,CT,76
+06705,New Haven County,CT,28.999999999999996
+06790,Litchfield County,CT,3.5000000000000004
+19702,New Castle County,DE,18.5
+32608,Alachua County,FL,16.5
+32901,Brevard County,FL,45.5
+33177,Miami-Dade County,FL,49.5
+33405,Palm Beach County,FL,95.5
+33435,Palm Beach County,FL,55.50000000000001
+33445,Palm Beach County,FL,64
+33446,Palm Beach County,FL,30.5
+33467,Palm Beach County,FL,23.5
+33614,Hillsborough County,FL,44.5
+33928,Lee County,FL,31
+31405,Chatham County,GA,36
+60030,Lake County,IL,22.5
+60046,Lake County,IL,24
+60452,Cook County,IL,41
+60481,Will County,IL,89
+60608,Cook County,IL,14.000000000000002
+60616,Cook County,IL,10.5
+60656,Cook County,IL,77.5
+61401,Knox County,IL,29.5
+62711,Sangamon County,IL,90.5
+62832,Perry County,IL,89.5
+47203,Bartholomew County,IN,75
+47250,Jefferson County,IN,57.49999999999999
+47401,Monroe County,IN,74
+52404,Linn County,IA,17.5
+67550,Pawnee County,KS,84
+40031,Oldham County,KY,53.5
+70115,Orleans Parish,LA,22
+70448,St. Tammany Parish,LA,28.000000000000004
+70760,Pointe Coupee Parish,LA,83
+70767,West Baton Rouge Parish,LA,67.5
+04092,Cumberland County,ME,27
+20832,Montgomery County,MD,78.5
+20874,Montgomery County,MD,59
+21131,Baltimore County,MD,88
+21771,Frederick County,MD,63
+01002,Hampshire County,MA,52
+01821,Middlesex County,MA,2.5
+01841,Essex County,MA,25
+01845,Essex County,MA,97.5
+02026,Norfolk County,MA,16
+02129,Suffolk County,MA,26
+02152,Suffolk County,MA,6
+02453,Middlesex County,MA,99.5
+02568,Dukes County,MA,40.5
+02638,Barnstable County,MA,86.5
+02719,Bristol County,MA,49
+48081,Macomb County,MI,23
+48189,Washtenaw County,MI,52.5
+48204,Wayne County,MI,30
+48316,Macomb County,MI,42.5
+48629,Roscommon County,MI,66
+48706,Bay County,MI,2
+49006,Kalamazoo County,MI,61
+49009,Kalamazoo County,MI,6.5
+49093,St. Joseph County,MI,34
+49286,Lenawee County,MI,45
+49424,Ottawa County,MI,12.5
+49601,Wexford County,MI,50
+49633,Kalkaska County,MI,93
+49660,Manistee County,MI,26.5
+49765,Presque Isle County,MI,91.5
+55371,Mille Lacs County,MN,71
+56001,Blue Earth County,MN,32.5
+56031,Martin County,MN,20
+56636,Itasca County,MN,72.5
+39213,Hinds County,MS,50.5
+39577,Stone County,MS,83.5
+63044,St. Louis County,MO,66.5
+63367,St. Charles County,MO,68
+65608,Douglas County,MO,79.5
+89423,Douglas County,NV,56.99999999999999
+03220,Belknap County,NH,77
+03275,Merrimack County,NH,43.5
+03801,Rockingham County,NH,85
+07013,Passaic County,NJ,97
+07054,Morris County,NJ,32
+07060,Union County,NJ,21
+07093,Hudson County,NJ,11.5
+07110,Essex County,NJ,55.00000000000001
+07834,Morris County,NJ,88.5
+08002,Camden County,NJ,41.5
+08004,Camden County,NJ,58.5
+08081,Camden County,NJ,33.5
+08360,Cumberland County,NJ,8
+08533,Ocean County,NJ,95
+08628,Mercer County,NJ,80
+08861,Middlesex County,NJ,5
+87501,Santa Fe County,NM,65.5
+88346,Lincoln County,NM,100
+11212,Kings County,NY,0
+11218,Kings County,NY,14.499999999999998
+11366,Queens County,NY,91
+11368,Queens County,NY,17
+11421,Queens County,NY,54.50000000000001
+11561,Nassau County,NY,81
+11576,Nassau County,NY,96.5
+11757,Suffolk County,NY,43
+13027,Onondaga County,NY,51
+14304,Niagara County,NY,21.5
+14424,Ontario County,NY,0.5
+14450,Monroe County,NY,1.5
+14621,Monroe County,NY,3
+27030,Surry County,NC,15.5
+28001,Stanly County,NC,38.5
+58078,Cass County,ND,48.5
+58104,Cass County,ND,42
+43062,Licking County,OH,63.5
+43227,Franklin County,OH,35.5
+43723,Guernsey County,OH,51.5
+43935,Belmont County,OH,60.5
+44012,Lorain County,OH,54
+44102,Cuyahoga County,OH,18
+44266,Portage County,OH,31.5
+44312,Summit County,OH,9.5
+44906,Richland County,OH,92
+45385,Greene County,OH,7.000000000000001
+45693,Adams County,OH,40
+73013,Oklahoma County,OK,36
+74044,Creek County,OK,84.5
+97128,Yamhill County,OR,27.500000000000004
+97401,Lane County,OR,69.5
+97404,Lane County,OR,47.5
+97756,Deschutes County,OR,20.5
+15220,Allegheny County,PA,73
+15226,Allegheny County,PA,56.49999999999999
+17837,Union County,PA,37.5
+17901,Schuylkill County,PA,62.5
+18109,Lehigh County,PA,47
+18302,Monroe County,PA,96
+18436,Wayne County,PA,85.5
+18509,Lackawanna County,PA,65
+19120,Philadelphia County,PA,5.5
+19140,Philadelphia County,PA,8.5
+19508,Berks County,PA,39.5
+19522,Berks County,PA,82.5
+19601,Berks County,PA,46.5
+29492,Berkeley County,SC,81.5
+29576,Horry County,SC,12
+29607,Greenville County,SC,24.5
+29673,Greenville County,SC,19
+29681,Greenville County,SC,15
+29803,Aiken County,SC,9
+37406,Hamilton County,TN,71.5
+37716,Anderson County,TN,28.499999999999996
+37803,Blount County,TN,13.5
+37919,Knox County,TN,34.5
+75056,Denton County,TX,67
+75243,Dallas County,TX,76.5
+76904,Tom Green County,TX,35
+77006,Harris County,TX,86
+77048,Harris County,TX,78
+77401,Harris County,TX,92.5
+77429,Harris County,TX,4.5
+78240,Bexar County,TX,57.99999999999999
+78580,Willacy County,TX,87
+78664,Williamson County,TX,70
+79766,Ector County,TX,99
+84790,Washington County,UT,13
+05602,Washington County,VT,33
+23924,Mecklenburg County,VA,93.5
+24360,Wythe County,VA,98.5
+98021,Snohomish County,WA,46
+98233,Skagit County,WA,53
+98239,Island County,WA,59.5
+98274,Skagit County,WA,39
+26003,Ohio County,WV,4
+26170,Pleasants County,WV,72
+26416,Barbour County,WV,37
+53718,Dane County,WI,68.5
+54601,La Crosse County,WI,1
+54937,Fond du Lac County,WI,87.5

@@ -1,0 +1,258 @@
+ZipCode,county,state,Adult
+35016,Marshall County,AL,57.8125
+35630,Lauderdale County,AL,35.9375
+35634,Lauderdale County,AL,87.5
+35674,Colbert County,AL,41.015625
+99701,Fairbanks North Star Borough,AK,71.875
+85019,Maricopa County,AZ,44.140625
+85042,Maricopa County,AZ,30.859375
+85375,Maricopa County,AZ,85.546875
+86001,Coconino County,AZ,23.828125
+86004,Coconino County,AZ,8.59375
+86503,Apache County,AZ,40.234375
+90006,Los Angeles County,CA,71.09375
+90011,Los Angeles County,CA,28.125
+90028,Los Angeles County,CA,69.53125
+90059,Los Angeles County,CA,40.234375
+90063,Los Angeles County,CA,56.25
+90275,Los Angeles County,CA,62.890625
+90650,Los Angeles County,CA,53.125
+91504,Los Angeles County,CA,76.5625
+91606,Los Angeles County,CA,84.765625
+91768,Los Angeles County,CA,47.65625
+92105,San Diego County,CA,21.484375
+92120,San Diego County,CA,81.25
+92173,San Diego County,CA,68.359375
+92345,San Bernardino County,CA,41.796875
+92503,Riverside County,CA,23.4375
+92603,Orange County,CA,86.71875
+92618,Orange County,CA,66.40625
+92627,Orange County,CA,87.109375
+92656,Orange County,CA,39.0625
+92806,Orange County,CA,61.71875
+93455,Santa Barbara County,CA,36.71875
+93618,Tulare County,CA,59.375
+93631,Fresno County,CA,77.734375
+93706,Fresno County,CA,26.171875
+94102,San Francisco County,CA,11.328125
+94571,Solano County,CA,100
+94602,Alameda County,CA,81.640625
+94610,Alameda County,CA,69.140625
+95014,Santa Clara County,CA,89.0625
+95112,Santa Clara County,CA,43.359375
+95492,Sonoma County,CA,66.796875
+95762,El Dorado County,CA,53.90625
+96022,Tehama County,CA,82.03125
+80011,Arapahoe County,CO,10.546875
+80015,Arapahoe County,CO,22.265625
+80108,Douglas County,CO,80.859375
+80203,Denver County,CO,91.40625
+80221,Adams County,CO,37.5
+80229,Adams County,CO,18.359375
+80537,Larimer County,CO,25.390625
+80601,Adams County,CO,38.28125
+81504,Mesa County,CO,67.96875
+81521,Mesa County,CO,73.828125
+06437,New Haven County,CT,66.796875
+19702,New Castle County,DE,19.53125
+32514,Escambia County,FL,27.734375
+32819,Orange County,FL,75
+32927,Brevard County,FL,58.59375
+33034,Miami-Dade County,FL,92.578125
+33149,Miami-Dade County,FL,95.3125
+33324,Broward County,FL,73.046875
+33547,Hillsborough County,FL,82.421875
+33610,Hillsborough County,FL,18.75
+33904,Lee County,FL,43.75
+34135,Lee County,FL,52.734375
+34288,Sarasota County,FL,85.9375
+34677,Pinellas County,FL,79.6875
+34974,Okeechobee County,FL,60.546875
+30281,Henry County,GA,30.46875
+31407,Chatham County,GA,90.234375
+31510,Bacon County,GA,80.46875
+31794,Tift County,GA,32.03125
+96706,Honolulu County,HI,15.625
+96732,Maui County,HI,93.75
+83211,Power County,ID,84.375
+60007,Cook County,IL,59.765625
+60044,Lake County,IL,83.984375
+60087,Lake County,IL,73.4375
+60181,DuPage County,IL,34.765625
+60445,Cook County,IL,61.328125
+60459,Cook County,IL,39.453125
+60502,DuPage County,IL,57.421875
+60559,DuPage County,IL,48.4375
+60586,Will County,IL,19.140625
+60638,Cook County,IL,13.28125
+60647,Cook County,IL,10.9375
+46902,Howard County,IN,5.078125
+47401,Monroe County,IN,70.703125
+47933,Montgomery County,IN,36.328125
+50317,Polk County,IA,16.015625
+66112,Wyandotte County,KS,88.671875
+40065,Shelby County,KY,76.953125
+40165,Bullitt County,KY,17.96875
+40212,Jefferson County,KY,29.6875
+40245,Jefferson County,KY,51.953125
+40444,Garrard County,KY,64.0625
+41056,Mason County,KY,47.265625
+41101,Boyd County,KY,21.875
+41501,Pike County,KY,44.921875
+70301,Lafourche Parish,LA,3.125
+70444,Tangipahoa Parish,LA,50.78125
+70805,East Baton Rouge Parish,LA,3.90625
+71342,La Salle Parish,LA,85.15625
+04210,Androscoggin County,ME,23.046875
+20735,Prince George's County,MD,63.28125
+21046,Howard County,MD,92.1875
+21060,Anne Arundel County,MD,32.8125
+21117,Baltimore County,MD,33.984375
+21221,Baltimore County,MD,56.640625
+01852,Middlesex County,MA,0
+02130,Suffolk County,MA,1.171875
+02135,Suffolk County,MA,24.21875
+02453,Middlesex County,MA,12.5
+02458,Middlesex County,MA,50
+02766,Bristol County,MA,22.65625
+48021,Macomb County,MI,14.453125
+48066,Macomb County,MI,4.296875
+48189,Washtenaw County,MI,64.84375
+48206,Wayne County,MI,31.25
+48219,Wayne County,MI,6.25
+48223,Wayne County,MI,16.796875
+48228,Wayne County,MI,1.5625
+48238,Wayne County,MI,6.640625
+48306,Oakland County,MI,46.484375
+48374,Oakland County,MI,78.125
+48377,Oakland County,MI,70.3125
+48836,Livingston County,MI,58.984375
+49001,Kalamazoo County,MI,25
+49068,Calhoun County,MI,99.21875
+49707,Alpena County,MI,35.546875
+49953,Ontonagon County,MI,92.96875
+55405,Hennepin County,MN,42.1875
+55421,Anoka County,MN,24.609375
+39090,Attala County,MS,73.828125
+39208,Rankin County,MS,44.53125
+63114,St. Louis County,MO,28.515625
+64055,Jackson County,MO,9.765625
+64056,Jackson County,MO,29.296875
+64080,Cass County,MO,66.015625
+64133,Jackson County,MO,5.859375
+68134,Douglas County,NE,62.109375
+68522,Lancaster County,NE,96.875
+89130,Clark County,NV,59.765625
+03301,Merrimack County,NH,21.09375
+03841,Rockingham County,NH,94.921875
+07066,Union County,NJ,82.8125
+07470,Passaic County,NJ,20.3125
+07514,Passaic County,NJ,67.578125
+07762,Monmouth County,NJ,96.09375
+08251,Cape May County,NJ,55.46875
+87120,Bernalillo County,NM,39.84375
+87410,San Juan County,NM,69.921875
+10021,New York County,NY,77.34375
+10026,New York County,NY,94.140625
+10457,Bronx County,NY,0.78125
+10458,Bronx County,NY,0.390625
+10465,Bronx County,NY,34.375
+10468,Bronx County,NY,14.0625
+11106,Queens County,NY,55.859375
+11208,Kings County,NY,11.71875
+11365,Queens County,NY,52.34375
+11385,Queens County,NY,86.328125
+11520,Nassau County,NY,37.109375
+12074,Saratoga County,NY,96.484375
+12180,Rensselaer County,NY,2.34375
+12946,Essex County,NY,41.40625
+13069,Oswego County,NY,7.03125
+14012,Niagara County,NY,98.828125
+14206,Erie County,NY,17.578125
+14226,Erie County,NY,33.59375
+27217,Alamance County,NC,17.1875
+28655,Burke County,NC,48.046875
+43207,Franklin County,OH,1.953125
+43214,Franklin County,OH,51.5625
+43224,Franklin County,OH,7.8125
+43334,Morrow County,OH,78.90625
+43952,Jefferson County,OH,9.375
+44035,Lorain County,OH,3.515625
+44108,Cuyahoga County,OH,38.671875
+44117,Cuyahoga County,OH,45.3125
+44122,Cuyahoga County,OH,26.5625
+44146,Cuyahoga County,OH,32.421875
+44203,Summit County,OH,8.203125
+44310,Summit County,OH,14.84375
+44320,Summit County,OH,50.390625
+44865,Huron County,OH,98.046875
+45005,Warren County,OH,12.109375
+45013,Butler County,OH,4.6875
+45237,Hamilton County,OH,80.078125
+45410,Montgomery County,OH,45.703125
+73003,Oklahoma County,OK,88.28125
+97215,Multnomah County,OR,97.65625
+15061,Beaver County,PA,65.625
+15201,Allegheny County,PA,63.671875
+15238,Allegheny County,PA,89.453125
+15342,Washington County,PA,91.015625
+15601,Westmoreland County,PA,5.46875
+15632,Westmoreland County,PA,91.40625
+15642,Westmoreland County,PA,25.78125
+15846,Elk County,PA,94.53125
+17015,Cumberland County,PA,46.09375
+17036,Dauphin County,PA,26.953125
+17038,Lebanon County,PA,97.265625
+17112,Dauphin County,PA,71.484375
+18103,Lehigh County,PA,7.421875
+18655,Luzerne County,PA,98.4375
+19002,Montgomery County,PA,42.96875
+19122,Philadelphia County,PA,48.828125
+19142,Philadelphia County,PA,16.40625
+19145,Philadelphia County,PA,8.984375
+29501,Florence County,SC,68.75
+29526,Horry County,SC,42.578125
+57501,Hughes County,SD,75.78125
+37210,Davidson County,TN,83.59375
+37321,Rhea County,TN,33.203125
+37917,Knox County,TN,20.703125
+38305,Madison County,TN,12.890625
+76106,Tarrant County,TX,49.609375
+76661,Falls County,TX,93.359375
+77009,Harris County,TX,78.515625
+77845,Brazos County,TX,13.671875
+78240,Bexar County,TX,46.875
+78245,Bexar County,TX,27.34375
+78526,Cameron County,TX,74.609375
+79424,Lubbock County,TX,30.078125
+84081,Salt Lake County,UT,35.15625
+84321,Cache County,UT,90.625
+05855,Orleans County,VT,89.84375
+22202,Arlington County,VA,79.296875
+22655,Frederick County,VA,62.5
+23434,Suffolk city,VA,19.921875
+23453,Virginia Beach city,VA,51.171875
+23608,Newport News city,VA,54.6875
+24540,Danville city,VA,31.640625
+24614,Buchanan County,VA,64.453125
+98023,King County,WA,28.90625
+98168,King County,WA,37.5
+98178,King County,WA,60.9375
+98273,Skagit County,WA,65.234375
+98407,Pierce County,WA,72.65625
+99207,Spokane County,WA,53.515625
+20010,District of Columbia,DC,57.03125
+20020,District of Columbia,DC,2.734375
+25276,Roane County,WV,58.203125
+53029,Waukesha County,WI,87.890625
+53045,Waukesha County,WI,83.203125
+53210,Milwaukee County,WI,10.15625
+53225,Milwaukee County,WI,15.234375
+53228,Milwaukee County,WI,76.171875
+53527,Dane County,WI,95.703125
+53532,Dane County,WI,72.265625
+53566,Green County,WI,54.296875
+53964,Marquette County,WI,99.609375
+54001,Polk County,WI,55.078125
+54016,St. Croix County,WI,49.21875
+54401,Marathon County,WI,75.390625

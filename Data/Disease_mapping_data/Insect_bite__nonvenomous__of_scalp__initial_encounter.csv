@@ -1,0 +1,252 @@
+ZipCode,county,state,Youth
+35096,Talladega County,AL,71.6
+35221,Jefferson County,AL,62
+35611,Limestone County,AL,23.599999999999998
+35758,Madison County,AL,44
+36092,Elmore County,AL,64.4
+36301,Houston County,AL,32
+85015,Maricopa County,AZ,23.599999999999998
+85023,Maricopa County,AZ,30.4
+85033,Maricopa County,AZ,20
+85139,Pinal County,AZ,66.4
+85306,Maricopa County,AZ,72.39999999999999
+85757,Pima County,AZ,57.99999999999999
+85929,Navajo County,AZ,84.8
+71929,Hot Spring County,AR,92
+91766,Los Angeles County,CA,43.2
+92020,San Diego County,CA,48.4
+92083,San Diego County,CA,50.4
+92395,San Bernardino County,CA,59.199999999999996
+92620,Orange County,CA,62.4
+93401,San Luis Obispo County,CA,86.4
+93458,Santa Barbara County,CA,20.4
+93703,Fresno County,CA,36.8
+95360,Stanislaus County,CA,92.4
+80124,Douglas County,CO,68
+80239,Denver County,CO,24.8
+80905,El Paso County,CO,82
+81007,Pueblo County,CO,31.2
+06051,Hartford County,CT,7.6
+06062,Hartford County,CT,94.8
+06066,Tolland County,CT,50
+06451,New Haven County,CT,29.599999999999998
+06516,New Haven County,CT,21.6
+06705,New Haven County,CT,42.4
+06902,Fairfield County,CT,30.8
+32127,Volusia County,FL,76.8
+32206,Duval County,FL,52.800000000000004
+32539,Okaloosa County,FL,63.6
+32640,Putnam County,FL,90.8
+32757,Lake County,FL,73.2
+32771,Seminole County,FL,48
+32963,Indian River County,FL,91.2
+33023,Broward County,FL,22.400000000000002
+33142,Miami-Dade County,FL,22
+33147,Miami-Dade County,FL,22.8
+33186,Miami-Dade County,FL,4
+33312,Broward County,FL,34
+33404,Palm Beach County,FL,19.2
+33406,Palm Beach County,FL,90.4
+33458,Palm Beach County,FL,43.2
+33813,Polk County,FL,46.800000000000004
+33844,Polk County,FL,49.6
+34135,Lee County,FL,81.2
+30116,Carroll County,GA,56.8
+30117,Carroll County,GA,45.6
+30471,Emanuel County,GA,98.8
+30701,Gordon County,GA,28.000000000000004
+31554,Coffee County,GA,93.2
+39823,Early County,GA,90
+96720,Hawaii County,HI,50.8
+96819,Honolulu County,HI,18
+96822,Honolulu County,HI,61.6
+83301,Twin Falls County,ID,3.2
+83336,Minidoka County,ID,97.2
+83815,Kootenai County,ID,47.199999999999996
+60005,Cook County,IL,67.60000000000001
+60118,Kane County,IL,78.8
+60120,Kane County,IL,70.8
+60612,Cook County,IL,33.2
+60649,Cook County,IL,41.6
+61282,Rock Island County,IL,92.80000000000001
+61701,McLean County,IL,53.6
+61801,Champaign County,IL,87.6
+46256,Marion County,IN,88
+46901,Howard County,IN,11.200000000000001
+46902,Howard County,IN,4.3999999999999995
+47024,Franklin County,IN,97.2
+47274,Jackson County,IN,32
+47403,Monroe County,IN,53.2
+47960,White County,IN,59.199999999999996
+50201,Story County,IA,73.6
+51501,Pottawattamie County,IA,9.6
+51503,Pottawattamie County,IA,5.2
+52403,Linn County,IA,72
+52645,Henry County,IA,100
+52806,Scott County,IA,39.2
+41301,Wolfe County,KY,86
+42003,McCracken County,KY,59.199999999999996
+42320,Ohio County,KY,54.400000000000006
+42718,Taylor County,KY,42
+70364,Terrebonne Parish,LA,6.4
+70582,St. Martin Parish,LA,14.799999999999999
+70601,Calcasieu Parish,LA,9.2
+70726,Livingston Parish,LA,0.4
+70764,Iberville Parish,LA,46.400000000000006
+70769,Ascension Parish,LA,10.8
+70817,East Baton Rouge Parish,LA,10
+71106,Caddo Parish,LA,3.5999999999999996
+71203,Ouachita Parish,LA,4.8
+71241,Union Parish,LA,80
+04930,Penobscot County,ME,91.60000000000001
+01109,Hampden County,MA,2
+01960,Essex County,MA,5.6000000000000005
+02648,Barnstable County,MA,94
+02746,Bristol County,MA,34
+48505,Genesee County,MI,36.4
+48532,Genesee County,MI,65.2
+49090,Van Buren County,MI,77.2
+49348,Allegan County,MI,61.199999999999996
+49783,Chippewa County,MI,55.2
+49855,Marquette County,MI,37.2
+49866,Marquette County,MI,70
+55082,Washington County,MN,34.8
+55306,Dakota County,MN,58.4
+55411,Hennepin County,MN,16.8
+39051,Leake County,MS,58.8
+39355,Clarke County,MS,75.6
+39564,Jackson County,MS,57.199999999999996
+39574,Harrison County,MS,71.2
+63385,St. Charles County,MO,19.6
+64772,Vernon County,MO,60.8
+65066,Gasconade County,MO,79.2
+65240,Boone County,MO,75.2
+65753,Christian County,MO,98
+68959,Kearney County,NE,96.39999999999999
+89508,Washoe County,NV,80.80000000000001
+89706,Carson City,NV,74.4
+07047,Hudson County,NJ,40
+07446,Bergen County,NJ,77.2
+07731,Monmouth County,NJ,44.800000000000004
+07869,Morris County,NJ,76.4
+08527,Ocean County,NJ,27.6
+08691,Mercer County,NJ,74.4
+08753,Ocean County,NJ,12
+87026,Valencia County,NM,93.60000000000001
+88201,Chaves County,NM,33.6
+88203,Chaves County,NM,23.200000000000003
+88220,Eddy County,NM,29.2
+10001,New York County,NY,29.599999999999998
+10033,New York County,NY,35.6
+10034,New York County,NY,34.8
+10460,Bronx County,NY,0
+10473,Bronx County,NY,2.8000000000000003
+11368,Queens County,NY,0.8
+11418,Queens County,NY,42.8
+11432,Queens County,NY,17.599999999999998
+12303,Schenectady County,NY,56.00000000000001
+12921,Clinton County,NY,95.19999999999999
+13021,Cayuga County,NY,6.800000000000001
+13045,Cortland County,NY,6
+13215,Onondaga County,NY,68.8
+13691,Jefferson County,NY,98.8
+13830,Chenango County,NY,76
+14212,Erie County,NY,57.599999999999994
+14481,Livingston County,NY,94.39999999999999
+27107,Forsyth County,NC,12.4
+27217,Alamance County,NC,47.199999999999996
+28025,Cabarrus County,NC,28.799999999999997
+28144,Rowan County,NC,49.2
+28345,Richmond County,NC,78.4
+28560,Craven County,NC,24.4
+28635,Wilkes County,NC,96.39999999999999
+58801,Williams County,ND,48.8
+43085,Franklin County,OH,55.60000000000001
+43551,Wood County,OH,17.2
+43605,Lucas County,OH,16.400000000000002
+44112,Cuyahoga County,OH,14.399999999999999
+44203,Summit County,OH,6.800000000000001
+44512,Mahoning County,OH,13.600000000000001
+44906,Richland County,OH,15.6
+45066,Warren County,OH,40.8
+45212,Hamilton County,OH,46
+45231,Hamilton County,OH,8.799999999999999
+45694,Scioto County,OH,45.2
+45760,Meigs County,OH,84.8
+45869,Auglaize County,OH,99.6
+73071,Cleveland County,OK,38.800000000000004
+73139,Oklahoma County,OK,62.8
+74107,Tulsa County,OK,66
+97325,Marion County,OR,85.6
+97801,Umatilla County,OR,59.199999999999996
+97814,Baker County,OR,69.6
+15001,Beaver County,PA,67.2
+15120,Allegheny County,PA,54
+15417,Fayette County,PA,88
+16651,Clearfield County,PA,98.4
+16662,Blair County,PA,96
+17501,Lancaster County,PA,95.6
+17901,Schuylkill County,PA,16
+18042,Northampton County,PA,8
+18235,Carbon County,PA,51.6
+18707,Luzerne County,PA,70.39999999999999
+19070,Delaware County,PA,89.2
+19143,Philadelphia County,PA,1.6
+19147,Philadelphia County,PA,36
+19149,Philadelphia County,PA,8.4
+29385,Spartanburg County,SC,89.60000000000001
+29414,Charleston County,SC,40.400000000000006
+29445,Berkeley County,SC,15.2
+29461,Berkeley County,SC,21.2
+29472,Dorchester County,SC,80
+57201,Codington County,SD,74
+37015,Cheatham County,TN,66.8
+37066,Sumner County,TN,18.4
+37912,Knox County,TN,31.2
+38141,Shelby County,TN,52.400000000000006
+75069,Collin County,TX,32.800000000000004
+75149,Dallas County,TX,27.200000000000003
+75229,Dallas County,TX,51.2
+75428,Hunt County,TX,87.2
+75652,Rusk County,TX,63.6
+76182,Tarrant County,TX,64.8
+77039,Harris County,TX,52
+77306,Montgomery County,TX,82.8
+77328,San Jacinto County,TX,65.2
+77355,Montgomery County,TX,81.6
+77429,Harris County,TX,13.200000000000001
+77504,Harris County,TX,69.19999999999999
+77521,Harris County,TX,25.6
+77546,Galveston County,TX,26.400000000000002
+77584,Brazoria County,TX,20.8
+77705,Jefferson County,TX,44
+77845,Brazos County,TX,10.4
+78155,Guadalupe County,TX,12.8
+78217,Bexar County,TX,11.600000000000001
+78245,Bexar County,TX,2.4
+78503,Hidalgo County,TX,82.8
+78572,Hidalgo County,TX,25.2
+78621,Bastrop County,TX,39.2
+78641,Williamson County,TX,38.4
+78750,Travis County,TX,84.39999999999999
+78852,Maverick County,TX,37.6
+84074,Tooele County,UT,1.2
+84095,Salt Lake County,UT,25.6
+20147,Loudoun County,VA,26.8
+20187,Fauquier County,VA,82.39999999999999
+22124,Fairfax County,VA,86.8
+22310,Fairfax County,VA,83.6
+23139,Powhatan County,VA,84
+24073,Montgomery County,VA,41.199999999999996
+98271,Snohomish County,WA,63.2
+99336,Benton County,WA,14.000000000000002
+25880,Raleigh County,WV,78
+26330,Harrison County,WV,79.2
+53022,Washington County,WI,18.4
+53089,Waukesha County,WI,54.800000000000004
+53551,Jefferson County,WI,88
+53959,Sauk County,WI,56.39999999999999
+54017,St. Croix County,WI,38
+54022,Pierce County,WI,68
+54303,Brown County,WI,72.8
+54751,Dunn County,WI,28.4

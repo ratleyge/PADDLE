@@ -1,0 +1,258 @@
+ZipCode,county,state,Adult
+35208,Jefferson County,AL,41.015625
+36017,Barbour County,AL,100
+36104,Montgomery County,AL,60.15625
+36603,Mobile County,AL,84.765625
+85041,Maricopa County,AZ,10.546875
+85120,Pinal County,AZ,43.75
+85209,Maricopa County,AZ,86.328125
+85306,Maricopa County,AZ,81.25
+72058,Faulkner County,AR,82.03125
+72076,Pulaski County,AR,53.515625
+90008,Los Angeles County,CA,48.4375
+90047,Los Angeles County,CA,18.75
+90059,Los Angeles County,CA,36.71875
+91214,Los Angeles County,CA,80.859375
+91354,Los Angeles County,CA,78.90625
+92054,San Diego County,CA,45.3125
+92117,San Diego County,CA,82.421875
+92129,San Diego County,CA,83.203125
+92223,Riverside County,CA,32.8125
+92227,Imperial County,CA,43.359375
+92316,San Bernardino County,CA,55.859375
+92376,San Bernardino County,CA,11.328125
+92407,San Bernardino County,CA,22.265625
+92571,Riverside County,CA,42.1875
+93292,Tulare County,CA,42.96875
+95126,Santa Clara County,CA,67.1875
+95301,Merced County,CA,49.21875
+95341,Merced County,CA,60.9375
+95376,San Joaquin County,CA,30.078125
+95838,Sacramento County,CA,37.5
+95951,Glenn County,CA,96.875
+96003,Shasta County,CA,45.703125
+80031,Adams County,CO,39.84375
+80221,Adams County,CO,34.375
+80228,Jefferson County,CO,58.984375
+80631,Weld County,CO,10.15625
+80907,El Paso County,CO,56.640625
+06249,New London County,CT,82.8125
+06460,New Haven County,CT,32.03125
+19713,New Castle County,DE,66.796875
+19804,New Castle County,DE,30.859375
+19958,Sussex County,DE,35.546875
+32259,St. Johns County,FL,46.875
+32505,Escambia County,FL,23.4375
+32547,Okaloosa County,FL,44.140625
+32707,Seminole County,FL,69.921875
+32751,Orange County,FL,73.828125
+32778,Lake County,FL,63.671875
+32812,Orange County,FL,37.890625
+32905,Brevard County,FL,63.28125
+33025,Broward County,FL,33.203125
+33029,Broward County,FL,64.453125
+33037,Monroe County,FL,90.625
+33177,Miami-Dade County,FL,46.484375
+33309,Broward County,FL,61.328125
+33462,Palm Beach County,FL,71.09375
+33563,Hillsborough County,FL,51.5625
+33594,Hillsborough County,FL,64.84375
+33875,Highlands County,FL,91.015625
+34446,Citrus County,FL,81.640625
+30240,Troup County,GA,26.953125
+30467,Screven County,GA,62.5
+30518,Gwinnett County,GA,39.0625
+30906,Richmond County,GA,33.984375
+31031,Wilkinson County,GA,91.40625
+31535,Coffee County,GA,93.359375
+31709,Sumter County,GA,59.765625
+31833,Troup County,GA,76.953125
+96720,Hawaii County,HI,35.15625
+83651,Canyon County,ID,21.484375
+83704,Ada County,ID,20.703125
+60041,Lake County,IL,80.078125
+60103,DuPage County,IL,31.25
+60510,Kane County,IL,37.109375
+60521,DuPage County,IL,72.65625
+60629,Cook County,IL,8.203125
+60656,Cook County,IL,52.34375
+61265,Rock Island County,IL,50
+61443,Henry County,IL,65.234375
+61455,McDonough County,IL,85.9375
+62052,Jersey County,IL,90.234375
+46755,Noble County,IN,28.515625
+46816,Allen County,IN,86.328125
+47586,Perry County,IN,70.703125
+47960,White County,IN,68.75
+51334,Emmet County,IA,67.96875
+52317,Johnson County,IA,54.6875
+52403,Linn County,IA,44.921875
+66720,Neosho County,KS,79.6875
+40013,Nelson County,KY,85.15625
+40219,Jefferson County,KY,14.84375
+40330,Mercer County,KY,57.03125
+41169,Greenup County,KY,70.3125
+41339,Breathitt County,KY,51.953125
+41653,Floyd County,KY,47.65625
+70744,Livingston Parish,LA,98.046875
+04039,Cumberland County,ME,80.46875
+04064,York County,ME,75.78125
+04240,Androscoggin County,ME,3.125
+20716,Prince George's County,MD,67.578125
+01109,Hampden County,MA,0
+02726,Bristol County,MA,32.421875
+48126,Wayne County,MI,37.890625
+48162,Monroe County,MI,14.453125
+48202,Wayne County,MI,33.59375
+48205,Wayne County,MI,5.46875
+48206,Wayne County,MI,28.125
+48219,Wayne County,MI,5.859375
+48340,Oakland County,MI,38.671875
+49221,Lenawee County,MI,4.6875
+49424,Ottawa County,MI,16.796875
+49519,Kent County,MI,19.140625
+55301,Wright County,MN,95.3125
+38801,Lee County,MS,40.234375
+39110,Madison County,MS,41.796875
+39479,Covington County,MS,95.703125
+63034,St. Louis County,MO,65.625
+63038,St. Louis County,MO,98.4375
+64086,Jackson County,MO,35.9375
+89178,Clark County,NV,74.609375
+03038,Rockingham County,NH,15.234375
+07727,Monmouth County,NJ,78.125
+08009,Camden County,NJ,61.71875
+08012,Camden County,NJ,48.046875
+08069,Salem County,NJ,16.40625
+08081,Camden County,NJ,2.734375
+08104,Camden County,NJ,1.5625
+08332,Cumberland County,NJ,24.21875
+08360,Cumberland County,NJ,8.984375
+08751,Ocean County,NJ,78.90625
+08758,Ocean County,NJ,93.75
+08901,Middlesex County,NJ,6.25
+87401,San Juan County,NM,20.3125
+88340,Otero County,NM,89.453125
+10001,New York County,NY,42.578125
+10003,New York County,NY,56.25
+10019,New York County,NY,66.40625
+10029,New York County,NY,0.78125
+10467,Bronx County,NY,0.390625
+11103,Queens County,NY,73.4375
+11212,Kings County,NY,1.953125
+11236,Kings County,NY,5.078125
+11237,Kings County,NY,25.78125
+11375,Queens County,NY,51.171875
+11553,Nassau County,NY,58.203125
+11692,Queens County,NY,52.734375
+11792,Suffolk County,NY,97.265625
+12831,Saratoga County,NY,49.609375
+14031,Erie County,NY,83.59375
+14070,Erie County,NY,77.34375
+14222,Erie County,NY,59.375
+14519,Wayne County,NY,24.609375
+14701,Chautauqua County,NY,3.90625
+14737,Cattaraugus County,NY,87.109375
+27320,Rockingham County,NC,12.5
+27514,Orange County,NC,62.109375
+27605,Wake County,NC,98.828125
+27801,Edgecombe County,NC,41.40625
+27834,Pitt County,NC,9.375
+28146,Rowan County,NC,34.765625
+28216,Mecklenburg County,NC,11.71875
+28366,Sampson County,NC,91.796875
+58501,Burleigh County,ND,54.6875
+43055,Licking County,OH,12.890625
+43113,Pickaway County,OH,16.015625
+43223,Franklin County,OH,7.03125
+43701,Muskingum County,OH,1.171875
+44120,Cuyahoga County,OH,4.296875
+44140,Cuyahoga County,OH,69.53125
+44203,Summit County,OH,7.8125
+44230,Wayne County,OH,94.140625
+44320,Summit County,OH,19.53125
+44405,Mahoning County,OH,76.171875
+44485,Trumbull County,OH,19.921875
+44512,Mahoning County,OH,12.109375
+45103,Clermont County,OH,27.734375
+45135,Highland County,OH,96.484375
+45205,Hamilton County,OH,23.828125
+45373,Miami County,OH,8.59375
+45385,Greene County,OH,13.28125
+73025,Oklahoma County,OK,71.875
+73055,Stephens County,OK,74.21875
+74036,Rogers County,OK,75.390625
+74434,Muskogee County,OK,88.671875
+97030,Multnomah County,OR,21.09375
+97477,Lane County,OR,25.390625
+15003,Beaver County,PA,89.84375
+15212,Allegheny County,PA,26.171875
+15234,Allegheny County,PA,87.5
+16301,Venango County,PA,50.78125
+16323,Venango County,PA,54.6875
+16433,Crawford County,PA,78.515625
+16801,Centre County,PA,40.625
+17104,Dauphin County,PA,21.875
+17110,Dauphin County,PA,17.96875
+18102,Lehigh County,PA,9.765625
+18810,Bradford County,PA,84.375
+19050,Delaware County,PA,30.078125
+19121,Philadelphia County,PA,10.9375
+19124,Philadelphia County,PA,2.34375
+19131,Philadelphia County,PA,7.421875
+19137,Philadelphia County,PA,87.890625
+19147,Philadelphia County,PA,22.65625
+19154,Philadelphia County,PA,18.359375
+19320,Chester County,PA,36.328125
+19403,Montgomery County,PA,53.125
+19425,Chester County,PA,83.984375
+02804,Washington County,RI,99.609375
+02920,Providence County,RI,31.640625
+29036,Lexington County,SC,72.265625
+29574,Marion County,SC,62.890625
+57078,Yankton County,SD,71.484375
+57430,Marshall County,SD,97.65625
+37339,Grundy County,TN,99.21875
+37421,Hamilton County,TN,28.90625
+37642,Hawkins County,TN,92.1875
+37714,Campbell County,TN,94.921875
+37801,Blount County,TN,17.1875
+38474,Maury County,TN,77.734375
+75090,Grayson County,TX,50.390625
+75149,Dallas County,TX,23.046875
+75672,Harrison County,TX,85.546875
+76052,Tarrant County,TX,92.96875
+77004,Harris County,TX,29.296875
+77034,Harris County,TX,60.546875
+77072,Harris County,TX,57.421875
+77086,Harris County,TX,68.359375
+77423,Waller County,TX,89.0625
+77429,Harris County,TX,13.671875
+77536,Harris County,TX,39.453125
+78046,Webb County,TX,17.578125
+78543,Hidalgo County,TX,94.140625
+78660,Travis County,TX,27.34375
+79762,Ector County,TX,29.6875
+84043,Utah County,UT,47.265625
+05403,Chittenden County,VT,66.015625
+22043,Fairfax County,VA,72.65625
+23093,Louisa County,VA,64.0625
+23890,Sussex County,VA,96.09375
+24503,Lynchburg city,VA,88.28125
+98023,King County,WA,26.5625
+98032,King County,WA,44.53125
+98258,Snohomish County,WA,25
+98531,Lewis County,WA,75
+98597,Thurston County,WA,69.140625
+99336,Benton County,WA,14.0625
+20002,District of Columbia,DC,6.640625
+20020,District of Columbia,DC,3.515625
+25314,Kanawha County,WV,57.8125
+25801,Raleigh County,WV,15.625
+26037,Brooke County,WV,92.578125
+53051,Waukesha County,WI,46.09375
+53095,Washington County,WI,54.296875
+53104,Kenosha County,WI,76.5625
+53963,Dodge County,WI,58.59375
+54016,St. Croix County,WI,48.828125
+54487,Lincoln County,WI,53.90625
