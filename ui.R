@@ -37,7 +37,8 @@ ui <- navbarPage(
                 img(src = "Man in boat.jpg", align = "right"),
          ),
          column(6, 
-                img(src = "vid placeholder.jpg", align = "left", height = "307px", width = "auto"),
+                HTML('<iframe width="560" height="315" src="https://www.youtube.com/embed/CksOqC-zP9s?si=B3fuRay7T1ufTuey" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>'
+                     ),
          ),
        ),
        br(),
@@ -83,7 +84,7 @@ ui <- navbarPage(
             Services (CMS).</p>
             
             <p style='text-align: left'>&emsp;&emsp;For non-spatial analysis, billing visits were separated into categories 
-            of “youth” (age 0-5 years of age), “pediatric” (6-17 years), “adult” 
+            of “Pre-K” (age 0-5 years of age), “pediatric” (6-17 years), “adult” 
             (18-54 years), “retirement age” (55-74 years), and “geriatric” 
             (75 years and older).  Each age cohort was modeled independently.  
             Because of the increased computational power required for spatial 
@@ -297,24 +298,24 @@ ui <- navbarPage(
            # Explain the graphical output
            fluidRow(
              align = "left",
-             HTML("<p>The graph below displays the 15 diseases with the strongest 
+             HTML("<p>The graph below displays the 15 diagnoses with the strongest 
               associations with your selected chemical, based on the absolute value 
               of the beta coefficient from a logistic elastic net model. The odds 
               ratios were calculated by exponentiating the beta coefficients, 
-              representing the change in odds of having the disease for each unit 
+              representing the change in odds of having the diagnosis for each unit 
               increase in the chemical of interest.
               
               <div style='background-color: #333333'>
               <ul>
-              <li>The <b>red dot</b> represents the specific odds ratio for the chemical-disease association.</li>
-              <li>The <b>black line</b> indicates the full range of odds ratios observed for that disease across all chemical associations.</li>
-              <li>The <b>x</b> marks the mean odds ratio for that disease.</li>
+              <li>The <b>red dot</b> represents the specific odds ratio for the chemical-diagnosis association.</li>
+              <li>The <b>black line</b> indicates the full range of odds ratios observed for that diagnosis across all chemical associations.</li>
+              <li>The <b>x</b> marks the mean odds ratio for that diagnosis.</li>
               <li>The <b>grey range</b> represents one standard deviation above and below the mean.</li>
               <li>A <b>dashed line</b> at 1 serves as a reference, indicating no association (odds ratio = 1 means no increased or decreased risk).</li>
               </ul></p>
               </div>
               
-              <p>If a diagnosis is presented, then the chemical interactions with that disease are 
+              <p>If a diagnosis is presented, then the chemical interactions with that diagnosis are 
               potentially important.  If the red dot is far to the right of the given black line, 
               that indicates the chemical you selected is one of the strongest associations with the 
               diagnosis indicated.  However, while negative associations (odds ratios less than one) 
@@ -337,12 +338,12 @@ ui <- navbarPage(
            br(), # Space beneath
            
            # Explain the table
-           p("The table below shows all the diseases with which your chemical of interest was associated.
-             The total predictors column shows how many chemicals were associated with a change in risk in each disease.
+           p("The table below shows all the diagnoses with which your chemical of interest was associated.
+             The total predictors column shows how many chemicals were associated with a change in risk in each diagnosis.
              The mean, standard deviation, max, and min columns show summary statistics for the chemicals associated with 
-             each disease, so you can guage the relative importance of the chemical in moderating disease risk."),
+             each diagnosis, so you can guage the relative importance of the chemical in moderating diagnosis risk."),
            
-           # Display all the odds and the disease ranges
+           # Display all the odds and the diagnosis ranges
            DT::dataTableOutput("viewTable_chem"),
            downloadButton("download_diseases_chem"),
            br(),
@@ -375,9 +376,9 @@ ui <- navbarPage(
        ), 
   ),
   
-  # Search by disease ----
+  # Search by diagnosis ----
   tabPanel(
-    "Search Diseases",
+    "Search Diagnoses",
     # Make a page layout that contains a side panel for inputs  and a main panel for outputs
     
     sidebarLayout(
@@ -385,7 +386,7 @@ ui <- navbarPage(
       sidebarPanel(
         style="padding: 0px 30px 0px 30px;",
         
-        h4("Search by Disease"),
+        h4("Search by Diagnosis"),
         
         selectInput(
           "pollutionSource_disease",
@@ -444,7 +445,7 @@ ui <- navbarPage(
               column(8, 
                      p("Note that the rates are 
                        derived from the providers location, not the patient's. This means that
-                       for diseases that require a specialist, the specialist's county
+                       for diagnoses that require a specialist, the specialist's county
                        may be artificially inflated."),
                      plotlyOutput("US_map_disease") %>% withSpinner(color = "#666666", type = 6),
                      br(),
@@ -452,7 +453,7 @@ ui <- navbarPage(
                      p("The following counties had the highest clinical visit rates
                        for the selected diesease for each age group. If an age group does not
                        appear in the table, that means no visits were recorded for
-                       the selected disease in that age group."),
+                       the selected diagnosis in that age group."),
                      DT::dataTableOutput("top_10_disease"),
                      ),
               ),
@@ -466,7 +467,7 @@ ui <- navbarPage(
                 6,
                 p(
                   "The donut chart displays the chemical classes of the compounds
-                             this disease is associated with. The table lists the classes,
+                             this diagnosis is associated with. The table lists the classes,
                              from most to least common, and the chemicals found within that class."
                 ),
                 p(
@@ -663,5 +664,259 @@ ui <- navbarPage(
                  ),),
            ),
              ),
-           ),),
+           ),
+),
+
+
+# Summary Data ----
+tabPanel("Summary Data",
+         
+         fluidPage(
+           tags$head(
+             tags$style('
+                          ul.nav-pills{
+                            display: flex !important;
+                            justify-content: center !important;
+                          }')
+           ),
+           align = "center",
+           
+           h3("Summary Data"),
+           
+           
+           tabsetPanel(
+             type="pills",
+             tabPanel(
+               "Adult Diagnosis Data",
+               br(),
+               div(class = 'center-container',
+                   column(
+                     6,
+                     p(
+                       "Download heat maps (nonspatial only) or full spread sheets of the various associations identified by P.A.D.D.L.E."
+                     ),
+                     p(
+                       "Note that heat maps are limited to only the associations that are >5 standard deviations removed from 
+                       the mean of all associations."
+                     ),
+                   ), 
+               ),
+               
+               fluidPage(
+                 align = "center",
+                 
+                 fluidRow(
+                   h3(class = "ohio-state", "Air Pollution and Adults (18-54 yrs old)"),
+                   img(src = "Summary Data Images/Diseases_hm/Adult_Air_nonspatial_5SD.png", align = "center", width='850px'),
+                 ),
+                 
+                 br(),
+                 br(),
+                 
+                 fluidRow(
+                   h3(class = "ohio-state", "Water Pollution and Adults (18-54 yrs old)"),
+                   img(src = "Summary Data Images/Diseases_hm/Adult_Water_nonspatial_5SD.png", align = "center", width='850px'),
+                 ),
+                 
+                 br(),
+                 
+                 fluidRow(
+                   h3(class = "ohio-state", "Air Pollution and Adults (55-74 yrs old)"),
+                   img(src = "Summary Data Images/Diseases_hm/Retirement_Air_nonspatial_5SD.png", align = "center", width='850px'),
+                 ),
+                 
+                 br(),
+                 
+                 fluidRow(
+                   h3(class = "ohio-state", "Water Pollution and Adults (55-74 yrs old)"),
+                   img(src = "Summary Data Images/Diseases_hm/Retirement_Water_nonspatial_5SD.png", align = "center", width='850px'),
+                 ),
+                 
+                 br(),
+                 
+                 fluidRow(
+                   h3(class = "ohio-state", "Air Pollution and Adults (75+ yrs)"),
+                   img(src = "Summary Data Images/Diseases_hm/Geriatric_Air_nonspatial_5SD.png", align = "center", width='850px'),
+                 ),
+                 
+                 br(),
+                 
+                 fluidRow(
+                   h3(class = "ohio-state", "Water Pollution and Adults (75+ yrs)"),
+                   img(src = "Summary Data Images/Diseases_hm/Geriatric_Water_nonspatial_5SD.png", align = "center", width='850px'),
+                 ),
+                 
+                 br(),
+                 br(),
+                 
+                 
+                 fluidRow(
+                   h3(class = "ohio-state", "Download Adult Nonspatial Data"),
+                   downloadButton("downloadNonspatialad", "Download")
+                 ),
+               ),
+               
+               br(),
+               br(),
+               
+               fluidRow(
+                 h3(class = "ohio-state", "Download Adult/Peds Spatial Data"),
+                 downloadButton("downloadSpatialad", "Download")
+               )
+             ),
+             
+             
+             
+             tabPanel(
+               "Pediatric Diagnosis Data",
+               br(),
+               div(class = 'center-container',
+                   column(
+                     6,
+                     p(
+                       "Download heat maps (nonspatial only) or full spread sheets of the various associations identified by P.A.D.D.L.E."
+                     ),
+                     p(
+                       "Note that heat maps are limited to only the associations that are >5 standard deviations removed from 
+                       the mean of all associations."
+                     ),
+                   ), 
+               ),
+               
+               fluidPage(
+                 align = "center",
+                 
+                 fluidRow(
+                   h3(class = "ohio-state", "Air Pollution and Children (0-5 yrs old)"),
+                   img(src = "Summary Data Images/Diseases_hm/Youth_Air_nonspatial_5SD.png", align = "center", width='850px'),
+                 ),
+                 
+                 br(),
+                 br(),
+                 
+                 fluidRow(
+                   h3(class = "ohio-state", "Water Pollution and Children (0-5 yrs old)"),
+                   img(src = "Summary Data Images/Diseases_hm/Youth_Water_nonspatial_5SD.png", align = "center", width='850px'),
+                 ),
+                 
+                 br(),
+                 
+                 fluidRow(
+                   h3(class = "ohio-state", "Air Pollution and Children (6-17 yrs old)"),
+                   img(src = "Summary Data Images/Diseases_hm/Pediatric_Air_nonspatial_5SD.png", align = "center", width='850px'),
+                 ),
+                 
+                 br(),
+                 
+                 fluidRow(
+                   h3(class = "ohio-state", "Water Pollution and Children (6-17 yrs old)"),
+                   img(src = "Summary Data Images/Diseases_hm/Pediatric_Water_nonspatial_5SD.png", align = "center", width='850px'),
+                 ),
+                 
+                 br(),
+                 br(),
+                 br(),
+
+                 fluidRow(
+                   h3(class = "ohio-state", "Download Pediatric Nonspatial Data"),
+                   downloadButton("downloadNonspatial", "Download")
+                 ),
+               ),
+               
+               br(),
+               br(),
+               
+               fluidRow(
+                 h3(class = "ohio-state", "Download Adult/Peds Spatial Data"),
+                 downloadButton("downloadSpatial", "Download")
+               ),
+             ),
+             
+             
+             tabPanel(
+               "Social Determinants Data",
+               br(),
+               
+               div(class = 'center-container',
+                   column(
+                     6,
+                     p(
+                       "Download heat maps or full spread sheets of the various associations identified by P.A.D.D.L.E."
+                     ),
+                     p(
+                       "Note that top hits heat maps are limited to only the associations that are >2 standard deviations removed from 
+                       the mean of all associations."
+                     ),
+                   ), 
+               ),
+               
+               fluidPage(
+                 align = "center",
+                 
+                 fluidRow(
+                   h3(class = "ohio-state", "Top Hits for Air & Water Pollution and Deprivation (nonspatial)"),
+                   img(src = "Summary Data Images/Social_Determinants/Deprivation/Deprivation_combined_nonspatial_2SD.png", align = "center", width='850px'),
+                 ),
+                 
+                 br(),
+                 br(),
+                 
+                 fluidRow(
+                   h3(class = "ohio-state", "Full set for Air & Water Pollution and Deprivation (nonspatial)"),
+                   img(src = "Summary Data Images/Social_Determinants/Deprivation/Deprivation_combined_nonspatial_Full.png", align = "center", width='850px'),
+                 ),
+                 
+                 br(),
+                 
+                 fluidRow(
+                   h3(class = "ohio-state", "Pollution linked to Historic Redlining Score (HRS)(nonspatial)"),
+                   img(src = "Summary Data Images/Social_Determinants/HRS_air_water_nonspatial.png", align = "center", width='850px'),
+                 ),
+                 
+                 br(),
+                 
+                 fluidRow(
+                   h3(class = "ohio-state", "Top hits for air pollutants associated with increased % of population of given ethnicity (nonspatial)"),
+                   img(src = "Summary Data Images/Social_Determinants/Ethnicity/Ethnicity_air_nonspatial_2SD.png", align = "center", width='850px'),
+                 ),
+                 
+                 br(),
+                 
+                 fluidRow(
+                   h3(class = "ohio-state", "Full set for air pollutants associated with increased % of population of given ethnicity  (nonspatial)"),
+                   img(src = "Summary Data Images/Social_Determinants/Ethnicity/Ethnicity_air_nonspatial.png", align = "center", width='850px'),
+                 ),
+                 
+                 br(),
+                 
+                 fluidRow(
+                   h3(class = "ohio-state", "Water pollutants associated with increased % of population of given ethnicity (nonspatial)"),
+                   img(src = "Summary Data Images/Social_Determinants/Ethnicity/Ethnicity_water_nonspatial.png", align = "center", width='850px'),
+                 ),
+                 
+                 br(),
+                 
+                 fluidRow(
+                   h3(class = "ohio-state", "Top hits for air pollutants associated with increased % of population of given ethnicity  (spatial)"),
+                   img(src = "Summary Data Images/Social_Determinants/Ethnicity/Ethnicity_air_spatial_2SD.png", align = "center", width='850px'),
+                 ),
+                 
+                 br(),
+                 
+                 fluidRow(
+                   h3(class = "ohio-state", "Full set for air pollutants associated with increased % of population of given ethnicity  (spatial)"),
+                   img(src = "Summary Data Images/Social_Determinants/Ethnicity/Ethnicity_air_spatial.png", align = "center", width='850px'),
+                 ),
+                 
+                 br(),
+                 br(),
+                 
+                 fluidRow(
+                   h3(class = "ohio-state", "Download Social Determinants Data"),
+                   downloadButton("downloadSDOH", "Download"))
+               ),
+             ),
+           ),
+         ),
+    ),
 )

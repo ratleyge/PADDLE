@@ -11,7 +11,7 @@ server <- function(input, output, session) {
       
       if (req(input$dataSource_chem) == "non_spatial") {
         ageChoices <<- c(
-          "Youth (0-5 yrs)" = "Youth", 
+          "PreK (0-5 yrs)" = "PreK", 
           "Pediatric (6-17 yrs)" = "Pediatric_ns", 
           "Adult (18-55 yrs)" = "Adult_ns", 
           "Retirement (56-75 yrs)" = "Retirement",  
@@ -36,7 +36,7 @@ server <- function(input, output, session) {
       ageGroup_chemText <- switch(req(input$ageGroup_chem),
                                   "Over18" = "an adult (over 18)",
                                   "Under18" = "a pediatric (under 18)",
-                                  "Youth" = "a youth (ages 0-5)",  
+                                  "PreK" = "a pre-K youth (ages 0-5)",  
                                   "Pediatric_ns" = "a pediatric (ages 6-17)",
                                   "Adult_ns" = "an adult (ages 18-55)",
                                   "Retirement" = "a retirement-age (ages 56-75)",
@@ -757,10 +757,10 @@ server <- function(input, output, session) {
         df <- req(result_kids()) %>%
           mutate(Source = recode(Source,
                                  "non_spatial_Pediatric_ns_Air" = "Non-Spatial Model of<br>Pediatric (6-17) Visits",
-                                 "non_spatial_Youth_Air" = "Non-Spatial Model of<br>Youth (0-5) Visits",
+                                 "non_spatial_Youth_Air" = "Non-Spatial Model of<br>PreK (0-5) Visits",
                                  "spatial_Under18_Air"= "Spatial Model of<br>Pediatric (<18) Visits",
                                  "non_spatial_Pediatric_ns_Water" = "Non-Spatial Model of<br>Pediatric (6-17) Visits",
-                                 "non_spatial_Youth_Water" = "Non-Spatial Model of<br>Youth (0-5) Visits"
+                                 "non_spatial_Youth_Water" = "Non-Spatial Model of<br>PreK (0-5) Visits"
                                  ))
         
         vline <- function(x = 0, color = "black") {
@@ -933,7 +933,7 @@ server <- function(input, output, session) {
       ageGroup_diseaseText <- switch(req(input$ageGroup_disease),
                                      "Over18" = "an adult (over 18)",
                                      "Under18" = "a pediatric (under 18)",
-                                     "Youth" = "a youth (ages 0-5)",  
+                                     "PreK" = "a pre-K youth (ages 0-5)",  
                                      "Pediatric_ns" = "a pediatric (ages 6-17)",
                                      "Adult_ns" = "a adult (ages 18-55)",
                                      "Retirement" = "a retirement-age (ages 56-75)",
@@ -957,7 +957,7 @@ server <- function(input, output, session) {
       
       if (req(input$dataSource_disease) == "non_spatial") {
         ageChoices <<- c(
-          "Youth (0-5 yrs)" = "Youth", 
+          "PreK (0-5 yrs)" = "PreK", 
           "Pediatric (6-17 yrs)" = "Pediatric_ns", 
           "Adult (18-55 yrs)" = "Adult_ns", 
           "Retirement (56-75 yrs)" = "Retirement", 
@@ -1181,22 +1181,22 @@ server <- function(input, output, session) {
         
         # Conditional age group layers
         {
-          if ("Youth" %in% age_groups)
+          if ("PreK" %in% age_groups)
             add_trace(
               .,
-              data = map_data %>% filter(!is.na(Youth)),
+              data = map_data %>% filter(!is.na(PreK)),
               geojson = counties,
               type = "choropleth",
               locations = ~ fips,
-              z = ~ Youth,
+              z = ~ PreK,
               colorscale = "Viridis",
               colorbar = list(title = "Percentile"),
               marker = list(line = list(width = 0)),
               hoverinfo = "text",
               text = ~paste0(county, ", ", state,
-                             "<br><b>Percentile:</b> ", signif(Youth, 3), "</br>"),
-              visible = age_groups[1] == "Youth",
-              showscale = age_groups[1] == "Youth"
+                             "<br><b>Percentile:</b> ", signif(PreK, 3), "</br>"),
+              visible = age_groups[1] == "PreK",
+              showscale = age_groups[1] == "PreK"
             )
           else
             .
@@ -2102,5 +2102,57 @@ server <- function(input, output, session) {
           columnDefs = list(list(className = 'dt-center', targets = 0:3))
         ))
     })
+    
+    # Summary Data ----
+    
+    # Download csv files
+    output$downloadSDOH <- downloadHandler(
+      filename = function() {
+        "Determinants_Data.xlsx"  # The name user will see when downloading
+      },
+      content = function(file) {
+        file.copy("Data/Summary Data Excel Sheets/SDOH_combined.xlsx", file)
+      },
+      contentType = "text/csv"
+    )
   
+    output$downloadSpatial <- downloadHandler(
+      filename = function() {
+        "Spatial_Data.xlsx"  # The name user will see when downloading
+      },
+      content = function(file) {
+        file.copy("Data/Summary Data Excel Sheets/Spatial.xlsx", file)
+      },
+      contentType = "text/csv"
+    )
+    
+    output$downloadSpatialad <- downloadHandler(
+      filename = function() {
+        "Spatial_Data.xlsx"  # The name user will see when downloading
+      },
+      content = function(file) {
+        file.copy("Data/Summary Data Excel Sheets/Spatial.xlsx", file)
+      },
+      contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    
+    output$downloadNonspatialad <- downloadHandler(
+      filename = function() {
+        "Adult_nonspatial_Data.xlsx"  # The name user will see when downloading
+      },
+      content = function(file) {
+        file.copy("Data/Summary Data Excel Sheets/Nonspatial_adult.xlsx", file)
+      },
+      contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    
+    output$downloadNonspatial <- downloadHandler(
+      filename = function() {
+        "Pediatric_nonspatial_Data.xlsx"  # The name user will see when downloading
+      },
+      content = function(file) {
+        file.copy("Data/Summary Data Excel Sheets/Nonspatial_peds.xlsx", file)
+      },
+      contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
 }
