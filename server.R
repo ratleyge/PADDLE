@@ -1484,11 +1484,11 @@ server <- function(input, output, session) {
       
       if (input$comb_or_strat_disease == "Stratified") {
         req(input$searchDisease_disease)
-        total_toxins_in_disease <- nrow(req(dataToView_disease()))
+        total_toxins_in_disease <- length(which(req(dataToView_disease())$Variable %in% unique(chem_prot_interactions$`Toxin Name`)))
       } else {
         req(input$searchDisease_disease)
         comb_df <- as.data.frame(rbind(req(result_adults()), req(result_kids())))
-        total_toxins_in_disease <- length(unique(comb_df$Variable))
+        total_toxins_in_disease <- length(which(unique(comb_df$Variable) %in% unique(chem_prot_interactions$`Toxin Name`)))
       }
       
       total_toxins <- length(unique(chem_prot_interactions$`Toxin Name`))
