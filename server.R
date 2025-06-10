@@ -1113,7 +1113,7 @@ server <- function(input, output, session) {
         need(input$searchDisease_disease != "", "Please select a disease")
       )
       
-      age_groups <- names(req(map_data_disease()))[-c(1:3, (ncol(map_data_disease())-3):ncol(map_data_disease()))]
+      age_groups <- names(req(map_data_disease()))[-c(1:3, (ncol(map_data_disease())-2):ncol(map_data_disease()))]
 
       top_10 <- lapply(age_groups, function (group) {
         map_data_disease() %>%
@@ -1143,10 +1143,13 @@ server <- function(input, output, session) {
       map_data <- req(map_data_disease())
       
       # List of age group columns
-      age_groups <- names(map_data)[-c(1:3, (ncol(map_data_disease())-3):ncol(map_data_disease()))]
+      age_groups <- names(map_data)[-c(1:3, (ncol(map_data_disease())-2):ncol(map_data_disease()))]
       
       # Create dropdown buttons for each age group
       buttons <- lapply(seq_along(age_groups), function(i) {
+        
+        print(age_groups[i])
+        
         visibilities <- rep(FALSE, length(age_groups) + 1)  # +1 for grey layer
         visibilities[1] <- TRUE  # always show the grey layer
         visibilities[i + 1] <- TRUE  # show the selected age group trace
@@ -1165,126 +1168,70 @@ server <- function(input, output, session) {
         )
       })
       
+      if ("Under18" %in% colnames(map_data) && "Over18" %in% colnames(map_data)) {
+        naFips <- all_visit_zipcodes[!all_visit_zipcodes$fips %in% (map_data %>% filter(!is.na(Under18)) %>% filter(!is.na(Over18)) %>% pull(fips)), ]
+      } else if("Under18" %in% colnames(map_data)) {
+        naFips <- all_visit_zipcodes[!(all_visit_zipcodes$fips %in% c(map_data %>% filter(!is.na(Under18)) %>% pull(fips))), ]
+      } else if("Over18" %in% colnames(map_data)) {
+        naFips <- all_visit_zipcodes[!(all_visit_zipcodes$fips %in% c(map_data %>% filter(!is.na(Over18)) %>% pull(fips))), ]
+      } 
+        
+
       disease_plot <- plot_ly() %>%
         
         add_trace(
-          data = all_visit_zipcodes,
+          data = all_visit_zipcodes %>% filter(fips %in% naFips$fips),
           type = "choropleth",
           geojson = counties,
           locations = ~ fips,
-          z = I(rep(1, nrow(all_visit_zipcodes))),
+          z = I(rep(1, nrow(all_visit_zipcodes %>% filter(fips %in% naFips$fips)))),
           showscale = FALSE,
           colorscale = list(c(0, 1), c("#dddddd", "#dddddd")),
           marker = list(line = list(width = 0)),
           hoverinfo = "none"
         ) %>%
-        
+
         # Conditional age group layers
         {
-          if ("PreK" %in% age_groups)
+          if ("Under18" %in% age_groups){
             add_trace(
               .,
-              data = map_data %>% filter(!is.na(PreK)),
+              data = map_data %>% filter(!is.na(Under18)),
               geojson = counties,
               type = "choropleth",
               locations = ~ fips,
-              z = ~ PreK,
+              z = ~ Under18,
               colorscale = "Viridis",
               colorbar = list(title = "Percentile"),
               marker = list(line = list(width = 0)),
               hoverinfo = "text",
               text = ~paste0(county, ", ", state,
-                             "<br><b>Percentile:</b> ", signif(PreK, 3), "</br>"),
-              visible = age_groups[1] == "PreK",
-              showscale = age_groups[1] == "PreK"
+                             "<br><b>Percentile:</b> ", signif(Under18, 3), "</br>"),
+              visible = age_groups[1] == "Under18",
+              showscale = age_groups[1] == "Under18"
             )
+            }
           else
             .
         } %>%
-        
+
         {
-          if ("Pediatric" %in% age_groups)
+          if ("Over18" %in% age_groups)
             add_trace(
               .,
-              data = map_data %>% filter(!is.na(Pediatric)),
+              data = map_data %>% filter(!is.na(Over18)),
               geojson = counties,
               type = "choropleth",
               locations = ~ fips,
-              z = ~ Pediatric,
+              z = ~ Over18,
               colorscale = "Viridis",
               colorbar = list(title = "Percentile"),
               marker = list(line = list(width = 0)),
               hoverinfo = "text",
               text = ~paste0(county, ", ", state,
-                             "<br><b>Percentile:</b> ", signif(Pediatric, 3), "</br>"),
-              visible = age_groups[1] == "Pediatric",
-              showscale = age_groups[1] == "Pediatric"
-            )
-          else
-            .
-        } %>%
-        
-        {
-          if ("Adult" %in% age_groups)
-            add_trace(
-              .,
-              data = map_data %>% filter(!is.na(Adult)),
-              geojson = counties,
-              type = "choropleth",
-              locations = ~ fips,
-              z = ~ Adult,
-              colorscale = "Viridis",
-              colorbar = list(title = "Percentile"),
-              marker = list(line = list(width = 0)),
-              hoverinfo = "text",
-              text = ~paste0(county, ", ", state,
-                             "<br><b>Percentile:</b> ", signif(Adult, 3), "</br>"),
-              visible = age_groups[1] == "Adult",
-              showscale = age_groups[1] == "Adult"
-            )
-          else
-            .
-        } %>%
-        
-        {
-          if ("Retirement" %in% age_groups)
-            add_trace(
-              .,
-              data = map_data %>% filter(!is.na(Retirement)),
-              geojson = counties,
-              type = "choropleth",
-              locations = ~ fips,
-              z = ~ Retirement,
-              colorscale = "Viridis",
-              colorbar = list(title = "Percentile"),
-              marker = list(line = list(width = 0)),
-              hoverinfo = "text",
-              text = ~paste0(county, ", ", state,
-                             "<br><b>Percentile:</b> ", signif(Retirement, 3), "</br>"),
-              visible = age_groups[1] == "Retirement",
-              showscale = age_groups[1] == "Retirement"
-            )
-          else
-            .
-        } %>%
-        
-        {
-          if ("Geriatric" %in% age_groups)
-            add_trace(
-              .,
-              data = map_data %>% filter(!is.na(Geriatric)),
-              geojson = counties,
-              type = "choropleth",
-              locations = ~ fips,
-              z = ~ Geriatric,
-              colorscale = "Viridis",
-              colorbar = list(title = "Percentile"),
-              marker = list(line = list(width = 0)),
-              hoverinfo = "text",
-              text = ~paste0(county, ", ", state,
-                             "<br><b>Percentile:</b> ", signif(Geriatric, 3), "</br>"),
-              visible = age_groups[1] == "Geriatric",
-              showscale = age_groups[1] == "Geriatric"
+                             "<br><b>Percentile:</b> ", signif(Over18, 3), "</br>"),
+              visible = age_groups[1] == "Over18",
+              showscale = age_groups[1] == "Over18"
             )
           else
             .
