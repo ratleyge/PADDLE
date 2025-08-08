@@ -919,4 +919,54 @@ tabPanel("Summary Data",
            ),
          ),
     ),
+
+# Summary Data ----
+tabPanel("Additional Links",
+         
+         fluidPage(
+           tags$head(
+             tags$style('
+                          ul.nav-pills{
+                            display: flex !important;
+                            justify-content: center !important;
+                          }')
+           ),
+           align = "center",
+           
+           h3(class = "ohio-state", "EPA Where You Live"),
+           
+           div(class = 'center-container',
+               column(
+                 6,
+                 HTML("<p><a href = 'https://www.epa.gov/trinationalanalysis/where-you-live'>https://www.epa.gov/trinationalanalysis/where-you-live</a></p>"),
+                 p(
+                   "This site reports the specific chemicals released by factories, 
+                   and the amounts released.  Search for your state or zip code to 
+                   see the sources of industrial pollution in your area.  Note, 
+                   this site does not collect data on road/automobile exhaust.  
+                   Using this site would allow one to assess the pollutants in 
+                   their area, which can then be searched in PADDLE for disease 
+                   associations of concern." 
+                   ), 
+               ), 
+           ),
+           
+           h3(class = "ohio-state","EPA TRI Toxin Tracker"),
+           
+           div(class = 'center-container',
+               column(
+                 6,
+                 HTML("<p><a href = 'https://edap.epa.gov/public/extensions/TRIToxicsTracker/TRIToxicsTracker.html'>https://edap.epa.gov/public/extensions/TRIToxicsTracker/TRIToxicsTracker.html</a></p>"),
+                 p("This site reports the exact locations for factories releasing 
+                   toxic substances.  Search by address, state, or zip code to see 
+                   the facilities in your area.  Note, this site does not collect
+                   data on road/automobile exhaust."
+                   ), 
+               ), 
+           ),
+           
+
+           
+         ),
+  ),
 )
