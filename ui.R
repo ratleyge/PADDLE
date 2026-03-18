@@ -50,9 +50,8 @@ ui <- navbarPage(
                   style = "background-color: #333333; padding: 0px 10px 15px 10px;",
                   HTML("<h3 class='ohio-state'>Citation</h3>
                        <p>Grace Ratley, Aditi Vijendra, Jalin Jordan, Pranav Thota, Jordan Zeldin, 
-            Prem Prashant Chaudhary, Ian A Myles. <i>P.A.D.D.L.E. : A novel tool for 
-            assessing pollution’s potential role in disease.</i> The Epithelial Therapeutics Unit. 
-            Version 1.0, April 2025.</p>"),
+                       Prem Prashant Chaudhary, Ian A Myles. <a href='https://doi.org/10.1038/s41598-026-39836-2'><i>P.A.D.D.L.E.: a hypothesis generation tool for 
+                       assessing pollution’s potential role in disease.</i></a> Scientific Reports. 16, 8808 (2026). </p>"),
                   ),
            ),
      ),
@@ -65,132 +64,110 @@ ui <- navbarPage(
         column(6,
           HTML("
             <h3 class='ohio-state'>Derivation of disease rates</h3>
-            <p style='text-align: left'>&emsp;&emsp;Disease rates from the Agency for Healthcare Research and Quality 
+            <p style='text-align: left'>&emsp;&emsp;Disease rates were taken from the Agency for Healthcare Research and Quality
             (AHRQ) <a href='https://www.ahrq.gov/data/innovations/syh-dr.html' target='_blank'>
-            Synthetic Healthcare Database for Research (SyH-DR)</a>.  The database 
-            collected all billable clinical visits in the United States which 
-            occurred in 2016.  Rates for each ICD included in the SyH-DR were 
-            calculated by taking the incidence of diagnosis and dividing by the 
-            total billed diagnoses for each included zip code.  The SyH-DR 
-            anonymizes diagnoses in zip codes with less than 10,000 people and the 
-            locations for disease diagnoses occurring less than 10,000 times.  
-            Therefore, these rare disorders and small towns were pre-excluded from 
-            the analysis.  We further excluded ICD’s that occurred in less than 2% 
-            of zip codes to reduce the risk that an ICD would be used only by a 
-            few providers in a localized region.  Converting ICD codes to their 
-            respective names was performed using the 
+            Synthetic Healthcare Database for Research (SyH-DR)</a>. The database
+            collected all billable clinical visits in the United States which
+            occurred in 2016. Rates for each International Classification of Diseases (ICD) included in the SyH-DR were
+            calculated by taking the incidence of diagnosis and dividing by the
+            total billed diagnoses for each included zip code. The SyH-DR
+            anonymizes diagnoses in zip codes with less than 10,000 people and the
+            locations for disease diagnoses occurring less than 10,000 times.
+            Therefore, these rare disorders and small towns were pre-excluded from
+            the analysis. We further excluded ICD codes that occurred in less than 2% of zip codes to reduce the risk that an ICD
+            would be used only by a few providers in a localized region. Converting ICD codes to their
+            respective names was performed using the
             <a href='https://www.cms.gov/medicare/coordination-benefits-recovery/overview/icd-code-lists' target='_blank'>
-            ICD code list</a> provided by the Centers for Medicare and Medicaid 
-            Services (CMS).</p>
+            ICD code list</a> provided by the Centers for Medicare and Medicaid Services (CMS).</p>
             
-            <p style='text-align: left'>&emsp;&emsp;For non-spatial analysis, billing visits were separated into categories 
-            of “Pre-K” (age 0-5 years of age), “pediatric” (6-17 years), “adult” 
-            (18-54 years), “retirement age” (55-74 years), and “geriatric” 
-            (75 years and older).  Each age cohort was modeled independently.  
-            Because of the increased computational power required for spatial 
-            analysis, subjects were grouped by adult (over 18) or pediatric 
+            <p style='text-align: left'>&emsp;&emsp;For any given healthcare visit, up to 10 ICD diagnoses could be assigned in addition to a primary diagnosis. Because the ordering of diagnoses can sometimes reflect administrative rather than clinical priorities, we counted each diagnosis separately rather than relying solely on the primary diagnosis. This approach makes the models more resistant to arbitrary coding decisions and captures disease prevalence more completely. However, we acknowledge this may inflate the apparent frequency of common, chronic, or multi-system diseases (such as diabetes) that generate multiple related diagnostic codes per visit. Multiple visits by the same patient were treated as separate events, as this may reflect greater symptom severity.</p>
+            
+            <p style='text-align: left'>&emsp;&emsp;For non-spatial analysis, billing visits were separated into categories
+            of 'Pre-K' (ages 0–5), 'pediatric' (6–17 years), 'adult'
+            (18–54 years), 'retirement age' (55–74 years), and 'geriatric'
+            (75 years and older). Each age cohort was modeled independently.
+            Because of the increased computational power required for spatial
+            analysis, subjects were grouped as either adult (18 and over) or pediatric
             (under 18 years of age).</p>
             <br>
             
             <h3 class='ohio-state'>Identification of pollution exposures and modeling</h3>
-            <p style='text-align: left'>&emsp;&emsp;Pollution exposure was derived from the EPA databases <a href='https://www.epa.gov/rsei' target='_blank'>
-            Risk-Screening Environmental Indicators (RSEI)</a> and <a herf='https://www.epa.gov/toxics-release-inventory-tri-program' target='_blank'>
-            Toxics Release Inventory (TRI)</a>.  Water pollution was also evaluated 
-            using the <a href='https://www.epa.gov/dwucmr' target='_blank'>Monitoring Unregulated 
-            Contaminants in Drinking Water (UCMR)</a> data from the EPA.  Features 
-            matrixes were constructed by same method as previously described<sup>
+            <p style='text-align: left'>&emsp;&emsp;Air pollution exposure was derived from the EPA databases <a href='https://www.epa.gov/rsei' target='_blank'>
+            Risk-Screening Environmental Indicators (RSEI)</a> and <a href='https://www.epa.gov/toxics-release-inventory-tri-program' target='_blank'>
+            Toxics Release Inventory (TRI)</a>. Outdoor concentrations of O<sub>3</sub>, CO, SO<sub>2</sub>, NO<sub>2</sub>, PM<sub>10</sub>, and PM<sub>2.5</sub> were derived from the <a href='https://www.caces.us/' target='_blank'>Center for Air, Climate, &amp; Energy Solutions (CACES)</a> using their Land Use Regression (LUR) model, with census tract-level data averaged for overlapping zip codes. Water pollution was separately evaluated
+            using the <a href='https://www.epa.gov/dwucmr' target='_blank'>Monitoring Unregulated
+            Contaminants in Drinking Water (UCMR)</a> data from the EPA. The UCMR data from UCMR 3–5 was
+            combined to contrast against the 2016 AHRQ data. If differing
+            measurements of the same chemical were reported in different UCMR databases,
+            the results were averaged prior to analysis. Exposures were collated from the years 2010–2016
+            to contrast with the AHRQ data from 2016.</p>
+            
+            <p style='text-align: left'>&emsp;&emsp;Feature matrices were constructed by the same method as previously described<sup>
             <a href='https://pubmed.ncbi.nlm.nih.gov/38637696/' target='_blank'>1</a>,
             <a href='https://pubmed.ncbi.nlm.nih.gov/36608129/' target='_blank'>2</a>,
             <a href='https://pubmed.ncbi.nlm.nih.gov/37692200/' target='_blank'>3</a>
-            </sup>.  In brief, 30-mile catchment areas were created around point-
-            source release emissions for air pollution.  Distance weights were 
-            created so that pollution sources with catchment areas that expanded 
-            beyond the borders to their zip code were counted towards all zip 
-            codes that would be within the 30-mile area.  Water pollution was 
-            counted only towards the zip code of the measurement device reported 
-            by the EPA.</p>
+            </sup>. In brief, for each zip code in the AHRQ database, a 30-mile catchment area was defined around the zip code centroid. The total amount of each pollutant released by facilities within that catchment area was summed. A Gaussian distance-weighting function was applied to account for the fact that the zip code reflects the location of the healthcare provider, not necessarily the patient's residence. Water pollution was attributed only to the zip code of the EPA measurement device, as cross-zip dissemination patterns are not captured in the UCMR data.</p>
             
-            <p style='text-align: left'>&emsp;&emsp;Nonspatial analysis was performed as previously described
-            <sup><a href='https://pubmed.ncbi.nlm.nih.gov/36608129/' target='_blank'>2</a>,
-            <a href='https://pubmed.ncbi.nlm.nih.gov/37692200/' target='_blank'>3</a></sup>, 
-            using the glmnet package in R17.  After beta-coefficients were derived, 
-            because our non-spatial approach does not produce p-values, we eliminated 
-            associations that were less than two standard deviations (2SD) from the mean 
-            beta-values.  Partial model fit testing was performed by assessing the 
-            means of the residuals and removing any model which was more than 2% removed 
-            from a residual mean of 0.  Correlations were displayed for those with more 
-            than 5SD from the mean to improve readability. Spatial modeling was performed 
-            as previously described9, also using the glmnet package in R.  Spatial models 
-            were screened for trend p values of <0.1.  Heatmaps were created using the 
-            pheatmap package in R.  The exposures were collated from the years 2010-2016 
-            to contrast with the AHRQ data from 2016.  The UCMR data from UCMR 3-5 was 
-            combined to contrast against the 2016 AHRQ data as well.  If differing 
-            measurements of the same chemical were reported in different UCMR databases, 
-            the results were averaged prior to analysis.</p>
+            <p style='text-align: left'>&emsp;&emsp;Two complementary modeling approaches were used to assess associations between environmental toxicant exposures and disease diagnosis rates: a non-spatial penalized regression and a spatial penalized regression. Both approaches were applied separately to each of 5,984 disease diagnoses. The predictor matrix for air pollution models included 592 variables: 571 environmental exposures and 21 sociodemographic covariates (census age distributions, deprivation index, population density, and for non-spatial models, latitude and longitude). The water pollution model contained 42 environmental exposures alongside the same sociodemographic covariates. All predictors were standardized prior to modeling to allow comparison across variables with different measurement scales.</p>
+            
+            <p style='text-align: left'>&emsp;&emsp;Nonspatial analysis was performed as previously described<sup>
+            <a href='https://pubmed.ncbi.nlm.nih.gov/36608129/' target='_blank'>2</a>,
+            <a href='https://pubmed.ncbi.nlm.nih.gov/37692200/' target='_blank'>3</a></sup>,
+            using the glmnet package in R. For each disease-age combination, an elastic net regression model was fit (alpha = 0.5) with the regularization parameter tuned via 10-fold cross-validation. Because elastic net regression does not produce p-values, we filtered associations to those with beta-coefficients more than two standard deviations (2SD) from the mean. Correlations more than 5SD from the mean are displayed on the website to improve readability, but all correlations are available in the underlying data.</p>
+            
+            <p style='text-align: left'>&emsp;&emsp;For spatial modeling, a negative binomial generalized linear mixed effects model was fit with nested spatial random effects, applied only to air pollution data and the two collapsed age strata (pediatric and adult) due to computational demands. A four-level nested spatial hierarchy was constructed using hierarchical clustering on distances between zip code centroids, generating clusters of approximately 81, 27, 9, and 3 zip codes at each successive level. These clusters were included as random effects to capture spatial autocorrelation at multiple geographic scales.</p>
             <br>
             
             <h3 class='ohio-state'>Additional comparisons</h3>
-            <p style='text-align: left'>&emsp;&emsp;Racial disparities were calculated by taking the percentage 
+            <p style='text-align: left'>&emsp;&emsp;Racial disparities were calculated by taking the percentage
             representation of each race/ethnicity from the <a href='https://www.census.gov/' target='_blank'>
-            US Census of 2020</a>.  Deprivation index was collected from the 
+            US Census of 2020</a>. Deprivation index was collected from the
             <a href='https://www.neighborhoodatlas.medicine.wisc.edu/' target='_blank'>
-            Neighborhood Altas</a> from the Center of Health Disparities Research at 
-            the University of Wisconsin.  <a href='https://redivis.com/datasets/rnef-d56dafea8?v=1.0' target='_blank'>
-            Historic redlining scores for 2020</a> US census tracts were used after 
-            registration from the Environmental Impact Data Collective.  Exposure 
-            rates for social determinants were collected from the years 2013-2019 
-            to compare against the 2020 census.</p> 
+            Neighborhood Atlas</a> from the Center of Health Disparities Research at
+            the University of Wisconsin. <a href='https://redivis.com/datasets/rnef-d56dafea8?v=1.0' target='_blank'>
+            Historic redlining scores for 2020</a> US census tracts were used after
+            registration from the Environmental Impact Data Collective. Exposure
+            rates for social determinants were collected from the years 2013–2019
+            to compare against the 2020 census.</p>
             
-            <p style='text-align: left'>&emsp;&emsp;Connecting which commercial products contain any indicated chemical 
-            was taken from <a href='https://comptox.epa.gov/chemexpo/get_data/'>EPA 
-            ChemExpo databases</a>.  Spatial and non-spatial modeling was performed 
-            as for diseases.  Mapping functions were performed using the ggmap and 
+            <p style='text-align: left'>&emsp;&emsp;Connecting which commercial products contain any indicated chemical
+            was taken from the <a href='https://comptox.epa.gov/chemexpo/get_data/' target='_blank'>EPA
+            ChemExpo databases</a>. Spatial and non-spatial modeling was performed
+            as for diseases. Mapping functions were performed using the ggmap and
             viridis packages in R.</p>
+            
+            <p style='text-align: left'>&emsp;&emsp;Protein-toxicant interactions were accessed from the <a href='http://www.t3db.ca/' target='_blank'>Toxin-Target Database (T3DB)</a>. Protein-level enrichment analysis was performed using Fisher's exact test to identify proteins disproportionately targeted by disease-associated toxins. Pathway enrichment analysis was performed using the enrichR package, referencing GO Biological Process, GO Molecular Function, KEGG, and WikiPathways databases. Enriched proteins are indicated on the website where FDR-corrected p-values are less than 0.05.</p>
             <br>
             
             <h3 class='ohio-state'>Limitations</h3>
-            <p style='text-align: left'>&emsp;&emsp;The major limitation of this work is that the AHRQ database was only 
-            a pilot program encompassing visits in the US in 2016.  The inability to 
-            assess disease-chemical associations over time likely limits our accuracy.  
-            For example, our prior work on AD used a commercial database which 
-            included data from 2017-2019 and identified slightly different specific 
-            chemicals; although, the fact that the same chemical class was identified 
+            <p style='text-align: left'>&emsp;&emsp;The major limitation of this work is that the AHRQ database was only
+            a pilot program encompassing visits in the US in 2016. The inability to
+            assess disease-chemical associations over time likely limits our accuracy.
+            For example, our prior work on Alzheimer's disease used a commercial database spanning 2017–2019 and identified slightly different specific
+            chemicals; although the fact that the same chemical class was identified
             speaks to the value of using pathway and chemical class aggregation in our
-            assessments. However, one advantage of the AHRQ data is that, unlike most 
-            commercial databases, it contains both inpatient and outpatient visit 
-            information.  Furthermore, should the AHRQ or other agency collect updated 
-            disease visit information, P.A.D.D.L.E. could be updated to incorporate 
-            the new data.  A similar limitation of our work is that it is limited to 
-            pollution data released in the United States only.  Our included databases 
-            do not capture exposures that may cause harm as commercial products unless 
-            the exposure also creates pathology in the areas surrounding their 
-            manufacturing point sources.  Nations with centralized health records 
-            could however mirror our approach by collecting pollution data in their 
-            countries and/or product exposure surveys and performing similar 
-            correlation assessments.</p>
-
-            <p style='text-align: left'>&emsp;&emsp;Another limitation is that our databases assessing functional 
-            consequences of chemical exposure are not congruent.  For example, the 
-            database for known protein-pollutant interactions is only a subset of 
-            the overall pollutant data and is enriched for gene and protein targets 
-            that have received greater investigative attention.  However, the pathway 
-            analysis offered by P.A.D.D.L.E. may still serve hypothesis generation 
-            for researchers.  Finally, the authors stress that the data outputs 
-            from P.A.D.D.L.E. are correlations and associations only and should not 
-            be assumed to be causal, even when statistically significant.  Any 
-            association identified should either be assessed against the established 
-            literature or be experimentally modeled before drawing any conclusions 
-            between the associations presented.  For example, although negative 
-            associations could theoretically represent a protective effect of a 
-            given chemical.  Because our clinical data is derived from visits to 
-            healthcare providers rather than individual diagnose, it seems more 
-            likely that the chemical indicated may generate other diseases which 
-            displace visits for other ailments.  For example, areas with the 
-            highest rates of COVID-19 infections saw a drop in outpatient visits 
-            for non-COVID related ailments.<sup><a href='https://pubmed.ncbi.nlm.nih.gov/36893413/' 
-            target='_blank'>4</a></sup>  
-            Thus, both negative and positive associations should spur mechanistic 
-            follow up studies rather than assumed causal relationships.</p>
+            assessments. One advantage of the AHRQ data is that, unlike most
+            commercial databases, it contains both inpatient and outpatient visit
+            information. Furthermore, should the AHRQ or other agency collect updated
+            disease visit information, P.A.D.D.L.E. could be updated to incorporate
+            the new data.</p>
+            
+            <p style='text-align: left'>&emsp;&emsp;The use of zip code-aggregated data introduces important caveats, including the ecological fallacy (population-level associations may not reflect individual risk), the possibility that a patient's zip code of care differs from their home zip code, and potential inflation of results from densely zip-coded urban areas. Despite these limitations, aggregated data enables nationwide analysis while protecting individual privacy, and our penalized regression approach and spatial smoothing terms help mitigate some of these effects. This approach is consistent with our goal of designing a hypothesis-generating tool to identify associations warranting further investigation with individual-level data.</p>
+            
+            <p style='text-align: left'>&emsp;&emsp;Another limitation is that our databases assessing functional
+            consequences of chemical exposure are not fully congruent. For example, the
+            database for known protein-pollutant interactions covers only a subset of
+            the overall pollutant data and is enriched for targets that have received greater investigative attention. The pathway
+            analysis offered by P.A.D.D.L.E. may still serve hypothesis generation
+            for researchers. Finally, the authors stress that the data outputs
+            from P.A.D.D.L.E. are correlations and associations only and should not
+            be assumed to be causal, even when statistically significant. Any
+            association identified should either be assessed against the established
+            literature or be experimentally modeled before drawing any conclusions.
+            Notably, negative associations could theoretically represent a protective effect, but because our clinical data derives from healthcare visits rather than individual diagnoses, it is more likely that a given chemical generates other diseases that displace visits for certain ailments — similar to how areas with the highest rates of COVID-19 saw a drop in outpatient visits for non-COVID conditions.<sup><a href='https://pubmed.ncbi.nlm.nih.gov/36893413/'
+            target='_blank'>4</a></sup>
+            Both negative and positive associations should spur mechanistic
+            follow-up studies rather than be assumed to reflect causal relationships.</p>
           "),
          ),
       ),
