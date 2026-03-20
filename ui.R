@@ -33,12 +33,7 @@ ui <- navbarPage(
        br(),
        br(),
        fluidRow(
-         column(6, 
-                img(src = "Man in boat.jpg", align = "right"),
-         ),
-         column(6, 
-                HTML('<iframe width="560" height="315" src="https://www.youtube.com/embed/CksOqC-zP9s?si=B3fuRay7T1ufTuey" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>'
-                     ),
+            HTML('<iframe width="560" height="315" src="https://www.youtube.com/embed/CksOqC-zP9s?si=B3fuRay7T1ufTuey" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>'
          ),
        ),
        br(),
