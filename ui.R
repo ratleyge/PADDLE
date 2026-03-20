@@ -18,7 +18,7 @@ ui <- navbarPage(
   # Title in top left corner
   title = div(
     class = "customNavbar-title",
-    img(src="White no background paddle logo.png", height = "30px", width = "auto")
+    img(src="PADDLE Blue Background.png", height = "30px", width = "auto")
   ),
   
   # About page ----
@@ -28,7 +28,7 @@ ui <- navbarPage(
        align = "center",
        
        fluidRow(
-         img(src = "White no background paddle logo.png", align = "center", width='650px'),
+         img(src = "PADDLE Black Background.png", align = "center", width='650px'),
        ),
        br(),
        br(),
