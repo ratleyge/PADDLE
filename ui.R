@@ -19,7 +19,7 @@ ui <- navbarPage(
   title = div(
     class = "customNavbar-title",
     img(src="PADDLE Blue Background.png", style="margin: -12px -20px",
-    height = "45px", width = "auto")
+    height = "55px", width = "auto")
   ),
   
   # About page ----
@@ -38,13 +38,13 @@ ui <- navbarPage(
          ),
        ),
        br(),
-       h3(class = "ohio-state", "Wading through our toxic world"),
+       h3("Wading through our toxic world"),
        br(),
        br(),
        div(class = "center-container",
            column(6, 
                   style = "background-color: #333333; padding: 0px 10px 15px 10px;",
-                  HTML("<h3 class='ohio-state'>Citation</h3>
+                  HTML("<h3>Citation</h3>
                        <p>Grace Ratley, Aditi Vijendra, Jalin Jordan, Pranav Thota, Jordan Zeldin, 
                        Prem Prashant Chaudhary, Ian A Myles. <a href='https://doi.org/10.1038/s41598-026-39836-2'><i>P.A.D.D.L.E.: a hypothesis generation tool for 
                        assessing pollution’s potential role in disease.</i></a> Scientific Reports. 16, 8808 (2026). </p>"),
@@ -59,7 +59,7 @@ ui <- navbarPage(
       div(class='center-container',
         column(6,
           HTML("
-            <h3 class='ohio-state'>Derivation of disease rates</h3>
+            <h3>Derivation of disease rates</h3>
             <p style='text-align: left'>&emsp;&emsp;Disease rates were taken from the Agency for Healthcare Research and Quality
             (AHRQ) <a href='https://www.ahrq.gov/data/innovations/syh-dr.html' target='_blank'>
             Synthetic Healthcare Database for Research (SyH-DR)</a>. The database
@@ -87,7 +87,7 @@ ui <- navbarPage(
             (under 18 years of age).</p>
             <br>
             
-            <h3 class='ohio-state'>Identification of pollution exposures and modeling</h3>
+            <h3>Identification of pollution exposures and modeling</h3>
             <p style='text-align: left'>&emsp;&emsp;Air pollution exposure was derived from the EPA databases <a href='https://www.epa.gov/rsei' target='_blank'>
             Risk-Screening Environmental Indicators (RSEI)</a> and <a href='https://www.epa.gov/toxics-release-inventory-tri-program' target='_blank'>
             Toxics Release Inventory (TRI)</a>. Outdoor concentrations of O<sub>3</sub>, CO, SO<sub>2</sub>, NO<sub>2</sub>, PM<sub>10</sub>, and PM<sub>2.5</sub> were derived from the <a href='https://www.caces.us/' target='_blank'>Center for Air, Climate, &amp; Energy Solutions (CACES)</a> using their Land Use Regression (LUR) model, with census tract-level data averaged for overlapping zip codes. Water pollution was separately evaluated
@@ -114,7 +114,7 @@ ui <- navbarPage(
             <p style='text-align: left'>&emsp;&emsp;For spatial modeling, a negative binomial generalized linear mixed effects model was fit with nested spatial random effects, applied only to air pollution data and the two collapsed age strata (pediatric and adult) due to computational demands. A four-level nested spatial hierarchy was constructed using hierarchical clustering on distances between zip code centroids, generating clusters of approximately 81, 27, 9, and 3 zip codes at each successive level. These clusters were included as random effects to capture spatial autocorrelation at multiple geographic scales.</p>
             <br>
             
-            <h3 class='ohio-state'>Additional comparisons</h3>
+            <h3>Additional comparisons</h3>
             <p style='text-align: left'>&emsp;&emsp;Racial disparities were calculated by taking the percentage
             representation of each race/ethnicity from the <a href='https://www.census.gov/' target='_blank'>
             US Census of 2020</a>. Deprivation index was collected from the
@@ -135,7 +135,7 @@ ui <- navbarPage(
             <p style='text-align: left'>&emsp;&emsp;Protein-toxicant interactions were accessed from the <a href='http://www.t3db.ca/' target='_blank'>Toxin-Target Database (T3DB)</a>. Protein-level enrichment analysis was performed using Fisher's exact test to identify proteins disproportionately targeted by disease-associated toxins. Pathway enrichment analysis was performed using the enrichR package, referencing GO Biological Process, GO Molecular Function, KEGG, and WikiPathways databases. Enriched proteins are indicated on the website where FDR-corrected p-values are less than 0.05.</p>
             <br>
             
-            <h3 class='ohio-state'>Limitations</h3>
+            <h3>Limitations</h3>
             <p style='text-align: left'>&emsp;&emsp;The major limitation of this work is that the AHRQ database was only
             a pilot program encompassing visits in the US in 2016. The inability to
             assess disease-chemical associations over time likely limits our accuracy.
@@ -679,7 +679,7 @@ tabPanel("Summary Data",
                  align = "center",
                  
                  fluidRow(
-                   h3(class = "ohio-state", "Air Pollution and Adults (18-54 yrs old)"),
+                   h3("Air Pollution and Adults (18-54 yrs old)"),
                    img(src = "Summary Data Images/Diseases_hm/Adult_Air_nonspatial_5SD.png", align = "center", width='850px'),
                  ),
                  
@@ -687,35 +687,35 @@ tabPanel("Summary Data",
                  br(),
                  
                  fluidRow(
-                   h3(class = "ohio-state", "Water Pollution and Adults (18-54 yrs old)"),
+                   h3("Water Pollution and Adults (18-54 yrs old)"),
                    img(src = "Summary Data Images/Diseases_hm/Adult_Water_nonspatial_5SD.png", align = "center", width='850px'),
                  ),
                  
                  br(),
                  
                  fluidRow(
-                   h3(class = "ohio-state", "Air Pollution and Adults (55-74 yrs old)"),
+                   h3("Air Pollution and Adults (55-74 yrs old)"),
                    img(src = "Summary Data Images/Diseases_hm/Retirement_Air_nonspatial_5SD.png", align = "center", width='850px'),
                  ),
                  
                  br(),
                  
                  fluidRow(
-                   h3(class = "ohio-state", "Water Pollution and Adults (55-74 yrs old)"),
+                   h3("Water Pollution and Adults (55-74 yrs old)"),
                    img(src = "Summary Data Images/Diseases_hm/Retirement_Water_nonspatial_5SD.png", align = "center", width='850px'),
                  ),
                  
                  br(),
                  
                  fluidRow(
-                   h3(class = "ohio-state", "Air Pollution and Adults (75+ yrs)"),
+                   h3("Air Pollution and Adults (75+ yrs)"),
                    img(src = "Summary Data Images/Diseases_hm/Geriatric_Air_nonspatial_5SD.png", align = "center", width='850px'),
                  ),
                  
                  br(),
                  
                  fluidRow(
-                   h3(class = "ohio-state", "Water Pollution and Adults (75+ yrs)"),
+                   h3("Water Pollution and Adults (75+ yrs)"),
                    img(src = "Summary Data Images/Diseases_hm/Geriatric_Water_nonspatial_5SD.png", align = "center", width='850px'),
                  ),
                  
@@ -724,7 +724,7 @@ tabPanel("Summary Data",
                  
                  
                  fluidRow(
-                   h3(class = "ohio-state", "Download Adult Nonspatial Data"),
+                   h3("Download Adult Nonspatial Data"),
                    downloadButton("downloadNonspatialad", "Download")
                  ),
                ),
@@ -733,7 +733,7 @@ tabPanel("Summary Data",
                br(),
                
                fluidRow(
-                 h3(class = "ohio-state", "Download Adult/Peds Spatial Data"),
+                 h3("Download Adult/Peds Spatial Data"),
                  downloadButton("downloadSpatialad", "Download")
                )
              ),
@@ -760,7 +760,7 @@ tabPanel("Summary Data",
                  align = "center",
                  
                  fluidRow(
-                   h3(class = "ohio-state", "Air Pollution and Children (0-5 yrs old)"),
+                   h3("Air Pollution and Children (0-5 yrs old)"),
                    img(src = "Summary Data Images/Diseases_hm/Youth_Air_nonspatial_5SD.png", align = "center", width='850px'),
                  ),
                  
@@ -768,21 +768,21 @@ tabPanel("Summary Data",
                  br(),
                  
                  fluidRow(
-                   h3(class = "ohio-state", "Water Pollution and Children (0-5 yrs old)"),
+                   h3("Water Pollution and Children (0-5 yrs old)"),
                    img(src = "Summary Data Images/Diseases_hm/Youth_Water_nonspatial_5SD.png", align = "center", width='850px'),
                  ),
                  
                  br(),
                  
                  fluidRow(
-                   h3(class = "ohio-state", "Air Pollution and Children (6-17 yrs old)"),
+                   h3("Air Pollution and Children (6-17 yrs old)"),
                    img(src = "Summary Data Images/Diseases_hm/Pediatric_Air_nonspatial_5SD.png", align = "center", width='850px'),
                  ),
                  
                  br(),
                  
                  fluidRow(
-                   h3(class = "ohio-state", "Water Pollution and Children (6-17 yrs old)"),
+                   h3("Water Pollution and Children (6-17 yrs old)"),
                    img(src = "Summary Data Images/Diseases_hm/Pediatric_Water_nonspatial_5SD.png", align = "center", width='850px'),
                  ),
                  
@@ -791,7 +791,7 @@ tabPanel("Summary Data",
                  br(),
 
                  fluidRow(
-                   h3(class = "ohio-state", "Download Pediatric Nonspatial Data"),
+                   h3("Download Pediatric Nonspatial Data"),
                    downloadButton("downloadNonspatial", "Download")
                  ),
                ),
@@ -800,7 +800,7 @@ tabPanel("Summary Data",
                br(),
                
                fluidRow(
-                 h3(class = "ohio-state", "Download Adult/Peds Spatial Data"),
+                 h3("Download Adult/Peds Spatial Data"),
                  downloadButton("downloadSpatial", "Download")
                ),
              ),
@@ -827,7 +827,7 @@ tabPanel("Summary Data",
                  align = "center",
                  
                  fluidRow(
-                   h3(class = "ohio-state", "Top Hits for Air & Water Pollution and Deprivation (nonspatial)"),
+                   h3("Top Hits for Air & Water Pollution and Deprivation (nonspatial)"),
                    img(src = "Summary Data Images/Social_Determinants/Deprivation/Deprivation_combined_nonspatial_2SD.png", align = "center", width='850px'),
                  ),
                  
@@ -835,49 +835,49 @@ tabPanel("Summary Data",
                  br(),
                  
                  fluidRow(
-                   h3(class = "ohio-state", "Full set for Air & Water Pollution and Deprivation (nonspatial)"),
+                   h3("Full set for Air & Water Pollution and Deprivation (nonspatial)"),
                    img(src = "Summary Data Images/Social_Determinants/Deprivation/Deprivation_combined_nonspatial_Full.png", align = "center", width='850px'),
                  ),
                  
                  br(),
                  
                  fluidRow(
-                   h3(class = "ohio-state", "Pollution linked to Historic Redlining Score (HRS)(nonspatial)"),
+                   h3("Pollution linked to Historic Redlining Score (HRS)(nonspatial)"),
                    img(src = "Summary Data Images/Social_Determinants/HRS_air_water_nonspatial.png", align = "center", width='850px'),
                  ),
                  
                  br(),
                  
                  fluidRow(
-                   h3(class = "ohio-state", "Top hits for air pollutants associated with increased % of population of given ethnicity (nonspatial)"),
+                   h3("Top hits for air pollutants associated with increased % of population of given ethnicity (nonspatial)"),
                    img(src = "Summary Data Images/Social_Determinants/Ethnicity/Ethnicity_air_nonspatial_2SD.png", align = "center", width='850px'),
                  ),
                  
                  br(),
                  
                  fluidRow(
-                   h3(class = "ohio-state", "Full set for air pollutants associated with increased % of population of given ethnicity  (nonspatial)"),
+                   h3("Full set for air pollutants associated with increased % of population of given ethnicity  (nonspatial)"),
                    img(src = "Summary Data Images/Social_Determinants/Ethnicity/Ethnicity_air_nonspatial.png", align = "center", width='850px'),
                  ),
                  
                  br(),
                  
                  fluidRow(
-                   h3(class = "ohio-state", "Water pollutants associated with increased % of population of given ethnicity (nonspatial)"),
+                   h3("Water pollutants associated with increased % of population of given ethnicity (nonspatial)"),
                    img(src = "Summary Data Images/Social_Determinants/Ethnicity/Ethnicity_water_nonspatial.png", align = "center", width='850px'),
                  ),
                  
                  br(),
                  
                  fluidRow(
-                   h3(class = "ohio-state", "Top hits for air pollutants associated with increased % of population of given ethnicity  (spatial)"),
+                   h3("Top hits for air pollutants associated with increased % of population of given ethnicity  (spatial)"),
                    img(src = "Summary Data Images/Social_Determinants/Ethnicity/Ethnicity_air_spatial_2SD.png", align = "center", width='850px'),
                  ),
                  
                  br(),
                  
                  fluidRow(
-                   h3(class = "ohio-state", "Full set for air pollutants associated with increased % of population of given ethnicity  (spatial)"),
+                   h3("Full set for air pollutants associated with increased % of population of given ethnicity  (spatial)"),
                    img(src = "Summary Data Images/Social_Determinants/Ethnicity/Ethnicity_air_spatial.png", align = "center", width='850px'),
                  ),
                  
@@ -885,7 +885,7 @@ tabPanel("Summary Data",
                  br(),
                  
                  fluidRow(
-                   h3(class = "ohio-state", "Download Social Determinants Data"),
+                   h3("Download Social Determinants Data"),
                    downloadButton("downloadSDOH", "Download"))
                ),
              ),
@@ -906,7 +906,7 @@ tabPanel("Additional Links",
            ),
            align = "center",
            
-           h3(class = "ohio-state", "EPA Where You Live"),
+           h3("EPA Where You Live"),
            
            div(class = 'center-container',
                column(
@@ -924,7 +924,7 @@ tabPanel("Additional Links",
                ), 
            ),
            
-           h3(class = "ohio-state","EPA TRI Toxin Tracker"),
+           h3("EPA TRI Toxin Tracker"),
            
            div(class = 'center-container',
                column(
