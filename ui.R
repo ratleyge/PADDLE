@@ -18,7 +18,7 @@ ui <- navbarPage(
   # Title in top left corner
   title = div(
     class = "customNavbar-title",
-    img(src="PADDLE Blue Background.png", style="margin-top: -5px",
+    img(src="PADDLE Blue Background.png", style="margin: -12px -20px",
     height = "45px", width = "auto")
   ),
   
@@ -471,7 +471,7 @@ ui <- navbarPage(
   ), 
   
   # Social determinants of health ----
-  tabPanel("Search Determinants of Health",
+  tabPanel("Determinants of Health",
            # Make a page layout that contains a side panel for inputs  and a main panel for outputs
            
            fluidPage(
