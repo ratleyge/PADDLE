@@ -22,6 +22,7 @@
 
   .navbar-brand {
     font-size: 30px !important;
+    padding-top: 0px;
   }
 
   .navbar-default {
