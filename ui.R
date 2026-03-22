@@ -18,7 +18,7 @@ ui <- navbarPage(
   # Title in top left corner
   title = div(
     class = "customNavbar-title",
-    img(src="PADDLE Blue Background.png", style="margin: -12px -20px",
+    img(src="PADDLE Blue Background.png", style="margin: -3px -20px",
     height = "55px", width = "auto")
   ),
   
