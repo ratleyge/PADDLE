@@ -40,10 +40,6 @@ chemDiseaseDatasetList_Water_kids <- c(
 )
 
 
-# Default plot height and width for the combined disease analysis
-plot_height_kids <- 400
-plot_height_adults <- 400
-
 
 split_middle_hyphen <- function(text) {
   # Find positions of all hyphens
@@ -67,9 +63,15 @@ split_middle_hyphen <- function(text) {
 # Settings for enrichR
 # listEnrichrDbs() # To see the available databases
 dbs <- c(
-  "GO_Biological_Process_2018", 
-  "GO_Molecular_Function_2018",
-  "KEGG_2019_Human",
-  "WikiPathways_2019_Human"
+  "GO_Biological_Process_2023", 
+  "GO_Molecular_Function_2023",
+  "KEGG_2021_Human",
+  "WikiPathways_2024_Human"
 )
+
+# global.R — add once at startup For chemical mapping
+available_mapping_cols <- c(
+  names(read_csv("Data/Chemical_mapping_data_part_1.csv", n_max = 0, show_col_types = FALSE)), 
+  names(read_csv("Data/Chemical_mapping_data_part_2.csv", n_max = 0, show_col_types = FALSE))
+  )
 

@@ -4,23 +4,20 @@
 server <- function(input, output, session) {
   
   # Search by chemical ----
+  
     ## Selector behavior ----
-
     # Different models have different age stratifications
     observe({
       
       if (req(input$dataSource_chem) == "non_spatial") {
-        ageChoices <<- c(
-          "PreK (0-5 yrs)" = "PreK", 
+        ageChoices <- c(
+          "PreK (0-5 yrs)" = "Youth", 
           "Pediatric (6-17 yrs)" = "Pediatric_ns", 
           "Adult (18-55 yrs)" = "Adult_ns", 
           "Retirement (56-75 yrs)" = "Retirement",  
           "Geriatric (+76 yrs)" = "Geriatric")
-      } else if (req(input$dataSource_chem) == "spatial") {
-        ageChoices <<- c(
-          "Adult" = "Over18",
-          "Pediatric" = "Under18"
-        )
+      } else {
+        ageChoices <- c("Adult" = "Over18", "Pediatric" = "Under18")  # safe fallback
       }
       
       updateSelectInput(session = session,
@@ -31,27 +28,28 @@ server <- function(input, output, session) {
   
   
     # Generate the title for the data viewer
-    output$currentlyViewing_chem <- renderText({
+    output$currentlyViewing_chem <- renderUI({
       
       ageGroup_chemText <- switch(req(input$ageGroup_chem),
                                   "Over18" = "an adult (over 18)",
                                   "Under18" = "a pediatric (under 18)",
-                                  "PreK" = "a pre-K youth (ages 0-5)",  
+                                  "Youth" = "a pre-K youth (ages 0-5)",  
                                   "Pediatric_ns" = "a pediatric (ages 6-17)",
                                   "Adult_ns" = "an adult (ages 18-55)",
                                   "Retirement" = "a retirement-age (ages 56-75)",
                                   "Geriatric" = "a geriatric (ages 75+)"
       )
       
-      currentlyViewing_chem <- paste0(
+      currentlyViewing_chem <- HTML(paste0(
+        "<h4 class='viewing-text'><b>Currently Viewing: </b>",
         "Disease associations with ", 
         req(input$searchChemical_chem), 
         ", using a ", 
         gsub("_", "-", req(input$dataSource_chem)), 
         " model in ", 
         ageGroup_chemText,
-        " population in the United States."
-      )
+        " population in the United States.</h4>"
+      ))
       
       currentlyViewing_chem
       
@@ -61,6 +59,7 @@ server <- function(input, output, session) {
     # Also there are no spatial models for the water models, so remove that option when water is selected
     observe({
       
+
       if (req(input$pollutionSource_chem) == "Water") {
         
         choices <- c("Start typing or select chemical from dropdown" = "", unique(non_spatial_Adult_ns_Water$Variable)[order(unique(non_spatial_Adult_ns_Water$Variable))])
@@ -69,7 +68,7 @@ server <- function(input, output, session) {
                           choices = choices,
                           selected = NULL,  # Ensure nothing is pre-selected
                           options = list(
-                            placeholder = 'Start typing or select disease from dropdown',
+                            placeholder = 'Start typing or select chemical from dropdown',
                             onInitialize = I('function() { this.clear(); }'), # Force clearing on load
                             persist = FALSE
                           ),
@@ -88,7 +87,7 @@ server <- function(input, output, session) {
                           choices = choices,
                           selected = NULL,  # Ensure nothing is pre-selected
                           options = list(
-                            placeholder = 'Start typing or select disease from dropdown',
+                            placeholder = 'Start typing or select chemical from dropdown',
                             onInitialize = I('function() { this.clear(); }'), # Force clearing on load
                             persist = FALSE
                           ),
@@ -114,10 +113,15 @@ server <- function(input, output, session) {
     })
     
     # Show whether the chemical is a carcinogen
-    output$carcinogen_chem <- renderText({
-      classes <- chem_cancer %>% 
+    output$carcinogen_badge_chem <- renderUI({
+      classes <- chem_cancer %>%
         filter(Chemical == req(input$searchChemical_chem))
-      p <- ifelse(nrow(classes) > 0, "Yes", "No")
+      is_carc <- nrow(classes) > 0
+      if (is_carc) {
+        tags$span(class = "badge-yes", "Yes")
+      } else {
+        tags$span(class = "badge-no",  "Not Established")
+      }
     })
     
     # Show whether the chemical has known organ toxicities
@@ -151,11 +155,11 @@ server <- function(input, output, session) {
     # These data frames are prepared in the Archive.R file from the model outputs
     dataToView <- reactive({
       
-      req(exists(paste(req(input$dataSource_chem), req(input$ageGroup_chem), req(input$pollutionSource_chem), sep = "_")))
+      df_name <- paste(req(input$dataSource_chem), req(input$ageGroup_chem), req(input$pollutionSource_chem), sep = "_")
+      validate(need(exists(df_name), paste("Dataset not found:", df_name)))
       
-      get(paste(req(input$dataSource_chem), req(input$ageGroup_chem), req(input$pollutionSource_chem), sep = "_")) %>%
+      get(df_name) %>%
         filter(Variable == req(input$searchChemical_chem)) %>%
-        filter(Disease != "NA") %>%
         mutate_if(is.numeric, ~ signif(.x, 5)) %>%
         select(-Variable) %>% 
         arrange(desc(abs(log(Odds))))
@@ -168,6 +172,7 @@ server <- function(input, output, session) {
       validate(
         need(input$searchChemical_chem != "", "Please select a chemical")
       )
+      
       
       # Define vline function
       vline <- function(x = 0, color = "black") {
@@ -196,6 +201,8 @@ server <- function(input, output, session) {
         select(-`LONG DESCRIPTION (VALID ICD-10 FY2025)`) %>%
         slice_max(order_by = ranking_metric, n = 15, with_ties = FALSE) %>%
         mutate(Disease = reorder(Disease, Odds)) 
+      
+      validate(need(nrow(data) > 0, "No associations found for this combination of inputs."))
       
       p <- plot_ly(data) %>%
         # Error bars (Min to Max range)
@@ -269,6 +276,8 @@ server <- function(input, output, session) {
         selection = "none",
         options = list(
           autoWidth = TRUE,
+          dom = 'tip',
+          rownames= FALSE,
           columnDefs = list(list(className = 'dt-center', targets = 0:7))
         ))
     })
@@ -294,27 +303,34 @@ server <- function(input, output, session) {
     
     ## Mapping exposure ----
     map_data <- reactive({
+    
+      validate(
+        need(req(input$searchChemical_chem) %in% available_mapping_cols, # defined in global.R
+             paste0("No mapping data available for ", input$searchChemical_chem, "."))
+      )
       
       mapping_chem <- rbind(
         read_csv(
           "Data/Chemical_mapping_data_part_1.csv",
-          col_select = c("county", "state", "chemical" = req(input$searchChemical_chem))
+          col_select = c("county", "state", "chemical" = req(input$searchChemical_chem)),
+          show_col_types = FALSE
         ) %>%
           na.omit() %>%
           filter(chemical != 0),
         read_csv(
           "Data/Chemical_mapping_data_part_2.csv",
-          col_select = c("county", "state", "chemical" = req(input$searchChemical_chem))
+          col_select = c("county", "state", "chemical" = req(input$searchChemical_chem)),
+          show_col_types = FALSE
         ) %>%
           na.omit() %>%
           filter(chemical != 0)
-        )
+      )
       
       mapping_chem %>%
         inner_join(fips_codes, by = c("county", "state")) %>%
-        mutate(fips = paste0(state_code, county_code))  %>%
+        mutate(fips = paste0(state_code, county_code)) %>%
         group_by(county, state, state_code, state_name, county_code, fips) %>%
-        summarise(chemical = mean(chemical, na.rm = TRUE), .groups = "drop") %>% 
+        summarise(chemical = mean(chemical, na.rm = TRUE), .groups = "drop") %>%
         mutate(chemical_scaled = signif((chemical - min(chemical)) / (max(chemical) - min(chemical)), 5))
     })
     
@@ -390,183 +406,138 @@ server <- function(input, output, session) {
     
   
     ## At risk groups ----
+    # Single unified chart replacing the three separate tables.
+    # Collects Ethnicity, Deprivation, and Historic Redlining rows,
+    # labels each with a Category, and plots them as one horizontal bar chart.
     
-      ### Race ----
-      output$race_chem <- renderUI({
-        
-        req(exists(paste(req(input$dataSource_chem), "Race", req(input$pollutionSource_chem), sep = "_")))
-        
-        # Get the dataset dynamically
-        dataset <- get(paste(req(input$dataSource_chem), "Race", req(input$pollutionSource_chem), sep = "_"))
-        
-        # Check if the chemical is in the dataset
-        if (req(input$searchChemical_chem) %in% dataset$Variable) {
-          
-          tagList(
-            div(
-              class = "center-container",
-              h4("Ethnicity"),
-              column(8, DT::dataTableOutput("viewTable_race_chem")),
-              br(),
+    at_risk_data_chem <- reactive({
+      
+      chem  <- req(input$searchChemical_chem)
+      src   <- req(input$pollutionSource_chem)
+      model <- req(input$dataSource_chem)
+      
+      rows <- list()
+      
+      # Ethnicity
+      race_key <- paste(model, "Race", src, sep = "_")
+      if (exists(race_key)) {
+        ds <- get(race_key)
+        if (chem %in% ds$Variable) {
+          rows$race <- ds %>%
+            filter(Variable == chem) %>%
+            rename("Label" = "Disease") %>%
+            mutate(
+              Label = gsub("BlackAA", "Black",
+                           gsub("NativeAmerican", "Native American",
+                                gsub("AAPI", "Asian & Pacific Islander", Label))),
+              Category = "Ethnicity"
             )
-          )
-          
-        } else {
-          return(NULL)  # Hide the section if the chemical is not in the dataset
         }
-      })
+      }
       
+      # Deprivation (non-spatial Air only)
+      if (src == "Air") {
+        adi_key <- "non_spatial_ADI_Air"
+        if (exists(adi_key)) {
+          ds <- get(adi_key)
+          if (chem %in% ds$Variable) {
+            rows$adi <- ds %>%
+              filter(Variable == chem) %>%
+              rename("Label" = "Disease") %>%
+              mutate(Label = "Area Deprivation Index", Category = "Deprivation")
+          }
+        }
+      }
       
-      # Filter the data to be viewed
-      dataToView_Race_chem <- reactive({
-        
-        get(paste(req(input$dataSource_chem), "Race", req(input$pollutionSource_chem), sep = "_")) %>%
-          rename("Ethnicity" = "Disease") %>%
-          filter(Variable == req(input$searchChemical_chem)) %>%
-          mutate(Ethnicity = gsub("BlackAA", "Black", 
-                             gsub("NativeAmerican", "Native American", 
-                                  gsub("AAPI", "Asian & Pacific Islander", Ethnicity)))
-          ) %>%
-          mutate_if(is.numeric, ~ signif(.x, 5)) %>%
-          arrange(desc(abs(log(Odds))))
-        
-      })
+      # Historic Redlining
+      hrs_key <- paste("non_spatial", "HRS", src, sep = "_")
+      if (exists(hrs_key)) {
+        ds <- get(hrs_key)
+        if (chem %in% ds$Variable) {
+          rows$hrs <- ds %>%
+            filter(Variable == chem) %>%
+            select(-Disease) %>%
+            rename("Label" = "Variable") %>%
+            mutate(Label = "Historic Redlining Score", Category = "Historic Redlining")
+        }
+      }
       
+      if (length(rows) == 0) return(NULL)
       
-      # Display the data table 
-      output$viewTable_race_chem <- DT::renderDataTable({ 
-        
-        DT::datatable(
-          dataToView_Race_chem() %>% 
-            mutate(Risk = ifelse(Odds > 1, "Increased", "Decreased")) %>% 
-            mutate(`Log Odds` = signif(log(Odds), 5)) %>%
-            select(Ethnicity, Odds, `Log Odds`, Risk),
-            selection = "none",
-            rownames= FALSE,
-            options = list(
-              pageLength = -1,
-              dom = 't', 
-              autoWidth = TRUE,
-              columnDefs = list(list(className = 'dt-center', targets = 0:3))
-            )
-          )
-      })
+      bind_rows(rows) %>%
+        mutate(
+          `Log Odds` = signif(log(Odds), 4),
+          Direction  = ifelse(log(Odds) >= 0, "Increased", "Decreased")
+        ) %>%
+        select(Category, Label, `Log Odds`, Direction)
+    })
     
+    
+    output$at_risk_plot_chem <- renderPlotly({
       
+      df <- req(at_risk_data_chem())
       
-      ### Deprivation ----
-      output$deprivation_chem <- renderUI({
-        
-        # Get the dataset dynamically
-        dataset <- get(paste("non_spatial", "ADI", "Air", sep = "_"))
-        
-        # Check if the chemical is in the dataset
-        if (req(input$searchChemical_chem) %in% dataset$Variable & req(input$pollutionSource_chem) == "Air") {
-          
-          tagList(
-            div(
-              class = "center-container",
-              h4("Deprivation"),
-              p("From a non-spatial model"),
-              column(8, DT::dataTableOutput("viewTable_deprivation_chem")),
-              br()
-            )
-          )
-          
-        } else {
-          return(NULL)  # Hide the section if the chemical is not in the dataset
-        }
+      df <- df %>%
+        arrange(Category, `Log Odds`) %>%
+        mutate(Label = factor(Label, levels = unique(Label)))
+      
+      # Dotted dividers between categories
+      cat_levels <- levels(df$Label)
+      categories <- df$Category[match(cat_levels, df$Label)]
+      boundaries <- which(diff(as.integer(factor(categories))) != 0) + 0.5
+      
+      shapes <- lapply(boundaries, function(b) {
+        list(type = "line",
+             x0 = min(df$`Log Odds`, -0.1) * 1.3,
+             x1 = max(df$`Log Odds`,  0.1) * 1.3,
+             y0 = b, y1 = b,
+             xref = "x", yref = "y",
+             line = list(color = "#3a3a3a", width = 1, dash = "dot"))
       })
-      
-      
-      # Filter the data to be viewed
-      dataToView_deprivation_chem <- reactive({
-        
-        get(paste("non_spatial", "ADI", "Air", sep = "_")) %>%
-          rename("Deprivation" = "Disease") %>%
-          filter(Variable == req(input$searchChemical_chem)) %>%
-          mutate_if(is.numeric, ~ signif(.x, 5)) %>%
-          arrange(desc(abs(log(Odds))))
-        
-      })
-      
 
-      # Display the data table 
-      output$viewTable_deprivation_chem <- DT::renderDataTable({ 
-        
-        DT::datatable(
-          dataToView_deprivation_chem() %>% 
-            mutate(Risk = ifelse(Odds > 1, "Increased", "Decreased")) %>% 
-            mutate(`Log Odds` = signif(log(Odds), 5)) %>%
-            select(Variable, Odds, `Log Odds`, Risk),
-          selection = "none",
-          rownames= FALSE,
-          options = list(
-            pageLength = -1,
-            dom = 't', 
-            autoWidth = TRUE,
-            columnDefs = list(list(className = 'dt-center', targets = 0:3))
-          )
+      
+      # Right-margin category labels
+      x_max <- max(abs(df$`Log Odds`), 0.1)
+      
+      plot_ly(
+        data        = df,
+        x           = ~`Log Odds`,
+        y           = ~Label,
+        type        = "bar",
+        orientation = "h",
+        color       = ~Direction,
+        colors = c("Decreased" = "lightblue", "Increased" = "red"),
+        hoverinfo   = "text",
+        text        = ~paste0("<b>", Label, "</b>",
+                              "<br>Category: ", Category,
+                              "<br>Log Odds: ", `Log Odds`,
+                              "<br>Direction: ", Direction),
+        textposition = "none"
+      ) %>%
+        layout(
+          barmode       = "relative",
+          showlegend    = TRUE,
+          xaxis         = list(title = "Log Odds Ratio", zeroline = TRUE,
+                               range     = c(min(df$`Log Odds`, -0.1) * 1.3,
+                                             x_max * 1.35)),
+          yaxis         = list(title = "",
+                               automargin = TRUE),
+          margin        = list(l = 10, r = 20, t = 10, b = 40)
         )
-      })
-      
-      ### Historic Red Lining ----
-      
-      output$hrs_chem <- renderUI({
-        
-        req(exists(paste("non_spatial", "HRS", req(input$pollutionSource_chem), sep = "_")))
-        
-        # Get the dataset dynamically
-        dataset <- get(paste("non_spatial", "HRS", req(input$pollutionSource_chem), sep = "_"))
-        
-        # Check if the chemical is in the dataset
-        if (req(input$searchChemical_chem) %in% dataset$Variable) {
-          
-          tagList(
-            div(
-              class = "center-container",
-              h4("Historic Red Lining"),
-              column(8, DT::dataTableOutput("viewTable_hrs_chem")),
-              br(),
-            )
-          )
-          
-        } else {
-          return(NULL)  # Hide the section if the chemical is not in the dataset
-        }
-        
-      })
-      
-      
-      # Filter the data to be viewed
-      dataToView_hrs_chem <- reactive({
-        get(paste("non_spatial", "HRS", req(input$pollutionSource_chem), sep = "_")) %>%
-          mutate_if(is.numeric, ~ signif(.x, 5)) %>%
-          filter(Variable == req(input$searchChemical_chem)) %>%
-          select(-Disease) %>%
-          arrange(desc(abs(log(Odds))))
-      })
-      
-      
-      # Display the data table 
-      output$viewTable_hrs_chem <- DT::renderDataTable({ 
-        DT::datatable(
-          dataToView_hrs_chem() %>% 
-            mutate(Risk = ifelse(Odds > 1, "Increased", "Decreased")) %>% 
-            mutate(`Log Odds` = signif(log(Odds), 5)) %>%
-            select(Variable, Odds, `Log Odds`, Risk),
-          selection = "none",
-          rownames= FALSE,
-          options = list(
-            pageLength = -1,
-            dom = 't', 
-            autoWidth = TRUE,
-            columnDefs = list(list(className = 'dt-center', targets = 0:3))
-          )
-        )
-      })
-      
-      
+    })
+
+    output$at_risk_combined_chem <- renderUI({
+      df <- at_risk_data_chem()
+      if (is.null(df) || nrow(df) == 0) {
+        return(div(class = "dis-note",
+                   HTML("No at-risk group associations found for this chemical 
+                   in the selected model and pollution source.")))
+      }
+      plot_height <- max(200, nrow(df) * 42)
+      plotlyOutput("at_risk_plot_chem", height = paste0(plot_height, "px"))
+    })
+    
+    
     ## Products containing chemical ----
     output$product_table_chem <- DT::renderDataTable({ 
       DT::datatable(
@@ -576,15 +547,17 @@ server <- function(input, output, session) {
         selection = "none",
         options = list(
           autoWidth = TRUE,
+          rownames= FALSE,
           columnDefs = list(list(className = 'dt-center', targets = 0:1))
         ))
     })
+    
       
   
   # Search by disease ----
 
     # Server side select disease
-    isolate({
+    observe({
       
       diseases <- icdKey %>% 
         select(`SHORT DESCRIPTION (VALID ICD-10 FY2025)`, `LONG DESCRIPTION (VALID ICD-10 FY2025)`, Disease) %>%
@@ -607,7 +580,7 @@ server <- function(input, output, session) {
         ),
         server = TRUE
       )
-    })
+    }) |> bindEvent(session$clientData$url_hostname, once = TRUE)
     
     ## UI ----
       
@@ -633,39 +606,12 @@ server <- function(input, output, session) {
     })
       
       
-    output$comb_or_strat_disease <- renderUI({
+    output$comb_or_strat_disease_out <- renderUI({
       
       # Check if the chemical is in the dataset
       if (req(input$comb_or_strat_disease) == "Combined") {
         
         tagList(
-          
-          h3("Combined Analysis"),
-          p("This graph displays chemicals which have strong associations with 
-            the disease you selected. The odds ratio was derived using the beta 
-            coefficients from a logistic elastic net model, and it conveys the 
-            change in odds of having the disease for each unit increase in the 
-            chemical of interest."),
-          
-          p("If a chemical is presented, then the interactions with the disease 
-            you selected is potentially important.  If the dot is far to the right 
-            of the given line, that indicates the chemical you selected is one of 
-            the strongest associations with the diagnosis indicated.  However, 
-            while negative associations (odds ratios less than one) might indicate 
-            that the chemical selected “protects” against the diagnosis, the more 
-            likely reason for negative associations is that the chemical selected 
-            causes diagnoses which displace visits for the diagnosis listed.  For 
-            example, a chemical which triggered asthma would drive more people 
-            with asthma to see their health care provider; if enough people were 
-            being seen for asthma, it may leave less clinic appointments for 
-            people with other lung diseases.  Thus, any association presented 
-            should be evaluated for molecular or epidemiologic connections beyond 
-            this analysis alone."),
-          
-          p("The solid black line is at 1. A dot with an odds ratio of greater 
-            than 1 conveys increased risk. The color of the dot aligns with the 
-            age range and type of analysis performed."),
-          
           div(
             class = "center-container", 
             uiOutput("viewHistogram_disease_ui_adults"),
@@ -678,36 +624,19 @@ server <- function(input, output, session) {
             br()
           ),
           
-          downloadButton("download_combined_disease_chem_disease"),
+          downloadButton("download_combined_disease_chem_disease",
+                         class = "download-btn"),
         )
         
       } else {
         
         tagList(
-          h3("Stratified Analysis"),
-          p(textOutput("currentlyViewing_disease")),
-          p("If a chemical is presented, then the interactions with the disease 
-            you selected is potentially important.  If the dot is far to the right 
-            of the given line, that indicates the chemical you selected is one of 
-            the strongest associations with the diagnosis indicated.  However, 
-            while negative associations (odds ratios less than one) might indicate 
-            that the chemical selected “protects” against the diagnosis, the more 
-            likely reason for negative associations is that the chemical selected 
-            causes diagnoses which displace visits for the diagnosis listed.  For 
-            example, a chemical which triggered asthma would drive more people 
-            with asthma to see their health care provider; if enough people were 
-            being seen for asthma, it may leave less clinic appointments for 
-            people with other lung diseases.  Thus, any association presented 
-            should be evaluated for molecular or epidemiologic connections beyond 
-            this analysis alone."),
-          p("This bar graph shows how likely certain chemicals are to be linked 
-            with either a higher (red) or lower (blue) chance of developing the 
-            disease."),
           div(class="center-container", column(8, plotlyOutput("viewPlots_disease"),),),
           br(),
           DT::dataTableOutput("viewTable_disease"),
           br(),
-          downloadButton("download_stratified_disease_chem_disease"),
+          downloadButton("download_stratified_disease_chem_disease",
+                         class = "download-btn"),
         )
         
       }
@@ -754,6 +683,7 @@ server <- function(input, output, session) {
         }) 
       
       output$viewHistogram_disease_kids <- renderPlotly({
+        
         df <- req(result_kids()) %>%
           mutate(Source = recode(Source,
                                  "non_spatial_Pediatric_ns_Air" = "Non-Spatial Model of<br>Pediatric (6-17) Visits",
@@ -762,6 +692,8 @@ server <- function(input, output, session) {
                                  "non_spatial_Pediatric_ns_Water" = "Non-Spatial Model of<br>Pediatric (6-17) Visits",
                                  "non_spatial_Youth_Water" = "Non-Spatial Model of<br>PreK (0-5) Visits"
                                  ))
+        
+
         
         vline <- function(x = 0, color = "black") {
           list(
@@ -806,7 +738,12 @@ server <- function(input, output, session) {
       })
       
       output$viewHistogram_disease_ui_kids <- renderUI({
-        plotlyOutput("viewHistogram_disease_kids", height = plot_height_kids())
+        validate(
+          need(input$searchDisease_disease != "", "Please select a disease"),
+          need(nrow(result_kids()) > 0, 
+               paste0("No ", input$pollutionSource_disease, " pollutant associations found for pediatric age groups."))
+        )
+        plotlyOutput("viewHistogram_disease_kids", height = plot_height_kids(), width="100%")
       })
       
       
@@ -856,6 +793,7 @@ server <- function(input, output, session) {
                                  "non_spatial_Retirement_Water" = "Non-Spatial Model of<br>Geriatric (76+) Visits"
           ))
         
+        
         vline <- function(x = 0, color = "black") {
           list(
             type = "line",
@@ -899,7 +837,12 @@ server <- function(input, output, session) {
       })
       
       output$viewHistogram_disease_ui_adults <- renderUI({
-        plotlyOutput("viewHistogram_disease_adults", height = plot_height_adults())
+        validate(
+          need(input$searchDisease_disease != "", "Please select a disease"),
+          need(nrow(result_adults()) > 0,
+               paste0("No ", input$pollutionSource_disease, " pollutant associations found for adult age groups."))
+        )
+        plotlyOutput("viewHistogram_disease_adults", height = plot_height_adults(), width="100%")
       })
       
       
@@ -926,29 +869,46 @@ server <- function(input, output, session) {
     # Generate the title for the data viewer
     output$currentlyViewing_disease <- renderText({
       
-      validate(
-        need(input$searchDisease_disease != "", "Please select a disease")
-      )
+      if (req(input$comb_or_strat_disease) == "Combined") {
+        
+        currentlyViewing_disease <- HTML(paste0(
+          "<h4 class='viewing-text'><b>Combined analysis: </b>",
+          "Chemical associations with ", 
+          req(input$searchDisease_disease), 
+          " across all models. This chart shows how 
+          likely certain chemicals are to be linked with either a higher 
+          (Odds Ratio>1) or lower (Odds Ratio<1) chance of developing the disease.</h4>"
+        ))
+        
+      } else {
+        
+        ageGroup_diseaseText <- switch(req(input$ageGroup_disease),
+                                       "Over18" = "an adult (over 18)",
+                                       "Under18" = "a pediatric (under 18)",
+                                       "Youth" = "a pre-K youth (ages 0-5)",  
+                                       "Pediatric_ns" = "a pediatric (ages 6-17)",
+                                       "Adult_ns" = "a adult (ages 18-55)",
+                                       "Retirement" = "a retirement-age (ages 56-75)",
+                                       "Geriatric" = "a geriatric (ages 76+)"
+        )
+        
+        currentlyViewing_disease <- HTML(paste0(
+          "<h4 class='viewing-text'><b>Stratified analysis: </b>",
+          "Chemical associations with ", 
+          req(input$searchDisease_disease), 
+          ", using a ", 
+          gsub("_", "-", req(input$dataSource_disease)), 
+          " model in ", 
+          ageGroup_diseaseText,
+          " age group in the United States. This bar graph shows how 
+          likely certain chemicals are to be linked with either a higher 
+          (red) or lower (blue) chance of developing the disease.</h4>"
+        ))
+        
+      }
       
-      ageGroup_diseaseText <- switch(req(input$ageGroup_disease),
-                                     "Over18" = "an adult (over 18)",
-                                     "Under18" = "a pediatric (under 18)",
-                                     "PreK" = "a pre-K youth (ages 0-5)",  
-                                     "Pediatric_ns" = "a pediatric (ages 6-17)",
-                                     "Adult_ns" = "a adult (ages 18-55)",
-                                     "Retirement" = "a retirement-age (ages 56-75)",
-                                     "Geriatric" = "a geriatric (ages 76+)"
-      )
+      currentlyViewing_disease
       
-      paste0(
-        "Chemical associations with ", 
-        req(input$searchDisease_disease), 
-        ", using a ", 
-        gsub("_", "-", req(input$dataSource_disease)), 
-        " model in ", 
-        ageGroup_diseaseText,
-        " age group in the United States."
-      )
     })
     
     
@@ -956,14 +916,14 @@ server <- function(input, output, session) {
     observe({
       
       if (req(input$dataSource_disease) == "non_spatial") {
-        ageChoices <<- c(
-          "PreK (0-5 yrs)" = "PreK", 
+        ageChoices <- c(
+          "PreK (0-5 yrs)" = "Youth", 
           "Pediatric (6-17 yrs)" = "Pediatric_ns", 
           "Adult (18-55 yrs)" = "Adult_ns", 
           "Retirement (56-75 yrs)" = "Retirement", 
           "Geriatric (+76 yrs)" = "Geriatric")
       } else if (req(input$dataSource_disease) == "spatial") {
-        ageChoices <<- c(
+        ageChoices <- c(
           "Adult" = "Over18",
           "Pediatric" = "Under18"
         )
@@ -1004,10 +964,10 @@ server <- function(input, output, session) {
     
     # Filter the data to be viewed
     dataToView_disease <- reactive({
+      df_name <- paste(req(input$dataSource_chem), req(input$ageGroup_chem), req(input$pollutionSource_chem), sep = "_")
+      validate(need(exists(df_name), paste("Dataset not found:", df_name)))
       
-      req(exists(paste(req(input$dataSource_disease), req(input$ageGroup_disease), req(input$pollutionSource_disease), sep = "_")))
-      
-      get(paste(req(input$dataSource_disease), req(input$ageGroup_disease), req(input$pollutionSource_disease), sep = "_")) %>%
+      get(df_name) %>%
         filter(Disease == req(input$searchDisease_disease)) %>%
         mutate_if(is.numeric, ~ signif(.x, 5)) %>%
         select(-Disease) %>%
@@ -1017,6 +977,10 @@ server <- function(input, output, session) {
     
     # Plot the top 20 Oddss Odds/odds relative to other variables for the same disease
     output$viewPlots_disease <- renderPlotly({
+      
+      validate(
+        need(input$searchDisease_disease != "", "Please select a disease")
+      )
 
         # Process data
         data_plot <- dataToView_disease() %>%
@@ -1027,6 +991,11 @@ server <- function(input, output, session) {
             Risk = ifelse(`Log Odds` > 0, "Increased", "Decreased"),
             Variable = reorder(Variable, `Log Odds`)
           )
+        
+        validate(
+          need(nrow(data_plot) > 0, 
+               paste0("No ", input$pollutionSource_disease, " pollutant associations found for this disease. Try switching the Pollution Source selector."))
+        )
         
         # Plotly chart
         p_plotly <- plot_ly(
@@ -1050,8 +1019,7 @@ server <- function(input, output, session) {
                 x0 = 0,
                 x1 = 0,
                 y0 = -0.5,
-                y1 = length(data_plot$Variable) - 0.5,
-                line = list(dash = "dash", width = 1, color = "black")
+                y1 = length(data_plot$Variable) - 0.5
               )
             ),
             font = list(size = 15),
@@ -1073,6 +1041,7 @@ server <- function(input, output, session) {
         selection = "none",
         options = list(
           autoWidth = TRUE,
+          rownames= FALSE,
           columnDefs = list(list(className = 'dt-center', targets = 0:3))
         ))
     })
@@ -1097,8 +1066,15 @@ server <- function(input, output, session) {
     ## Mapping exposure ----
     map_data_disease <- reactive({
       
+      map_file <- paste0("Data/Disease_mapping_data/", gsub("[^A-Za-z0-9_-]", "_", req(input$searchDisease_disease)), ".csv")
+      
+      validate(
+        need(file.exists(map_file), 
+             "County-level visit rate data is not available for this disease.")
+      )
+      
       # Load your data
-      mapping_disease <- read_csv(paste0("Data/Disease_mapping_data/", gsub("[^A-Za-z0-9_-]", "_", req(input$searchDisease_disease)), ".csv"))
+      mapping_disease <- read_csv(map_file)
       
       # Join to FIPS
       mapping_disease %>%
@@ -1134,7 +1110,8 @@ server <- function(input, output, session) {
           options = list(
             columnDefs = list(
               list(className = 'dt-center', targets = 0:(length(age_groups)))),
-            dom = 't'
+            dom = 't',
+            rownames= FALSE
           ))
     })
     
@@ -1295,6 +1272,7 @@ server <- function(input, output, session) {
             list(className = 'dt-center', targets = 0:2)),
           pageLength = -1,
           dom = 't',
+          rownames= FALSE,
           rowCallback = JS(
             "function(row, data) {",
             "var full_text = data[3]",
@@ -1354,8 +1332,8 @@ server <- function(input, output, session) {
         plot_ly(labels = ~Class, values = ~`Chemical Class`) %>% 
         add_pie(hole = 0.6) %>%
         layout(showlegend = F,
-               plot_bgcolor="black",
-               paper_bgcolor="black",
+               plot_bgcolor="#1a1a1a",
+               paper_bgcolor="#1a1a1a",
                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
     })
@@ -1396,6 +1374,7 @@ server <- function(input, output, session) {
             columnDefs = list(
               list(visible=FALSE, targets=c(4)), 
               list(className = 'dt-center', targets = 0:4)),
+            rownames= FALSE,
             rowCallback = JS(
               "function(row, data) {",
               "var full_text = data[4]",
@@ -1543,6 +1522,7 @@ server <- function(input, output, session) {
             list(visible=FALSE, targets=c(4)), 
             list(width = '200px', targets = c(4)),
             list(className = 'dt-center', targets = 0:4)),
+          rownames= FALSE,
           rowCallback = JS(
             "function(row, data) {",
             "var full_text = data[4]",
@@ -1589,64 +1569,61 @@ server <- function(input, output, session) {
       if(req(input$pollutionSource_disease) == "Air") {
         tagList(
           fluidRow(
-            h3("Toxin-Protein Interactions"),
-            
-            p("Hover mouse over row to see gene function."),
+            div(class = "legend-note",
+                HTML("<h3 class='section-title'>Toxin-Protein Interactions:</h3><p>Hover mouse over row to see gene function.</p>")
+            ),
             
             div(
               class = "center-container",
               column(8, DT::dataTableOutput("toxin_protein_disease"),),),
-            downloadButton("download_toxin_protein_interaction_disease"),
+            downloadButton("download_toxin_protein_interaction_disease",
+                           class = "download-btn"),
             br(),
             br(),
-            h4("Summary of Affected Proteins"),
-            div(class = "center-container",
-                column(
-                  6,
-                  p(
-                    "The table below summarizes the number of toxin-protein interactions
+            div(class = "legend-note",
+                HTML("<h3 class='section-title'>Summary of Affected Proteins:</h3>
+                    <p>The table below summarizes the number of toxin-protein interactions
                     associated with your disease of interest. Because there are only 792
                     proteins listed in the database and the interactions are biased towards
                     a select number of these (e.g. 63 out of the 191 toxins in this database
                     interact with the estrogen receptor ESR1), we add some statistical measures
                     to help guage how surprising it would be that, say, 10 of the 21 toxins
-                    associated with your disease interact with each protein."
-                  ),
-                  p("Hover mouse over row to see mechanism of action"),
-                ), 
-            ), 
+                    associated with your disease interact with each protein.</p><p>Hover mouse over row to see mechanism of action</p>")
+            ),
             
             div(
               class = "center-container",
               column(8, DT::dataTableOutput("protein_count_disease"),),),
-            downloadButton("download_protein_count_disease"),
-          ),
+            downloadButton("download_protein_count_disease",
+                           class = "download-btn", style='margin-bottom: 20px;'),
+          
           
           br(),
-          h3("Pathway Enrichment of Interacting Proteins"),
-          div(
-            class = "center-container",
-            column(6, 
-                   p("This will return broader biological pathways by which chemical toxins 
+          div(class = "legend-note",
+              HTML("<h3 class='section-title'>Pathway Enrichment of Interacting Proteins:</h3>
+                    <p>This will return broader biological pathways by which chemical toxins 
             are associated with the disease you selected, which is determined by 
-            the number of associated genes relevant to a particular pathway."),
-            HTML("<p>Clicking the button below will upload a list of the interacting
+            the number of associated genes relevant to a particular pathway.</p>
+                   <p>Clicking the button below will upload a list of the interacting
                proteins as shown above to <a href='https://maayanlab.cloud/Enrichr/'>
                Enrichr</a>. This will check for enrichment of pathways from the KEGG, 
                Gene Ontology, and WikiPathways databases. This may take a minute 
-               or 2.</p>"),
-            ),),
+               or 2.</p>")
+          ),
+
           br(),
-          actionBttn("run_enrichment_disease", "Run Enrichment"),
+          actionBttn("run_enrichment_disease", label = HTML("Run Enrichment<br/><span style='font-size:12px; font-weight:400;'>Re-click after changing inputs to refresh</span>"),, style = "fill", color = "primary", size = "sm"),
           br(),
           br(),
           div(
-            class = "center-container", htmlOutput("toxin_pathway_text_disease"),),
+            class = "viewing-banner", htmlOutput("toxin_pathway_text_disease"),),
           br(),
           div(
             class = "center-container", DT::dataTableOutput("toxin_pathway_disease"),),
           
-          downloadButton("download_pathway_enrichment_disease"),
+          downloadButton("download_pathway_enrichment_disease",
+                         class = "download-btn"),
+          ),
         )
       } else {
         return(NULL)
@@ -1738,7 +1715,7 @@ server <- function(input, output, session) {
             scrollX = TRUE, # It the table is wider than the display, allow scrolling so the display doesn't get extended
             columnDefs = list(
               list(width = '200px', targets = c(1, 8, 9)), # Standardize width of a couple columns and force wrap text
-              list(className = 'dt-center', targets = 0:9) # Center the column headings
+              list(className = 'dt-center', targets = 0:9)
               )
           )
         )
@@ -1754,7 +1731,6 @@ server <- function(input, output, session) {
       }
       
       paste0(
-        "<h4>If you have changed the input settings, click the Run Enrichment button again to update the results.</h4>",
         "<p style='text-align: center'>The table below shows the pathway enrichment results for toxins associated with <b>",
         req(input$searchDisease_disease), "</b>",
         comb_or_strat_text, "</p>"
@@ -1797,10 +1773,9 @@ server <- function(input, output, session) {
     
     
   # Social determinants of health ----
-
-    ## Ethnicity ----
     
-    # There is only spatial data for Air pollution, so modify the inputs for ethnicity accordingly 
+    ## Ethnicity ----
+
     observe({
       
       if (req(input$pollutionSource_determinant) == "Water") {
@@ -1810,7 +1785,7 @@ server <- function(input, output, session) {
                           choices = c("Non-spatial" = "non_spatial"),
                           selected = "non_spatial")
       } else {
-  
+        
         updateSelectInput(session = session,
                           "dataSource_determinant",
                           choices = c(
@@ -1822,11 +1797,232 @@ server <- function(input, output, session) {
     })
     
     
+    
+    
+    # Render the ethnicity selectInput only when Ethnicity tab is active
+    output$ethnicity_select_ui <- renderUI({
+      req(input$determinant_tab == "Ethnicity")
+      div(class = "input-group-paddle",
+          tags$label("Ethnicity", class = "input-label"),
+          selectInput("race_determinant", NULL,
+                      choices = c(
+                        "White"                    = "White",
+                        "Black"                    = "BlackAA",
+                        "Native American"          = "NativeAmerican",
+                        "Asian & Pacific Islander" = "AAPI",
+                        "Hispanic"                 = "Hispanic"
+                      ),
+                      selected = "White")
+      )
+    })
+    
+    # Route the unified plot/table outputs to the right existing reactive
+    output$viewPlots_determinant_main <- renderPlotly({
+      req(input$determinant_tab)
+      switch(input$determinant_tab,
+             "Ethnicity"   = { 
+               req(input$race_determinant); 
+               # Process data
+               data_plot <- dataToView_Race_determinant() %>%
+                 mutate(ranking_metric = abs(`Log Odds`)) %>%
+                 slice_max(order_by = ranking_metric, n = 15, with_ties = FALSE) %>%
+                 mutate(
+                   Risk = ifelse(`Log Odds` > 0, "Increased", "Decreased"),
+                   Variable = reorder(Variable, `Log Odds`)
+                 )
+               
+               # Plotly chart
+               p_plotly <- plot_ly(
+                 data = data_plot,
+                 x = ~`Log Odds`,
+                 y = ~Variable,
+                 type = "bar",
+                 orientation = "h",
+                 color = ~Risk,
+                 colors = c("Decreased" = "lightblue", "Increased" = "red"),
+                 hoverinfo = "none"
+               ) %>%
+                 layout(
+                   barmode = "relative",
+                   title = list(text = "", x = 0),
+                   xaxis = list(title = "Log Odds Ratio", zeroline = TRUE),
+                   yaxis = list(title = ""),
+                   shapes = list(
+                     list(
+                       type = "line",
+                       x0 = 0,
+                       x1 = 0,
+                       y0 = -0.5,
+                       y1 = length(data_plot$Variable) - 0.5
+                     )
+                   ),
+                   font = list(size = 15),
+                   showlegend = TRUE
+                 )
+               
+               p_plotly
+             },
+               "Deprivation" = { 
+                 
+                 # Process data
+                 data_plot <- dataToView_deprivation_determinant() %>%
+                   mutate(ranking_metric = abs(`Log Odds`)) %>%
+                   slice_max(order_by = ranking_metric, n = 15, with_ties = FALSE) %>%
+                   mutate(
+                     Risk = ifelse(`Log Odds` > 0, "Increased", "Decreased"),
+                     Variable = reorder(Variable, `Log Odds`)
+                   )
+                 
+                 # Plotly chart
+                 p_plotly <- plot_ly(
+                   data = data_plot,
+                   x = ~`Log Odds`,
+                   y = ~Variable,
+                   type = "bar",
+                   orientation = "h",
+                   color = ~Risk,
+                   colors = c("Decreased" = "lightblue", "Increased" = "red"),
+                   hoverinfo = "none"
+                 ) %>%
+                   layout(
+                     barmode = "relative",
+                     title = list(text = "", x = 0),
+                     xaxis = list(title = "Log Odds Ratio", zeroline = TRUE),
+                     yaxis = list(title = ""),
+                     shapes = list(
+                       list(
+                         type = "line",
+                         x0 = 0,
+                         x1 = 0,
+                         y0 = -0.5,
+                         y1 = length(data_plot$Variable) - 0.5
+                       )
+                     ),
+                     font = list(size = 15),
+                     showlegend = TRUE
+                   )
+                 
+                 p_plotly
+                 
+                 
+                 },
+                 "HRS"         = {
+                   
+                   
+                   # Process data
+                   data_plot <- dataToView_hrs_determinant() %>%
+                     mutate(ranking_metric = abs(`Log Odds`)) %>%
+                     slice_max(order_by = ranking_metric, n = 15, with_ties = FALSE) %>%
+                     mutate(
+                       Risk = ifelse(`Log Odds` > 0, "Increased", "Decreased"),
+                       Variable = reorder(Variable, `Log Odds`)
+                     )
+                   
+                   # Plotly chart
+                   p_plotly <- plot_ly(
+                     data = data_plot,
+                     x = ~`Log Odds`,
+                     y = ~Variable,
+                     type = "bar",
+                     orientation = "h",
+                     color = ~Risk,
+                     colors = c("Decreased" = "lightblue", "Increased" = "red"),
+                     hoverinfo = "none"
+                   ) %>%
+                     layout(
+                       barmode = "relative",
+                       title = list(text = "", x = 0),
+                       xaxis = list(title = "Log Odds Ratio", zeroline = TRUE),
+                       yaxis = list(title = ""),
+                       shapes = list(
+                         list(
+                           type = "line",
+                           x0 = 0,
+                           x1 = 0,
+                           y0 = -0.5,
+                           y1 = length(data_plot$Variable) - 0.5
+                         )
+                       ),
+                       font = list(size = 15),
+                       showlegend = TRUE
+                     )
+                   
+                   p_plotly
+                   
+                 }
+                   )
+               })
+    
+    output$viewTable_determinant_main <- DT::renderDataTable({
+      req(input$determinant_tab)
+      
+      switch(input$determinant_tab,
+             "Ethnicity"   = { req(input$race_determinant); 
+               DT::datatable(
+                 dataToView_Race_determinant() %>% 
+                   mutate(Risk = ifelse(`Log Odds` > 0, "Increased", "Decreased")) %>% 
+                   select(Variable, Odds, `Log Odds`, Risk),
+                 selection = "none",
+                 rownames= FALSE,
+                 options = list(
+                   autoWidth = TRUE,
+                   rownames= FALSE,
+                   columnDefs = list(list(className = 'dt-center', targets = 0:3))
+                 ))
+               
+               },
+               "Deprivation" = { 
+                 
+                 DT::datatable(
+                   dataToView_deprivation_determinant() %>% 
+                     mutate(Risk = ifelse(Odds > 1, "Increased", "Decreased")) %>% 
+                     select(Variable, Odds, `Log Odds`, Risk),
+                   selection = "none",
+                   rownames= FALSE,
+                   options = list(
+                     autoWidth = TRUE,
+                     columnDefs = list(list(className = 'dt-center', targets = 0:3))
+                   ))
+                 
+                 },
+                 "HRS"         = { 
+                   DT::datatable(
+                     dataToView_hrs_determinant() %>% 
+                       mutate(Risk = ifelse(Odds > 1, "Increased", "Decreased")) %>% 
+                       select(Variable, Odds, `Log Odds`, Risk),
+                     selection = "none",
+                     rownames= FALSE,
+                     options = list(
+                       autoWidth = TRUE,
+                       rownames= FALSE,
+                       columnDefs = list(list(className = 'dt-center', targets = 0:3))
+                     ))
+                   }
+                   )
+               })
+    
+    output$determinant_about_text <- renderUI({
+      req(input$determinant_tab)
+      switch(input$determinant_tab,
+             "Ethnicity" = HTML("<p>This table displays the risk of chemical exposures, through an odds ratio, based on the ethnicity you have selected. <em>longitude</em> or <em>latitude</em> may appear in the table. While they are not chemical exposures, they are included to express that certain chemicals have greater exposure in certain regions of the country.</p>
+                                <p>Longitude and latitude may also be associated with racial demographics given that US populations are not evenly distributed. For example, Black American populations represent a higher percentage of zip codes in the South Eastern US than other areas.</p>
+                                "),
+             "Deprivation" = HTML("The <b>Area Deprivation Index (ADI)</b> is a composite measure of 17 variables across education, employment, housing quality, and income. Higher numbers indicate greater disadvantage. <em>Maintained by the University of Wisconsin School of Medicine and Public Health.</em>"),
+             "HRS" = HTML("<p>The <b>Historic Redlining Score (HRS)</b> expresses the extent to which 20th-century redlining has shaped concentrated inequality and racial disparities today.</p>
+                          <p>Redlining was a discriminatory practice describing the government sanctioned denial of financial services, such as mortgage loans and insurance, to minority communities, especially Black communities. Redlining practices sequestered minority communities into neighborhoods deemed “hazardous” and were a key mechanism by which the United States maintained and deepened social inequities over time.</p>
+                          <p>Scores are derived by overlaying historic HOLC maps with 2020 census tracts. Higher scores indicate more redlining in a given census tract.</p>")
+      )
+    })
+    
+ 
+    
     # Prepare data to view for different user inputs for ethnicity
     dataToView_Race_determinant <- reactive({
       
-      req(exists(paste(req(input$dataSource_determinant), "Race", req(input$pollutionSource_determinant), sep = "_")))
-      get(paste(req(input$dataSource_determinant), "Race", req(input$pollutionSource_determinant), sep = "_")) %>%
+      df_name <- paste(req(input$dataSource_determinant), "Race", req(input$pollutionSource_determinant), sep = "_")
+      validate(need(exists(df_name), paste("Dataset not found:", df_name)))
+      
+      get(df_name) %>%
         rename("Ethnicity" = "Disease") %>%
         filter(Ethnicity == req(input$race_determinant)) %>%
         mutate_if(is.numeric, ~ signif(.x, 5)) %>%
@@ -1835,69 +2031,6 @@ server <- function(input, output, session) {
         arrange(desc(abs(`Log Odds`)))
       
     })
-    
-    # Bar plot for risk of exposure for different ethnicities
-    output$viewPlots_race_determinant <- renderPlotly({
-      
-      # Process data
-      data_plot <- dataToView_Race_determinant() %>%
-        mutate(ranking_metric = abs(`Log Odds`)) %>%
-        slice_max(order_by = ranking_metric, n = 15, with_ties = FALSE) %>%
-        mutate(
-          Risk = ifelse(`Log Odds` > 0, "Increased", "Decreased"),
-          Variable = reorder(Variable, `Log Odds`)
-        )
-      
-      # Plotly chart
-      p_plotly <- plot_ly(
-        data = data_plot,
-        x = ~`Log Odds`,
-        y = ~Variable,
-        type = "bar",
-        orientation = "h",
-        color = ~Risk,
-        colors = c("Decreased" = "lightblue", "Increased" = "red"),
-        hoverinfo = "none"
-      ) %>%
-        layout(
-          barmode = "relative",
-          title = list(text = "", x = 0),
-          xaxis = list(title = "Log Odds Ratio", zeroline = TRUE),
-          yaxis = list(title = ""),
-          shapes = list(
-            list(
-              type = "line",
-              x0 = 0,
-              x1 = 0,
-              y0 = -0.5,
-              y1 = length(data_plot$Variable) - 0.5,
-              line = list(dash = "dash", width = 1, color = "black")
-            )
-          ),
-          font = list(size = 15),
-          showlegend = TRUE
-        )
-      
-      p_plotly
-      
-    })
-    
-    # Ethnicity table 
-    output$viewTable_race_determinant <- DT::renderDataTable({ 
-      DT::datatable(
-        dataToView_Race_determinant() %>% 
-          mutate(Risk = ifelse(`Log Odds` > 0, "Increased", "Decreased")) %>% 
-          select(Variable, Odds, `Log Odds`, Risk),
-        selection = "none",
-        rownames= FALSE,
-        options = list(
-          autoWidth = TRUE,
-          columnDefs = list(list(className = 'dt-center', targets = 0:3))
-        ))
-    })
-  
-  
-    
     
     ## Deprivation ----
     
@@ -1912,144 +2045,24 @@ server <- function(input, output, session) {
       
     })
     
-    # Bar plot for deprivation index - used log odds because it doesn't skew to positive as much
-    output$viewPlots_deprivation_determinant <- renderPlotly({
-      
-      # Process data
-      data_plot <- dataToView_deprivation_determinant() %>%
-        mutate(ranking_metric = abs(`Log Odds`)) %>%
-        slice_max(order_by = ranking_metric, n = 15, with_ties = FALSE) %>%
-        mutate(
-          Risk = ifelse(`Log Odds` > 0, "Increased", "Decreased"),
-          Variable = reorder(Variable, `Log Odds`)
-        )
-      
-      # Plotly chart
-      p_plotly <- plot_ly(
-        data = data_plot,
-        x = ~`Log Odds`,
-        y = ~Variable,
-        type = "bar",
-        orientation = "h",
-        color = ~Risk,
-        colors = c("Decreased" = "lightblue", "Increased" = "red"),
-        hoverinfo = "none"
-      ) %>%
-        layout(
-          barmode = "relative",
-          title = list(text = "", x = 0),
-          xaxis = list(title = "Log Odds Ratio", zeroline = TRUE),
-          yaxis = list(title = ""),
-          shapes = list(
-            list(
-              type = "line",
-              x0 = 0,
-              x1 = 0,
-              y0 = -0.5,
-              y1 = length(data_plot$Variable) - 0.5,
-              line = list(dash = "dash", width = 1, color = "black")
-            )
-          ),
-          font = list(size = 15),
-          showlegend = TRUE
-        )
-      
-      p_plotly
-
-    })
-    
-    # Deprivation index table
-    output$viewTable_deprivation_determinant <- DT::renderDataTable({ 
-      DT::datatable(
-        dataToView_deprivation_determinant() %>% 
-          mutate(Risk = ifelse(Odds > 1, "Increased", "Decreased")) %>% 
-          select(Variable, Odds, `Log Odds`, Risk),
-        selection = "none",
-        rownames= FALSE,
-        options = list(
-          autoWidth = TRUE,
-          columnDefs = list(list(className = 'dt-center', targets = 0:3))
-        ))
-    })
-    
-  
-    
-    
     
     ## Historic Red Lining ----
     
     # Prepare the historic red lining data frame from user input
     dataToView_hrs_determinant <- reactive({
       
-      req(exists(paste("non_spatial", "HRS", req(input$pollutionSource_hrs_determinant), sep = "_")))
-      get(paste("non_spatial", "HRS", req(input$pollutionSource_hrs_determinant), sep = "_")) %>%
+      df_name <- paste("non_spatial", "HRS", req(input$pollutionSource_determinant), sep = "_")
+      validate(need(exists(df_name), paste("Dataset not found:", df_name)))
+      get(df_name) %>%
         mutate_if(is.numeric, ~ signif(.x, 5)) %>%
         mutate(`Log Odds` = signif(log(Odds), 5)) %>%
         select(-Disease) %>%
         arrange(desc(abs(`Log Odds`)))
       
-    })
-    
-    # Bar plot of Historic Red Lining
-    output$viewPlots_hrs_determinant <- renderPlotly({
-
-        # Process data
-        data_plot <- dataToView_hrs_determinant() %>%
-          mutate(ranking_metric = abs(`Log Odds`)) %>%
-          slice_max(order_by = ranking_metric, n = 15, with_ties = FALSE) %>%
-          mutate(
-            Risk = ifelse(`Log Odds` > 0, "Increased", "Decreased"),
-            Variable = reorder(Variable, `Log Odds`)
-          )
-        
-        # Plotly chart
-        p_plotly <- plot_ly(
-          data = data_plot,
-          x = ~`Log Odds`,
-          y = ~Variable,
-          type = "bar",
-          orientation = "h",
-          color = ~Risk,
-          colors = c("Decreased" = "lightblue", "Increased" = "red"),
-          hoverinfo = "none"
-        ) %>%
-          layout(
-            barmode = "relative",
-            title = list(text = "", x = 0),
-            xaxis = list(title = "Log Odds Ratio", zeroline = TRUE),
-            yaxis = list(title = ""),
-            shapes = list(
-              list(
-                type = "line",
-                x0 = 0,
-                x1 = 0,
-                y0 = -0.5,
-                y1 = length(data_plot$Variable) - 0.5,
-                line = list(dash = "dash", width = 1, color = "black")
-              )
-            ),
-            font = list(size = 15),
-            showlegend = TRUE
-          )
-        
-        p_plotly
       
     })
     
-    # Historic Red Lining Code
-    output$viewTable_hrs_determinant <- DT::renderDataTable({ 
-      DT::datatable(
-        dataToView_hrs_determinant() %>% 
-          mutate(Risk = ifelse(Odds > 1, "Increased", "Decreased")) %>% 
-          select(Variable, Odds, `Log Odds`, Risk),
-        selection = "none",
-        rownames= FALSE,
-        options = list(
-          autoWidth = TRUE,
-          columnDefs = list(list(className = 'dt-center', targets = 0:3))
-        ))
-    })
-    
+
     # Summary Data ----
     
     # Download csv files
@@ -2060,32 +2073,32 @@ server <- function(input, output, session) {
       content = function(file) {
         file.copy("Data/Summary Data Excel Sheets/SDOH_combined.xlsx", file)
       },
-      contentType = "text/csv"
+      contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
   
     output$downloadSpatial <- downloadHandler(
       filename = function() {
-        "Spatial_Data.xlsx"  # The name user will see when downloading
+        "Pediatric_Spatial_Data.xlsx"  # The name user will see when downloading
       },
       content = function(file) {
-        file.copy("Data/Summary Data Excel Sheets/Spatial.xlsx", file)
+        file.copy("Data/Summary Data Excel Sheets/Spatial_peds.xlsx", file)
       },
-      contentType = "text/csv"
+      contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
     
     output$downloadSpatialad <- downloadHandler(
       filename = function() {
-        "Spatial_Data.xlsx"  # The name user will see when downloading
+        "Adult_Spatial_Data.xlsx"  # The name user will see when downloading
       },
       content = function(file) {
-        file.copy("Data/Summary Data Excel Sheets/Spatial.xlsx", file)
+        file.copy("Data/Summary Data Excel Sheets/Spatial_adult.xlsx", file)
       },
       contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
     
     output$downloadNonspatialad <- downloadHandler(
       filename = function() {
-        "Adult_nonspatial_Data.xlsx"  # The name user will see when downloading
+        "Adult_Nonspatial_Data.xlsx"  # The name user will see when downloading
       },
       content = function(file) {
         file.copy("Data/Summary Data Excel Sheets/Nonspatial_adult.xlsx", file)
@@ -2095,7 +2108,7 @@ server <- function(input, output, session) {
     
     output$downloadNonspatial <- downloadHandler(
       filename = function() {
-        "Pediatric_nonspatial_Data.xlsx"  # The name user will see when downloading
+        "Pediatric_Nonspatial_Data.xlsx"  # The name user will see when downloading
       },
       content = function(file) {
         file.copy("Data/Summary Data Excel Sheets/Nonspatial_peds.xlsx", file)

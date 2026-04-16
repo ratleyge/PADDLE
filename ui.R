@@ -6,8 +6,82 @@ ui <- navbarPage(
   
   # Set my custom Css to make sure that the nav bar layout is compatible with the side bar layout
   header = tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")
-  ),
+    tags$link(rel = "stylesheet", type = "text/css", href = "custom.css"),
+    tags$script(
+      HTML(
+        "
+          function toggleLegend(id) {
+            var el = document.getElementById(id || 'chart-legend');
+            el.classList.toggle('collapsed');
+          }
+      
+          function toggleSection(id) {
+            var body   = document.getElementById(id);
+            var arrow  = document.getElementById(id + '-arrow');
+            var header = body.previousElementSibling;
+            body.classList.toggle('hidden');
+            if (header) header.classList.toggle('open');
+          }
+      
+          function updateDeterminantPills() {
+            var tab = document.querySelector('input[name=\"determinant_tab\"]:checked');
+            var src = document.querySelector('input[name=\"pollutionSource_determinant\"]:checked');
+      
+            var tabVal = tab ? tab.value : 'Ethnicity';
+            var srcVal = src ? src.value : 'Air';
+      
+            var spatialInput = document.getElementById('dt_spatial');
+            var spatialLabel = document.querySelector('label[for=\"dt_spatial\"]');
+            var waterInput   = document.getElementById('pd_water');
+            var waterLabel   = document.querySelector('label[for=\"pd_water\"]');
+      
+            var disableSpatial = (tabVal === 'Deprivation' || tabVal === 'HRS' || srcVal === 'Water');
+            spatialInput.disabled = disableSpatial;
+            spatialLabel.style.opacity = disableSpatial ? '0.35' : '1';
+            spatialLabel.style.cursor  = disableSpatial ? 'not-allowed' : 'pointer';
+      
+            if (disableSpatial && spatialInput.checked) {
+              spatialInput.checked = false;
+              document.getElementById('dt_nonspatial').checked = true;
+              Shiny.setInputValue('dataSource_determinant', 'non_spatial', {priority: 'event'});
+            }
+      
+            var disableWater = (tabVal === 'Deprivation');
+            waterInput.disabled = disableWater;
+            waterLabel.style.opacity = disableWater ? '0.35' : '1';
+            waterLabel.style.cursor  = disableWater ? 'not-allowed' : 'pointer';
+      
+            if (disableWater && waterInput.checked) {
+              waterInput.checked = false;
+              document.getElementById('pd_air').checked = true;
+              Shiny.setInputValue('pollutionSource_determinant', 'Air', {priority: 'event'});
+            }
+          }
+      
+          document.addEventListener('DOMContentLoaded', function() {
+      
+            // Sync all toggle pills to Shiny
+            document.querySelectorAll('.toggle-pill-input').forEach(function(radio) {
+              radio.addEventListener('change', function() {
+                var target = this.getAttribute('data-target');
+                if (target) Shiny.setInputValue(target, this.value, {priority: 'event'});
+              });
+            });
+      
+            // Attach determinant pill logic
+            document.querySelectorAll(
+              'input[name=\"determinant_tab\"], input[name=\"pollutionSource_determinant\"], input[name=\"dataSource_determinant\"]'
+            ).forEach(function(radio) {
+              radio.addEventListener('change', updateDeterminantPills);
+            });
+      
+            updateDeterminantPills();
+          });
+          "
+      )
+    )
+
+  ), 
   
   # Nice theme, but others can be found here: https://rstudio.github.io/shinythemes/
   theme = shinytheme("cyborg"),
@@ -19,47 +93,128 @@ ui <- navbarPage(
   title = div(
     class = "customNavbar-title",
     img(src="PADDLE Blue Background.png", style="margin: -3px -20px",
-    height = "55px", width = "auto")
+    height = "55px")
   ),
   
-  # About page ----
-  tabPanel("Home", 
-           
-     fluidPage(
-       align = "center",
-       
-       fluidRow(
-         img(src = "PADDLE Black Background.png", align = "center", width='650px'),
-       ),
-       br(),
-       br(),
-       fluidRow(
-            HTML('<iframe width="560" height="315" src="https://www.youtube.com/embed/CksOqC-zP9s?si=B3fuRay7T1ufTuey" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>'
-         ),
-       ),
-       br(),
-       h3("Wading through our toxic world"),
-       br(),
-       br(),
-       div(class = "center-container",
-           column(6, 
-                  style = "background-color: #333333; padding: 0px 10px 15px 10px;",
-                  HTML("<h3>Citation</h3>
-                       <p>Grace Ratley, Aditi Vijendra, Jalin Jordan, Pranav Thota, Jordan Zeldin, 
-                       Prem Prashant Chaudhary, Ian A Myles. <a href='https://doi.org/10.1038/s41598-026-39836-2'><i>P.A.D.D.L.E.: a hypothesis generation tool for 
-                       assessing pollution’s potential role in disease.</i></a> Scientific Reports. 16, 8808 (2026). </p>"),
-                  ),
-           ),
-     ),
-  ),
   
-  tabPanel("Methods",
-    fluidPage(
+  tabPanel("Home", fluidPage(style = "max-width: fit-content; margin-left: auto; margin-right: auto;",
+    column(3,
+      class = "paddle-sidebar",
+      style = "position: fixed; top: 70px; padding: 10px;",
+
+      #div(style = "max-width: fit-content; margin-inline: auto;", img(src = "PADDLE Icon.png", height = '200px'),),
+      h4(class = 'syncopate-bold', "Contents"),
+      a("How to Use PADDLE Video", href="#how_to_paddle", style = "font-size:14px;"),
+      br(),
+      a("Citation", href="#citation", style = "font-size:14px; "),
+      br(),
+      
+      h4(style="margin-top: 20px", "Methods"),
+      a("Derivation of Disease Rates", href="#Derivation_of_disease_rates", style = "font-size:14px;"),
+      br(),
+      a("Identification of Pollution Exposures and Modeling", href="#Identification_of_pollution_exposures_and_modeling", style = "font-size:14px;"),
+      br(),
+      a("Additional Comparisons", href="#Additional_comparisons", style = "font-size:14px;"),
+      br(),
+      a("Limitations", href="#Limitations", style = "font-size:14px;"),
+      
+      h4(style="margin-top: 20px", "Additional Links"),
+      a("EPA Where You Live", href="#epa_where_you_live", style = "font-size:14px;"),
+      br(),
+      a("TRI Toxics Tracker", href="#toxics_tracker", style = "font-size:14px;"),
+      br(),
+      a("Download Data", href="#download_data", style = "font-size:14px;"),
+      br(),
+    ),
+    
+    
+    column(4,),
+    
+    column(8,
       align = "center",
-      div(class='center-container',
-        column(6,
-          HTML("
-            <h3>Derivation of disease rates</h3>
+      class = 'center-container',
+
+      fluidRow(
+        img(src = "PADDLE Black Background.png", align = "center", width='650px'),
+      ),
+      
+      HTML(
+        "
+        <div style='background-color: #00425A; width: 100%; margin-top: 10px; height: 20px'>
+        </div>
+        <div style='background-color: white; color: black; width: 100%; padding: 10px 40px 10px 40px; margin-top: 0px;'>
+        <div>
+          <h4 style='color: black'>A tool for assessing pollution’s potential role in disease</h4>
+          <p>Since the 1960s, tens of thousands of chemicals have been added to the global market, yet the vast majority
+          lack comprehensive health risk assessments. During this same period, industrialized nations have experienced 
+          dramatic increases in inflammatory diseases, raising concerns about environmental contributors. We aim to 
+          provide a tool for researchers to explore associations between environmental toxicant releases and diseases
+          of interest, assess impacts of the route of exposure, connect findings to protein targets and biological 
+          pathways, map geographic “hot spots”, and identify at-risk populations. </p>
+        </div>
+        
+        <img style='width: 90%; margin-bottom: -20px; height: 45px' src='Paddle divider.png'>
+        
+        <div id='summary' class = 'col-sm-12' style='margin-top: 20px;'>
+          <div>
+          <div class='col-sm-4'>
+          <p class='syncopate-bold' style='font-size: 30px; color: #026285; margin-bottom: 0px'>61.9M</p>
+          <p style='font-size: 15px;'>Healthcare Visits</p>
+          </div>
+          <div class='col-sm-4'>
+          <p class='syncopate-bold' style='font-size: 30px; color: #026285; margin-bottom: 0px;'>4,533</p>
+          <p style='font-size: 15px;'>Diagnoses</p>
+          </div>
+          <div class='col-sm-4'>
+          <p class='syncopate-bold' style='font-size: 30px; color: #026285; margin-bottom: 0px;'>16,451</p>
+          <p style='font-size: 15px;'>Zip Codes</p>
+          </div>
+          </div>
+          
+          <div style='margin-top: 10px'>
+          <div class='col-sm-4'>
+          <p class='syncopate-bold' style='font-size: 30px; color: #026285; margin-bottom: 0px'>571</p>
+          <p style='font-size: 15px;'>Air Pollutants</p>
+          </div>
+          <div class='col-sm-4'>
+          <p class='syncopate-bold' style='font-size: 30px; color: #026285; margin-bottom: 0px;'>42</p>
+          <p style='font-size: 15px;'>Water Pollutants</p>
+          </div>
+          <div class='col-sm-4'>
+          <p class='syncopate-bold' style='font-size: 30px; color: #026285; margin-bottom: 0px;'>21</p>
+          <p style='font-size: 15px;'>Sociodemographic Covariates</p>
+          </div>
+          </div>
+        </div>
+        
+        </div>
+        
+        
+        <div id='how_to_paddle' style='margin-bottom: 0px; background-color: #1f1f1f; width: 100%; padding-bottom: 20px; padding-top: 10px;'>
+        <h4 style='color: white'>An Introduction to Using PADDLE</h4>
+        <iframe width='560' height='315' src='https://www.youtube.com/embed/CksOqC-zP9s?si=B3fuRay7T1ufTuey' title='YouTube video player' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share' referrerpolicy='strict-origin-when-cross-origin' allowfullscreen></iframe>
+        </div>
+        
+        
+        <h3 id='citation' class='syncopate-bold' style='font-size: 50px; color: white; margin-top: 60px'>Cite PADDLE</h3>
+        <div style='background-color: #00425A; width: 100%; margin-top: 0px; height: 20px'>
+        </div>
+        <div style='background-color: white; color: black; width: 100%; padding: 10px 200px 10px 200px; margin-top: 0px;'>
+         <h4 style='color: black'></h4>
+         <p>Grace Ratley, Aditi Vijendra, Jalin Jordan, Pranav Thota, Jordan Zeldin, 
+         Prem Prashant Chaudhary, Ian A Myles. <a href='https://doi.org/10.1038/s41598-026-39836-2'><i>P.A.D.D.L.E.: a hypothesis generation tool for 
+         assessing pollution’s potential role in disease.</i></a> Scientific Reports. 16, 8808 (2026). </p>
+        </div>
+        
+        <div>
+        <h3 class='syncopate-bold' style='font-size: 50px; color: white; margin-top: 60px'>Methods</h3>
+        </div>
+        
+        <div style='background-color: #00425A; width: 100%;  height: 20px; margin-top: 0px;'></div>
+        
+        <div style='background-color: white; color: black; padding: 10px 40px 10px 40px; margin-top: 0px; margin-bottom: 40px'>
+        <div style='margin-top: 5px;'>
+            <h4 id='Derivation_of_disease_rates' style='color: black'>Derivation of Disease Rates</h4>
             <p style='text-align: left'>&emsp;&emsp;Disease rates were taken from the Agency for Healthcare Research and Quality
             (AHRQ) <a href='https://www.ahrq.gov/data/innovations/syh-dr.html' target='_blank'>
             Synthetic Healthcare Database for Research (SyH-DR)</a>. The database
@@ -75,9 +230,15 @@ ui <- navbarPage(
             respective names was performed using the
             <a href='https://www.cms.gov/medicare/coordination-benefits-recovery/overview/icd-code-lists' target='_blank'>
             ICD code list</a> provided by the Centers for Medicare and Medicaid Services (CMS).</p>
-            
-            <p style='text-align: left'>&emsp;&emsp;For any given healthcare visit, up to 10 ICD diagnoses could be assigned in addition to a primary diagnosis. Because the ordering of diagnoses can sometimes reflect administrative rather than clinical priorities, we counted each diagnosis separately rather than relying solely on the primary diagnosis. This approach makes the models more resistant to arbitrary coding decisions and captures disease prevalence more completely. However, we acknowledge this may inflate the apparent frequency of common, chronic, or multi-system diseases (such as diabetes) that generate multiple related diagnostic codes per visit. Multiple visits by the same patient were treated as separate events, as this may reflect greater symptom severity.</p>
-            
+
+            <p style='text-align: left'>&emsp;&emsp;For any given healthcare visit, up to 10 ICD diagnoses could be assigned 
+            in addition to a primary diagnosis. Because the ordering of diagnoses can sometimes reflect administrative rather 
+            than clinical priorities, we counted each diagnosis separately rather than relying solely on the primary diagnosis. 
+            This approach makes the models more resistant to arbitrary coding decisions and captures disease prevalence more 
+            completely. However, we acknowledge this may inflate the apparent frequency of common, chronic, or multi-system 
+            diseases (such as diabetes) that generate multiple related diagnostic codes per visit. Multiple visits by the same 
+            patient were treated as separate events, as this may reflect greater symptom severity.</p>
+
             <p style='text-align: left'>&emsp;&emsp;For non-spatial analysis, billing visits were separated into categories
             of 'Pre-K' (ages 0–5), 'pediatric' (6–17 years), 'adult'
             (18–54 years), 'retirement age' (55–74 years), and 'geriatric'
@@ -86,35 +247,66 @@ ui <- navbarPage(
             analysis, subjects were grouped as either adult (18 and over) or pediatric
             (under 18 years of age).</p>
             <br>
-            
-            <h3>Identification of pollution exposures and modeling</h3>
+        </div>
+        
+        <img style='width: 90%; margin-bottom: -20px; height: 45px' src='Paddle divider.png'>
+        
+        <div style='margin-top: 20px;'>
+            <h4 id='Identification_of_pollution_exposures_and_modeling' style='color: black'>Identification of Pollution Exposures and Modeling</h4>
             <p style='text-align: left'>&emsp;&emsp;Air pollution exposure was derived from the EPA databases <a href='https://www.epa.gov/rsei' target='_blank'>
             Risk-Screening Environmental Indicators (RSEI)</a> and <a href='https://www.epa.gov/toxics-release-inventory-tri-program' target='_blank'>
-            Toxics Release Inventory (TRI)</a>. Outdoor concentrations of O<sub>3</sub>, CO, SO<sub>2</sub>, NO<sub>2</sub>, PM<sub>10</sub>, and PM<sub>2.5</sub> were derived from the <a href='https://www.caces.us/' target='_blank'>Center for Air, Climate, &amp; Energy Solutions (CACES)</a> using their Land Use Regression (LUR) model, with census tract-level data averaged for overlapping zip codes. Water pollution was separately evaluated
+            Toxics Release Inventory (TRI)</a>. Outdoor concentrations of O<sub>3</sub>, CO, SO<sub>2</sub>, NO
+            <sub>2</sub>, PM<sub>10</sub>, and PM<sub>2.5</sub> were derived from the <a href='https://www.caces.us/' target='_blank'>
+            Center for Air, Climate, &amp; Energy Solutions (CACES)</a> using their Land Use Regression (LUR) model, 
+            with census tract-level data averaged for overlapping zip codes. Water pollution was separately evaluated
             using the <a href='https://www.epa.gov/dwucmr' target='_blank'>Monitoring Unregulated
             Contaminants in Drinking Water (UCMR)</a> data from the EPA. The UCMR data from UCMR 3–5 was
             combined to contrast against the 2016 AHRQ data. If differing
             measurements of the same chemical were reported in different UCMR databases,
             the results were averaged prior to analysis. Exposures were collated from the years 2010–2016
             to contrast with the AHRQ data from 2016.</p>
-            
+
             <p style='text-align: left'>&emsp;&emsp;Feature matrices were constructed by the same method as previously described<sup>
             <a href='https://pubmed.ncbi.nlm.nih.gov/38637696/' target='_blank'>1</a>,
             <a href='https://pubmed.ncbi.nlm.nih.gov/36608129/' target='_blank'>2</a>,
             <a href='https://pubmed.ncbi.nlm.nih.gov/37692200/' target='_blank'>3</a>
-            </sup>. In brief, for each zip code in the AHRQ database, a 30-mile catchment area was defined around the zip code centroid. The total amount of each pollutant released by facilities within that catchment area was summed. A Gaussian distance-weighting function was applied to account for the fact that the zip code reflects the location of the healthcare provider, not necessarily the patient's residence. Water pollution was attributed only to the zip code of the EPA measurement device, as cross-zip dissemination patterns are not captured in the UCMR data.</p>
-            
-            <p style='text-align: left'>&emsp;&emsp;Two complementary modeling approaches were used to assess associations between environmental toxicant exposures and disease diagnosis rates: a non-spatial penalized regression and a spatial penalized regression. Both approaches were applied separately to each of 5,984 disease diagnoses. The predictor matrix for air pollution models included 592 variables: 571 environmental exposures and 21 sociodemographic covariates (census age distributions, deprivation index, population density, and for non-spatial models, latitude and longitude). The water pollution model contained 42 environmental exposures alongside the same sociodemographic covariates. All predictors were standardized prior to modeling to allow comparison across variables with different measurement scales.</p>
-            
-            <p style='text-align: left'>&emsp;&emsp;Nonspatial analysis was performed as previously described<sup>
+            </sup>. In brief, for each zip code in the AHRQ database, a 30-mile catchment area was defined around the 
+            zip code centroid. The total amount of each pollutant released by facilities within that catchment area was 
+            summed. A Gaussian distance-weighting function was applied to account for the fact that the zip code reflects 
+            the location of the healthcare provider, not necessarily the patient's residence. Water pollution was 
+            attributed only to the zip code of the EPA measurement device, as cross-zip dissemination patterns are not captured in the UCMR data.</p>
+
+            <p style='text-align: left'>&emsp;&emsp;Two complementary modeling approaches were used to assess 
+            associations between environmental toxicant exposures and disease diagnosis rates: a non-spatial 
+            penalized regression and a spatial penalized regression. Both approaches were applied separately to 
+            each of 5,984 disease diagnoses. The predictor matrix for air pollution models included 592 variables: 
+            571 environmental exposures and 21 sociodemographic covariates (census age distributions, deprivation 
+            index, population density, and for non-spatial models, latitude and longitude). The water pollution 
+            model contained 42 environmental exposures alongside the same sociodemographic covariates. All predictors 
+            were standardized prior to modeling to allow comparison across variables with different measurement scales.</p>
+
+            <p style='text-align: left'>&emsp;&emsp;Non-spatial analysis was performed as previously described<sup>
             <a href='https://pubmed.ncbi.nlm.nih.gov/36608129/' target='_blank'>2</a>,
             <a href='https://pubmed.ncbi.nlm.nih.gov/37692200/' target='_blank'>3</a></sup>,
-            using the glmnet package in R. For each disease-age combination, an elastic net regression model was fit (alpha = 0.5) with the regularization parameter tuned via 10-fold cross-validation. Because elastic net regression does not produce p-values, we filtered associations to those with beta-coefficients more than two standard deviations (2SD) from the mean. Correlations more than 5SD from the mean are displayed on the website to improve readability, but all correlations are available in the underlying data.</p>
-            
-            <p style='text-align: left'>&emsp;&emsp;For spatial modeling, a negative binomial generalized linear mixed effects model was fit with nested spatial random effects, applied only to air pollution data and the two collapsed age strata (pediatric and adult) due to computational demands. A four-level nested spatial hierarchy was constructed using hierarchical clustering on distances between zip code centroids, generating clusters of approximately 81, 27, 9, and 3 zip codes at each successive level. These clusters were included as random effects to capture spatial autocorrelation at multiple geographic scales.</p>
+            using the glmnet package in R. For each disease-age combination, an elastic net regression model was 
+            fit (alpha = 0.5) with the regularization parameter tuned via 10-fold cross-validation. Because 
+            elastic net regression does not produce p-values, we filtered associations to those with beta-coefficients 
+            more than two standard deviations (2SD) from the mean. Correlations more than 5SD from the mean are 
+            displayed on the website to improve readability, but all correlations are available in the underlying data.</p>
+
+            <p style='text-align: left'>&emsp;&emsp;For spatial modeling, a negative binomial generalized linear 
+            mixed effects model was fit with nested spatial random effects, applied only to air pollution data 
+            and the two collapsed age strata (pediatric and adult) due to computational demands. A four-level 
+            nested spatial hierarchy was constructed using hierarchical clustering on distances between zip code 
+            centroids, generating clusters of approximately 81, 27, 9, and 3 zip codes at each successive level. 
+            These clusters were included as random effects to capture spatial autocorrelation at multiple geographic scales.</p>
             <br>
-            
-            <h3>Additional comparisons</h3>
+        </div>
+        
+        <img style='width: 90%; margin-bottom: -20px; height: 45px' src='Paddle divider.png'>
+        
+        <div style='margin-top: 20px;'>
+            <h4 id='Additional_comparisons' style='color: black'>Additional Comparisons</h4>
             <p style='text-align: left'>&emsp;&emsp;Racial disparities were calculated by taking the percentage
             representation of each race/ethnicity from the <a href='https://www.census.gov/' target='_blank'>
             US Census of 2020</a>. Deprivation index was collected from the
@@ -125,17 +317,26 @@ ui <- navbarPage(
             registration from the Environmental Impact Data Collective. Exposure
             rates for social determinants were collected from the years 2013–2019
             to compare against the 2020 census.</p>
-            
+
             <p style='text-align: left'>&emsp;&emsp;Connecting which commercial products contain any indicated chemical
             was taken from the <a href='https://comptox.epa.gov/chemexpo/get_data/' target='_blank'>EPA
             ChemExpo databases</a>. Spatial and non-spatial modeling was performed
             as for diseases. Mapping functions were performed using the ggmap and
             viridis packages in R.</p>
-            
-            <p style='text-align: left'>&emsp;&emsp;Protein-toxicant interactions were accessed from the <a href='http://www.t3db.ca/' target='_blank'>Toxin-Target Database (T3DB)</a>. Protein-level enrichment analysis was performed using Fisher's exact test to identify proteins disproportionately targeted by disease-associated toxins. Pathway enrichment analysis was performed using the enrichR package, referencing GO Biological Process, GO Molecular Function, KEGG, and WikiPathways databases. Enriched proteins are indicated on the website where FDR-corrected p-values are less than 0.05.</p>
+
+            <p style='text-align: left'>&emsp;&emsp;Protein-toxicant interactions were accessed from the 
+            <a href='http://www.t3db.ca/' target='_blank'>Toxin-Target Database (T3DB)</a>. Protein-level 
+            enrichment analysis was performed using Fisher's exact test to identify proteins disproportionately 
+            targeted by disease-associated toxicants. Pathway enrichment analysis was performed using the 
+            enrichR package, referencing GO Biological Process, GO Molecular Function, KEGG, and WikiPathways
+            databases. Enriched proteins are indicated on the website where FDR-corrected p-values are less than 0.05.</p>
             <br>
-            
-            <h3>Limitations</h3>
+        </div>
+        
+        <img style='width: 90%; margin-bottom: -20px; height: 45px' src='Paddle divider.png'>
+        
+        <div style='margin-top: 20px;'>
+            <h4 id='Limitations' style='color: black'>Limitations</h4>
             <p style='text-align: left'>&emsp;&emsp;The major limitation of this work is that the AHRQ database was only
             a pilot program encompassing visits in the US in 2016. The inability to
             assess disease-chemical associations over time likely limits our accuracy.
@@ -147,9 +348,17 @@ ui <- navbarPage(
             information. Furthermore, should the AHRQ or other agency collect updated
             disease visit information, P.A.D.D.L.E. could be updated to incorporate
             the new data.</p>
-            
-            <p style='text-align: left'>&emsp;&emsp;The use of zip code-aggregated data introduces important caveats, including the ecological fallacy (population-level associations may not reflect individual risk), the possibility that a patient's zip code of care differs from their home zip code, and potential inflation of results from densely zip-coded urban areas. Despite these limitations, aggregated data enables nationwide analysis while protecting individual privacy, and our penalized regression approach and spatial smoothing terms help mitigate some of these effects. This approach is consistent with our goal of designing a hypothesis-generating tool to identify associations warranting further investigation with individual-level data.</p>
-            
+
+            <p style='text-align: left'>&emsp;&emsp;The use of zip code-aggregated data 
+            introduces important caveats, including the ecological fallacy (population-level 
+            associations may not reflect individual risk), the possibility that a patient's 
+            zip code of care differs from their home zip code, and potential inflation of results 
+            from densely zip-coded urban areas. Despite these limitations, aggregated data enables 
+            nationwide analysis while protecting individual privacy, and our penalized regression 
+            approach and spatial smoothing terms help mitigate some of these effects. This approach 
+            is consistent with our goal of designing a hypothesis-generating tool to identify 
+            associations warranting further investigation with individual-level data.</p>
+
             <p style='text-align: left'>&emsp;&emsp;Another limitation is that our databases assessing functional
             consequences of chemical exposure are not fully congruent. For example, the
             database for known protein-pollutant interactions covers only a subset of
@@ -160,194 +369,461 @@ ui <- navbarPage(
             be assumed to be causal, even when statistically significant. Any
             association identified should either be assessed against the established
             literature or be experimentally modeled before drawing any conclusions.
-            Notably, negative associations could theoretically represent a protective effect, but because our clinical data derives from healthcare visits rather than individual diagnoses, it is more likely that a given chemical generates other diseases that displace visits for certain ailments — similar to how areas with the highest rates of COVID-19 saw a drop in outpatient visits for non-COVID conditions.<sup><a href='https://pubmed.ncbi.nlm.nih.gov/36893413/'
+            Notably, negative associations could theoretically represent a protective effect, but because 
+            our clinical data derives from healthcare visits rather than individual diagnoses, it is more 
+            likely that a given chemical generates other diseases that displace visits for certain 
+            ailments, similar to how areas with the highest rates of COVID-19 saw a drop in outpatient 
+            visits for non-COVID conditions.<sup><a href='https://pubmed.ncbi.nlm.nih.gov/36893413/'
             target='_blank'>4</a></sup>
             Both negative and positive associations should spur mechanistic
             follow-up studies rather than be assumed to reflect causal relationships.</p>
-          "),
-         ),
+            </div>
+            
+            </div>
+            
+            
+        <div>
+        <h3 class='syncopate-bold' style='font-size: 50px; color: white; margin-top: 20px'>Additional Links</h3>
+        </div>
+        
+        <div style='background-color: #00425A; width: 100%;  height: 20px; margin-top: 0px;'></div>
+        <div style='background-color: white; color: black; padding: 10px 40px 10px 40px; margin-top: 0px; margin-bottom: 40px'>
+        
+        <div style='margin-top: 5px;'>
+         <h4 id='epa_where_you_live', style='color: black'>EPA Where You Live</h4>
+         <p><a href = 'https://www.epa.gov/trinationalanalysis/where-you-live'>https://www.epa.gov/trinationalanalysis/where-you-live</a></p>
+         <p style='text-align: left'>This site reports the specific chemicals released by factories, 
+                   and the amounts released.  Search for your state or zip code to 
+                   see the sources of industrial pollution in your area.  Note, 
+                   this site does not collect data on road/automobile exhaust.  
+                   Using this site would allow one to assess the pollutants in 
+                   their area, which can then be searched in PADDLE for disease 
+                   associations of concern.</p>
+        </div>
+        
+        <div style='margin-top: 20px;'>
+         <h4 id='toxics_tracker' style='color: black'>EPA TRI Toxics Tracker</h4>
+         <p><a href = 'https://edap.epa.gov/public/extensions/TRIToxicsTracker/TRIToxicsTracker.html'>https://edap.epa.gov/public/extensions/TRIToxicsTracker/TRIToxicsTracker.html</a></p>
+         <p style='text-align: left'>This site reports the exact locations for factories releasing 
+                   toxic substances.  Search by address, state, or zip code to see 
+                   the facilities in your area.  Note, this site does not collect
+                   data on road/automobile exhaust.</p>
+        </div>
+        
+        </div>
+          "
       ),
+      
+      
+      
+      HTML("
+          <div>
+            <h3 id='downoad_data' class='syncopate-bold' style='font-size: 50px; color: white; margin-top: 20px'>Download Data</h3>
+          </div>
+          
+          <div style='background-color: #00425A; width: 100%; height: 20px;'></div>
+          
+          <div style='background-color: white; color: black; padding: 10px; margin-bottom: 0px'>
+            <div class='col-sm-6' style='padding: 15px;'>
+              <h4 style='color: #026285;'>Adult Non-spatial Odds Ratios</h4>
+              <p style='font-size: 14px;'>Download the full table of adult non-spatial elastic net regression coefficients across all diagnoses and pollutants.</p>
+
+        "),
+      
+      downloadButton("downloadNonspatialad", "Download", class = "download-btn"),
+      
+      HTML("
+            </div>
+            <div class='col-sm-6' style='padding: 15px;'>
+              <h4 style='color: #026285;'>Adult Spatial Odds Ratios</h4>
+              <p style='font-size: 14px;'>Download the full table of adult spatial mixed-effects model coefficients across all diagnoses and pollutants.</p>
+        
+        "),
+              
+      downloadButton("downloadSpatialad", "Download", class = "download-btn"),
+      
+      HTML("
+    </div>
+    </div>
+    <div style='background-color: white; color: black; padding: 10px; margin-bottom: 0px'>
+    <div class='col-sm-6' style='padding: 15px;'>
+      <h4 style='color: #026285;'>Pediatric Non-spatial Odds Ratios</h4>
+      <p style='font-size: 14px;'>Download the full table of pediatric non-spatial elastic net regression coefficients across all diagnoses and pollutants.</p>
+
+"),
+      
+      downloadButton("downloadNonspatial", "Download", class = "download-btn"),
+      
+      HTML("
+    </div>
+    <div class='col-sm-6' style='padding: 15px;'>
+      <h4 style='color: #026285;'>Pediatric Spatial Odds Ratios</h4>
+      <p style='font-size: 14px;'>Download the full table of pediatric spatial mixed-effects model coefficients across all diagnoses and pollutants.</p>
+
+"),
+      
+      downloadButton("downloadSpatial", "Download", class = "download-btn"),
+      
+      HTML("
+    </div>
+  </div>
+  
+          
+        <div style='padding: 10px 40px 10px 40px; margin-top: 40px; margin-bottom: 40px'>
+        <div class='col-sm-8'>
+          <p class='syncopate-bold' style='font-size: 30px; margin-bottom: 0px'>Retired logo</p>
+        </div>
+        <div class='col-sm-2'>
+        <img height='50px' src='White no background paddle logo.png'></img>
+        </div>
+        </div>
+            
+"),
+      
     ),
-  ),
+  ), 
+  ), 
   
   # Search chemicals ----
-  tabPanel("Search Chemicals", # Make a page layout that contains a side panel for inputs  and a main panel for outputs
-           
-       sidebarLayout(
-         # Inputs ----
-         sidebarPanel(
-           id = "searchByChem",
-           style="padding: 0px 30px 0px 30px;",
-           
-           h3("Search by Chemical"),
-           
-           # If air - update selector to get air pollutants
-           # If water update selector to get water pollutants & only allow non-spatial
-           selectInput(
-             "pollutionSource_chem",
-             "Pollution Source:",
-             choices = c(
-               "Air",
-               "Water - non-spatial only" = "Water"
-             ),
-             selected = "Air"
-           ),
-           
-           # Which chemical to filter
-           selectizeInput(
-             "searchChemical_chem",
-             "Chemical of Interest:",
-             choices = NULL
-           ),
-           
-           # Choose model architecture
-           selectInput(
-             "dataSource_chem",
-             "Model Type:",
-             choices = c(
-              "Spatial" = "spatial",
-              "Non-Spatial" = "non_spatial"
-             ),
-            selected = "Spatial"
-           ),
-           
-           # Choose the age group 
-           # To-do: offer an option to look at all at once?
-           selectInput(
-             "ageGroup_chem",
-             "Age Group",
-             choices = NULL
-           )
-           
-         ),
-         
-         # Outputs ----
-         mainPanel(
-           align = "center",
-           style="padding: 0px 50px 0px 30px;",
-           
-           # State which data we are looking at based on the inputs 
-           h4(textOutput("currentlyViewing_chem")),
-           br(), # Space beneath
-           
-           fluidRow(
-             id = "chem_properties",
-             tags$style('#chem_properties {
-                             background-color: #333333;
-              }'),
-             
-             column(
-               3,
-               class = "center-container",
-               h5("Classes"),
-               textOutput("chem_class_chem"), 
-               br(),
-              ),
-             column(
-               3,
-               class = "center-container",
-               h5("Carcinogen"),
-               textOutput("carcinogen_chem"), 
-               br(),
-             ),
-             column(
-               3,
-               class = "center-container",
-               h5("Organ Toxicity"),
-               textOutput("organ_tox_chem"), 
-               br(),
-             ),
-             column(
-               3,
-               class = "center-container",
-               h5("Timing of Toxicity"),
-               textOutput("tox_timing_chem"), 
-               br(),
-             ),
-           ),
-           
-           br(),
-           
-           # Explain the graphical output
-           fluidRow(
-             align = "left",
-             HTML("<p>The graph below displays the 15 diagnoses with the strongest 
-              associations with your selected chemical, based on the absolute value 
-              of the beta coefficient from a logistic elastic net model. The odds 
-              ratios were calculated by exponentiating the beta coefficients, 
-              representing the change in odds of having the diagnosis for each unit 
-              increase in the chemical of interest.
-              
-              <div style='background-color: #333333'>
-              <ul>
-              <li>The <b>red dot</b> represents the specific odds ratio for the chemical-diagnosis association.</li>
-              <li>The <b>black line</b> indicates the full range of odds ratios observed for that diagnosis across all chemical associations.</li>
-              <li>The <b>x</b> marks the mean odds ratio for that diagnosis.</li>
-              <li>The <b>grey range</b> represents one standard deviation above and below the mean.</li>
-              <li>A <b>dashed line</b> at 1 serves as a reference, indicating no association (odds ratio = 1 means no increased or decreased risk).</li>
-              </ul></p>
-              </div>
-              
-              <p>If a diagnosis is presented, then the chemical interactions with that diagnosis are 
-              potentially important.  If the red dot is far to the right of the given black line, 
-              that indicates the chemical you selected is one of the strongest associations with the 
-              diagnosis indicated.  However, while negative associations (odds ratios less than one) 
-              might indicate that the chemical selected “protects” against the diagnosis, the more 
-              likely reason for negative associations is that the chemical selected causes diagnoses 
-              which displace visits for the diagnosis listed.  For example, a chemical which triggered 
-              asthma would drive more people with asthma to see their health care provider; if enough 
-              people were being seen for asthma, it may leave less clinic appointments for people with 
-              other lung diseases.  Thus, any association presented should be evaluated for molecular 
-              or epidemiologic connections beyond this analysis alone.</p>
-              "),
-           ),
-           
-           # Plot the output
-           div(
-             class = "center-container",
-             plotlyOutput("viewPlots_chem")
-             ),
-           
-           br(), # Space beneath
-           
-           # Explain the table
-           p("The table below shows all the diagnoses with which your chemical of interest was associated.
-             The total predictors column shows how many chemicals were associated with a change in risk in each diagnosis.
-             The mean, standard deviation, max, and min columns show summary statistics for the chemicals associated with 
-             each diagnosis, so you can guage the relative importance of the chemical in moderating diagnosis risk."),
-           
-           # Display all the odds and the diagnosis ranges
-           DT::dataTableOutput("viewTable_chem"),
-           downloadButton("download_diseases_chem"),
-           br(),
-           
-           # Distribution of chemical release across the US
-           h3("Distribution Across the US"),
-           actionBttn("generate_map_chem", "Generate Map"),
-           br(),
-           br(),
-           p("If you have changed the input settings, click the Generate Map button again to update the results."),
-           p("Values are min-max scaled."),
-           plotlyOutput("US_map_chem") %>% withSpinner(color = "#666666", type = 6),
-           
-           # At risk
-           h3("At Risk Groups"),
-           p("Associations between the selected chemical and deprivation index, ethnicity, and historic red-lining, 
-             if present, are shown below."),
-           uiOutput("deprivation_chem"),
-           uiOutput("race_chem"),
-           uiOutput("hrs_chem"),
-           
-           h3("Products Containing the Chemical"),
-           HTML("<p>This table includes products that are known to contain the chemical of interest, 
-             per the EPA’s <a href='https://comptox.epa.gov/chemexpo/get_data/'>ChemExpo database</a>.  
-             However, most products have not been assessed for 
-             chemical content and thus failure to see any products listed here does not indicate 
-             that no commercial product has the chemical of interest.</p>"),
-           div(class = "center-container", column(8, DT::dataTableOutput("product_table_chem"),),),
-         ),
-       ), 
-  ),
+  tabPanel(
+    "Search Chemicals",
+    sidebarLayout(
+      
+      # Sidebar
+      sidebarPanel(
+        id    = "searchByChem",
+        class = "paddle-sidebar",
+        div(class = "sidebar-header",
+            h3("Search Chemicals", class = "sidebar-title")
+        ),
+        
+        hr(class = "sidebar-divider"),
+        
+        # ── Pollution Source ────────────────────────────────────────────────
+        div(class = "input-group-paddle",
+            tags$label("Pollution Source",
+                       class = "input-label",
+                       # Inline tooltip trigger
+                       tags$span(
+                         class = "tooltip-trigger",
+                         `data-tooltip` = "Air: 571 TRI/RSEI chemicals. Water: 42 UCMR drinking-water contaminants (non-spatial only).",
+                         HTML("&#9432;")   # ⓘ
+                       )
+            ),
+            div(class = "toggle-pill-group",
+                tags$input(type = "radio", name = "pollutionSource_chem", id = "ps_air",
+                           value = "Air", checked = NA,
+                           class = "toggle-pill-input", `data-target` = "pollutionSource_chem"),
+                tags$label(`for` = "ps_air",   class = "toggle-pill", "Air"),
+                tags$input(type = "radio", name = "pollutionSource_chem", id = "ps_water",
+                           value = "Water",
+                           class = "toggle-pill-input", `data-target` = "pollutionSource_chem"),
+                tags$label(`for` = "ps_water", class = "toggle-pill", "Water")
+            ),
+            # Hidden Shiny binding — keep the actual selectInput for server reactivity
+            # but visually replace it with the pill toggle above via JS
+            div(style = "display:none;",
+                selectInput("pollutionSource_chem", NULL,
+                            choices  = c("Air", "Water - non-spatial only" = "Water"),
+                            selected = "Air"
+                )
+            )
+        ),
+        
+        # ── Chemical of Interest ────────────────────────────────────────────
+        div(class = "input-group-paddle",
+            tags$label("Chemical of Interest", class = "input-label"),
+            selectizeInput("searchChemical_chem", NULL, choices = NULL)
+        ),
+        
+        # ── Model Type ──────────────────────────────────────────────────────
+        div(class = "input-group-paddle",
+            tags$label("Model Type",
+                       class = "input-label",
+                       tags$span(
+                         class = "tooltip-trigger",
+                         `data-tooltip` = "Spatial: negative-binomial GLMM with nested geographic random effects (air only). Non-spatial: elastic net regression with lat/lon as covariates.",
+                         HTML("&#9432;")
+                       )
+            ),
+            selectInput("dataSource_chem", NULL,
+                        choices  = c("Spatial" = "spatial", "Non-Spatial" = "non_spatial"),
+                        selected = "spatial"
+            )
+        ),
+        
+        # ── Age Group ───────────────────────────────────────────────────────
+        div(class = "input-group-paddle",
+            tags$label("Age Group", class = "input-label"),
+            selectInput("ageGroup_chem", NULL, choices = NULL)
+        ),
+        
+        hr(class = "sidebar-divider"),
+        
+        # ── Chemical Properties card ────────────────────────────────────────
+        div(class = "chem-props-card",
+            div(class = "chem-props-title", "Chemical Profile"),
+            div(class = "chem-props-grid",
+                
+                div(class = "prop-item",
+                    div(class = "prop-label",
+                        "Class",
+                        tags$span(
+                          class = "tooltip-trigger",
+                          `data-tooltip` = "Broad chemical family (e.g. Heavy Metal, PAH, Phthalate).",
+                          HTML("&#9432;")
+                        )
+                    ),
+                    div(class = "prop-value", textOutput("chem_class_chem", inline = TRUE))
+                ),
+                
+                div(class = "prop-item",
+                    div(class = "prop-label",
+                        "Carcinogen",
+                        tags$span(
+                          class = "tooltip-trigger",
+                          `data-tooltip` = "Whether the chemical is classified as a known or probable carcinogen.",
+                          HTML("&#9432;")
+                        )
+                    ),
+                    uiOutput("carcinogen_badge_chem")   # rendered as a coloured badge (see server note)
+                ),
+                
+                div(class = "prop-item prop-item--wide",
+                    div(class = "prop-label",
+                        "Organ Toxicity",
+                        tags$span(
+                          class = "tooltip-trigger",
+                          `data-tooltip` = "Organ systems with documented toxicity for this chemical.",
+                          HTML("&#9432;")
+                        )
+                    ),
+                    div(class = "prop-value", textOutput("organ_tox_chem", inline = TRUE))
+                ),
+                
+                div(class = "prop-item prop-item--wide",
+                    div(class = "prop-label",
+                        "Toxicity Timing",
+                        tags$span(
+                          class = "tooltip-trigger",
+                          `data-tooltip` = "Whether toxicity is primarily acute, chronic, or both.",
+                          HTML("&#9432;")
+                        )
+                    ),
+                    div(class = "prop-value", textOutput("tox_timing_chem", inline = TRUE))
+                )
+            )
+        )
+        
+      ), # /sidebarPanel
+      
+      
+      # ── MAIN PANEL ──────────────────────────────────────────────────────────
+      mainPanel(
+        align = "center",
+        class = "paddle-main",
+        
+        # ── Currently viewing banner ─────────────────────────────────────────
+        div(class = "viewing-banner",
+            htmlOutput("currentlyViewing_chem"),
+        ),
+        
+        # ════════════════════════════════════════════════════════════════════
+        # SECTION 1: Forest Plot
+        # ════════════════════════════════════════════════════════════════════
+        div(class = "content-section",
+            
+            div(class = "section-header",
+                div(class = "section-num", "01"),
+                div(class = "section-title-block",
+                    h3("Top 15 Disease Associations", class = "section-title"),
+                    p("Ranked by log-odds from the selected model.", class = "section-subtitle")
+                ),
+                # Collapsible legend toggle
+                tags$button(
+                  id    = "legend_toggle",
+                  class = "legend-toggle-btn",
+                  onclick = "toggleLegend('chart-legend')",
+                  HTML("&#9432; How to read this chart")
+                )
+            ),
+            
+            # Collapsible legend
+            div(id = "chart-legend", class = "chart-legend collapsed",
+                div(class = "legend-note",
+                    HTML("<p>The graph below displays the 15 diagnoses with the strongest positive 
+                         associations with your selected chemical, based on the absolute 
+                         value of the beta coefficient from a logistic elastic net 
+                         model. The odds ratios were calculated by exponentiating the
+                         beta coefficients, representing the change in odds of having 
+                         the diagnosis for each unit increase in the chemical of 
+                         interest.</p>")
+                ),
+                
+                br(),
+                
+                div(class = "legend-grid",
+                    p("Legend"),
+                    div(class = "legend-item",
+                        div(class = "legend-swatch swatch-red-dot"), "Chemical's odds ratio"
+                    ),
+                    div(class = "legend-item",
+                        div(class = "legend-swatch swatch-black-line"), "Range of odds across all chemicals within disease"
+                    ),
+                    div(class = "legend-item",
+                        div(class = "legend-swatch swatch-x"), "Mean odds ratio for disease"
+                    ),
+                    div(class = "legend-item",
+                        div(class = "legend-swatch swatch-grey-band"), "± 1 SD"
+                    ),
+                    div(class = "legend-item",
+                        div(class = "legend-swatch swatch-dashed"), "No association (OR = 1)"
+                    )
+                ),
+                div(class = "legend-note",
+                    HTML("If the red dot sits far right of the grey band, this chemical is one of 
+            the strongest contributors to that disease. Odds ratios below 1 most likely reflect 
+            <em>visit displacement</em> (this chemical drives other diagnoses that crowd out this one) 
+            rather than a protective effect.")
+                )
+            ),
+            
+            div(class = "plot-container",
+                plotlyOutput("viewPlots_chem") %>% withSpinner(color = "transparent", type = 6),
+                
+                div(class = "legend-note",
+                    HTML("<p style='text-align: left;'><b>Note: </b>If a diagnosis is presented, then the chemical interactions with that diagnosis are potentially important. any association presented should be evaluated for molecular or epidemiologic connections beyond this analysis alone.</p>")
+                )
+            ),
+            
+            
+            
+        ), # /section 01
+        
+        # ════════════════════════════════════════════════════════════════════
+        # SECTION 2: Full data table  (collapsible)
+        # ════════════════════════════════════════════════════════════════════
+        div(class = "content-section",
+            
+            div(class = "section-header collapsible-header",
+                onclick = "toggleSection('table-section')",
+                div(class = "section-num", "02"),
+                div(class = "section-title-block",
+                    h3("All Disease Associations", class = "section-title"),
+                    p("Table of all diseases associated with selected chemical.", class = "section-subtitle")
+                ),
+                tags$span(class = "collapse-arrow", id = "table-section-arrow", HTML("&#9660;"))
+            ),
+            
+            div(id = "table-section", class = "collapsible-body",
+                div(class = "legend-note",
+                  HTML("The <b>Total Predictors</b> column shows how many chemicals were associated with a change 
+                       in risk in each diagnosis. The <b>Mean, Standard Deviation, Max,</b> and <b>Min</b> columns show 
+                       summary statistics for the chemicals associated with each diagnosis, so you can guage 
+                       the relative importance of the chemical in moderating diagnosis risk.")
+                ),
+                br(),
+                DT::dataTableOutput("viewTable_chem"),
+                br(),
+                downloadButton("download_diseases_chem", "Download CSV",
+                               class = "download-btn", style="margin-top: 20px;")
+            )
+            
+        ), # /section 02
+        
+        # ════════════════════════════════════════════════════════════════════
+        # SECTION 3: US Map  (collapsible)
+        # ════════════════════════════════════════════════════════════════════
+        div(class = "content-section",
+            
+            div(class = "section-header collapsible-header",
+                onclick = "toggleSection('map-section')",
+                div(class = "section-num", "03"),
+                div(class = "section-title-block",
+                    h3("US Exposure Distribution", class = "section-title"),
+                    p("County-level chemical release.", class = "section-subtitle")
+                ),
+                tags$span(class = "collapse-arrow", id = "map-section-arrow", HTML("&#9660;"))
+            ),
+            
+            div(id = "map-section", class = "collapsible-body",
+                
+                div(class = "legend-note",
+                    HTML("Results are min-max scaled (The county with the highest release is 1). Click <b>Generate Map</b> to load (may take ~1 min).")
+                ),
+        
+                div(class = "map-warning",
+                    HTML("&#9888; Generating this map reads large CSV files and may temporarily 
+            slow other sections of the app.")
+                ),
+                div(style="margin-bottom: 10px;",
+                  actionBttn("generate_map_chem",
+                             label = HTML("Generate Map<br/><span style='font-size:12px; font-weight:400;'>Re-click after changing inputs to refresh</span>"),
+                             style = "fill", color = "primary", size = "sm"),
+                ),
+                plotlyOutput("US_map_chem")  %>% withSpinner(color = "transparent", type = 6),
+                
+            )
+            
+        ), # /section 03
+        
+        # ════════════════════════════════════════════════════════════════════
+        # SECTION 4: At-Risk Groups  (collapsible)
+        # ════════════════════════════════════════════════════════════════════
+        div(class = "content-section",
+            
+            div(class = "section-header collapsible-header",
+                onclick = "toggleSection('risk-section')",
+                div(class = "section-num", "04"),
+                div(class = "section-title-block",
+                    h3("At-Risk Groups", class = "section-title"),
+                    p("Associations with deprivation index, ethnicity & historic redlining (where present).", class = "section-subtitle")
+                ),
+                tags$span(class = "collapse-arrow", id = "risk-section-arrow", HTML("&#9660;"))
+            ),
+            
+            div(id = "risk-section", class = "collapsible-body",
+                div(class = "legend-note",
+                    HTML("Log odds > 0 (Red) indicate the chemical is more prevalent in zip codes
+                    with a higher proportion of that group or greater deprivation/redlining.
+                    Log odds < 0 (blue) suggest the inverse.
+                    Only categories with a meaningful association are shown.")
+                ),
+                br(),
+                
+                uiOutput("at_risk_combined_chem")
+            )
+            
+        ), # /section 04
+        
+        # ════════════════════════════════════════════════════════════════════
+        # SECTION 5: Products  (collapsible)
+        # ════════════════════════════════════════════════════════════════════
+        div(class = "content-section",
+            
+            div(class = "section-header collapsible-header",
+                onclick = "toggleSection('products-section')",
+                div(class = "section-num", "05"),
+                div(class = "section-title-block",
+                    h3("Products Containing This Chemical", class = "section-title"),
+                    p("Source: EPA ChemExpo database. Absence of results does not rule out presence in other products.", class = "section-subtitle")
+                ),
+                tags$span(class = "collapse-arrow", id = "products-section-arrow", HTML("&#9660;"))
+            ),
+            
+            div(id = "products-section", class = "collapsible-body",
+                div(class = "center-container",
+                    column(10,
+                           DT::dataTableOutput("product_table_chem")
+                    )
+                )
+            )
+            
+        ) # /section 05
+        
+      ) # /mainPanel
+    ) # /sidebarLayout
+  ), # /tabPanel
   
   # Search by diagnosis ----
   tabPanel(
@@ -357,589 +833,365 @@ ui <- navbarPage(
     sidebarLayout(
       
       sidebarPanel(
-        style="padding: 0px 30px 0px 30px;",
+        id    = "searchByDisease",
+        class = "paddle-sidebar",
         
-        h4("Search by Diagnosis"),
-        
-        selectInput(
-          "pollutionSource_disease",
-          "Pollution Source:",
-          choices = c("Air", "Water - non-spatial only" = "Water"),
-          selected = "Air"
+        div(class = "sidebar-header",
+            h3("Search Diagnoses", class = "sidebar-title")
         ),
         
-        selectizeInput(
-          "searchDisease_disease",
-          "Disease of Interest:",
-          choices = NULL,
-          selected = NULL,  # Ensure nothing is pre-selected
-          options = list(
-            placeholder = 'Start typing or select chemical from dropdown',
-            onInitialize = I('function() { this.clear(); }') # Force clearing on load
-          )
+        hr(class = "sidebar-divider"),
+        
+        # ── Pollution Source ─────────────────────────────────────────────────
+        div(class = "input-group-paddle",
+            tags$label("Pollution Source",
+                       class = "input-label",
+                       tags$span(
+                         class = "tooltip-trigger",
+                         `data-tooltip` = "Air: 571 TRI/RSEI chemicals. Water: 42 UCMR drinking-water contaminants (non-spatial only).",
+                         HTML("&#9432;")
+                       )
+            ),
+            div(class = "toggle-pill-group",
+                tags$input(type = "radio", name = "pollutionSource_disease", id = "ps_disease_air",
+                           value = "Air", checked = NA,
+                           class = "toggle-pill-input", `data-target` = "pollutionSource_disease"),
+                tags$label(`for` = "ps_disease_air",   class = "toggle-pill", "Air"),
+                tags$input(type = "radio", name = "pollutionSource_disease", id = "ps_disease_water",
+                           value = "Water",
+                           class = "toggle-pill-input", `data-target` = "pollutionSource_disease"),
+                tags$label(`for` = "ps_disease_water", class = "toggle-pill", "Water")
+            ),
+            div(style = "display:none;",
+                selectInput("pollutionSource_disease", NULL,
+                            choices  = c("Air", "Water - non-spatial only" = "Water"),
+                            selected = "Air"
+                )
+            )
         ),
         
-        selectizeInput(
-          "comb_or_strat_disease",
-          "View Combined or Stratified Data:",
-          choices = c("Combined", "Stratified"),
-          selected = "Combined"
+        # ── Disease of Interest ──────────────────────────────────────────────
+        div(class = "input-group-paddle",
+            tags$label("Disease of Interest", class = "input-label"),
+            selectizeInput(
+              "searchDisease_disease", NULL,
+              choices = NULL,
+              selected = NULL,
+              options = list(
+                placeholder = 'Start typing or select disease from dropdown',
+                onInitialize = I('function() { this.clear(); }')
+              )
+            )
+        ),
+        
+        # ── Combined / Stratified ────────────────────────────────────────────
+        div(class = "input-group-paddle",
+            tags$label("View Data",
+                       class = "input-label",
+                       tags$span(
+                         class = "tooltip-trigger",
+                         `data-tooltip` = "Combined: single model pooling all ages. Stratified: separate models by age group and model type.",
+                         HTML("&#9432;")
+                       )
+            ),
+            div(class = "toggle-pill-group",
+                tags$input(type = "radio", name = "comb_or_strat_disease", id = "cs_combined",
+                           value = "Combined", checked = NA,
+                           class = "toggle-pill-input", `data-target` = "comb_or_strat_disease"),
+                tags$label(`for` = "cs_combined",  class = "toggle-pill", "Combined"),
+                tags$input(type = "radio", name = "comb_or_strat_disease", id = "cs_stratified",
+                           value = "Stratified",
+                           class = "toggle-pill-input", `data-target` = "comb_or_strat_disease"),
+                tags$label(`for` = "cs_stratified", class = "toggle-pill", "Stratified")
+            ),
+            div(style = "display:none;",
+                selectInput("comb_or_strat_disease", NULL,
+                            choices  = c("Combined", "Stratified"),
+                            selected = "Combined"
+                )
+            )
         ),
         
         uiOutput("strat_select_input_disease"),
         
+      
       ),
       
       mainPanel(
         align = "center",
-        style="padding: 0px 50px 0px 30px;",
-        uiOutput("comb_or_strat_disease"),
-      ),
-    ),
-    
-    fluidPage(
-      align = "center",
-      
-        fluidRow(
-          # Distribution of chemical release across the US
-          h3("Distribution Across the US"),
-          div(class="center-container",
-            column(6, style="background-color: #333333; padding: 10px 10px 5px 10px;",
-                     p("Be advised that the generation of this figure may take several 
-                        minutes and may reduce the performace of other sections of the website."),
-                     ),
-            ),
-          br(),
-          actionBttn("generate_map_disease", "Generate Map"),
-          br(),
-          br(),
-          p("If you have changed the input settings, click the Generate Map button again to update the results."),
-          div(class = "center-container",
-              column(8, 
-                     p("Note that the rates are 
-                       derived from the providers location, not the patient's. This means that
-                       for diagnoses that require a specialist, the specialist's county
-                       may be artificially inflated."),
-                     plotlyOutput("US_map_disease") %>% withSpinner(color = "#666666", type = 6),
-                     br(),
-                     h4("Top 10 Counties in Each Age Group"),
-                     p("The following counties had the highest clinical visit rates
-                       for the selected diesease for each age group. If an age group does not
-                       appear in the table, that means no visits were recorded for
-                       the selected diagnosis in that age group."),
-                     DT::dataTableOutput("top_10_disease"),
-                     ),
-              ),
-          
-        ),
-      
-        fluidRow(
-          h3("Chemical Class Summary"),
-          div(class = "center-container",
-              column(
-                6,
-                p(
-                  "The donut chart displays the chemical classes of the compounds
-                             this diagnosis is associated with. The table lists the classes,
-                             from most to least common, and the chemicals found within that class."
-                ),
-                p(
-                  "Note: There are overlapping chemicals between the chemical
-                             classes, as certain groups of chemicals fall under broader
-                             categories. For example, Phthalates are often described as
-                             Endocrine disruptors and BTEX substances are often described
-                             as Volatile Organic Compounds.
-                           "
-                ),
-                p("Hover mouse over chart or table for more chemical class information."),
-              ), ), 
-          br(),
-          column(5, 
-                 plotlyOutput("chem_class_pie_disease"), 
-          ),
-          column(7, 
-                 DT::dataTableOutput("chem_class_count_disease"),
-                 br(),
-                 downloadButton("download_chem_class_count"),
-                 br(),
-          ),
-        ),
+        class = "paddle-main",
         
-
-        uiOutput("pathway_enrichment_disease"),
-    ),
+        # ════════════════════════════════════════════════════════════════════
+        # SECTION 1: Chemical Associations (combined or stratified)
+        # ════════════════════════════════════════════════════════════════════
+        div(class = "content-section",
+            
+            div(class = "section-header",
+                div(class = "section-num", "01"),
+                div(class = "section-title-block",
+                    h3("Chemical Associations", class = "section-title"),
+                    p("Chemicals associated with the selected diagnosis.", class = "section-subtitle")
+                ),
+                tags$button(
+                  id    = "disease_legend_toggle",
+                  class = "legend-toggle-btn",
+                  onclick = "toggleLegend('disease-chart-legend')",
+                  HTML("&#9432; How to read this chart")
+                )
+            ),
+            
+            # Collapsible legend
+            div(id = "disease-chart-legend", class = "chart-legend collapsed",
+                div(class = "legend-note",
+                    HTML("<p>If a chemical is presented, then the interactions with the disease you 
+                         selected is potentially important. If the red dot sits far right of the grey 
+                         band, this chemical is one of the strongest contributors to that disease.
+                         Odds ratios below 1 most likely reflect visit displacement (this chemical 
+                         drives other diagnoses that crowd out this one) rather than a protective effect.
+                         </p><p>For example, a chemical which triggered asthma would drive more people with asthma to 
+                         see their health care provider; if enough people were being seen for 
+                         asthma, it may leave less clinic appointments for people with other lung 
+                         diseases. Thus, any association presented should be evaluated for 
+                         molecular or epidemiologic connections beyond this analysis alone.</p>")
+                )
+            ),
+            
+            div(class = "viewing-banner",
+                htmlOutput("currentlyViewing_disease"),
+            ),
+            
+            div(class = "plot-container",
+                uiOutput("comb_or_strat_disease_out")
+            )
+            
+        ), # /section 01
+        
+        # ════════════════════════════════════════════════════════════════════
+        # SECTION 2: Distribution Across the US  (collapsible)
+        # ════════════════════════════════════════════════════════════════════
+        div(class = "content-section",
+            
+            div(class = "section-header collapsible-header",
+                onclick = "toggleSection('disease-map-section')",
+                div(class = "section-num", "02"),
+                div(class = "section-title-block",
+                    h3("Distribution Across the US", class = "section-title"),
+                    p("County-level disease visit rates.", class = "section-subtitle")
+                ),
+                tags$span(class = "collapse-arrow", id = "disease-map-section-arrow", HTML("&#9660;"))
+            ),
+            
+            div(id = "disease-map-section", class = "collapsible-body",
+                
+                div(class = "map-warning",
+                    HTML("&#9888; Generating this map reads large files and may temporarily slow other sections of the app.")
+                ),
+                div(class = "legend-note",
+                    HTML("Note: rates are derived from the <em>provider's</em> location, not the patient's. Diagnoses requiring a specialist may artificially inflate that county's rate.")
+                ),
+                div(style="margin-bottom: 10px;",
+                  actionBttn("generate_map_disease",
+                             label = HTML("Generate Map<br/><span style='font-size:12px; font-weight:400;'>Re-click after changing inputs to refresh</span>"),
+                             style = "fill", color = "primary", size = "sm")
+                ),
+                plotlyOutput("US_map_disease") %>% withSpinner(color = "transparent", type = 6),
+                br(),
+               
+                div(class = "legend-note", 
+                    h3(class='section-title', "Top 10 Counties in Each Age Group"),
+                    HTML("The following counties had the highest clinical visit rates for the selected diesease for each age group. If an age group does not appear in the table, that means no visits were recorded for the selected diagnosis in that age group.")
+                ),
+                DT::dataTableOutput("top_10_disease"),
+                br()
+            )
+            
+        ), # /section 02
+        
+        # ════════════════════════════════════════════════════════════════════
+        # SECTION 3: Chemical Class Summary  (collapsible)
+        # ════════════════════════════════════════════════════════════════════
+        div(class = "content-section",
+            
+            div(class = "section-header collapsible-header",
+                onclick = "toggleSection('disease-class-section')",
+                div(class = "section-num", "03"),
+                div(class = "section-title-block",
+                    h3("Chemical Class Summary", class = "section-title"),
+                    p("Breakdown of associated chemical classes.", class = "section-subtitle")
+                ),
+                tags$span(class = "collapse-arrow", id = "disease-class-section-arrow", HTML("&#9660;"))
+            ),
+            
+            div(id = "disease-class-section", class = "collapsible-body",
+                div(class = "legend-note",
+                    HTML("The donut chart shows the chemical classes associated with this diagnosis. The table lists classes from most to least common with the chemicals within each class.
+                         <br><b>Note:</b> Classes overlap: Phthalates are also Endocrine Disruptors, and BTEX are also Volatile Organic Compounds. Hover over chart or table for details.")
+                ),
+                br(),
+                fluidRow(
+                  column(5, plotlyOutput("chem_class_pie_disease")),
+                  column(7,
+                         DT::dataTableOutput("chem_class_count_disease"),
+                         br(),
+                  ),
+                ),
+                downloadButton("download_chem_class_count", "Download CSV",
+                               class = "download-btn")
+            )
+            
+        ) # /section 03
+        
+      ) # /mainPanel
+    ), # /sidebarLayout
+    
+    # ════════════════════════════════════════════════════════════════════
+    # SECTION 4: Pathway Enrichment  (collapsible) - FULL WIDTH
+    # ════════════════════════════════════════════════════════════════════
+    fluidRow(
+      align = "center",
+      column(12,
+             div(class = "content-section",
+                 
+                 div(class = "section-header collapsible-header",
+                     onclick = "toggleSection('disease-pathway-section')",
+                     div(class = "section-num", "04"),
+                     div(class = "section-title-block",
+                         h3("Pathway Enrichment", class = "section-title"),
+                         p("Biological pathways implicated by associated chemicals.", class = "section-subtitle")
+                     ),
+                     tags$span(class = "collapse-arrow", id = "disease-pathway-section-arrow", HTML("&#9660;"))
+                 ),
+                 
+                 div(id = "disease-pathway-section", class = "collapsible-body",
+                     uiOutput("pathway_enrichment_disease")
+                 )
+                 
+             ) # /section 04
+      )
+    )
   ), 
   
   # Social determinants of health ----
   tabPanel("Determinants of Health",
-           # Make a page layout that contains a side panel for inputs  and a main panel for outputs
            
-           fluidPage(
-             tags$head(
-               tags$style('
-                          ul.nav-pills{
-                            display: flex !important;
-                            justify-content: center !important;
-                          }')
-             ),
-             align = "center",
+           sidebarLayout(
              
-             h3("Search Determinants"),
-             
-             
-             tabsetPanel(
-               type="pills",
-               tabPanel(
-                 "Ethnicity",
-                 br(),
-                 div(class = 'center-container',
-                     column(
-                       6,
-                       p(
-                         "This table displays the risk of chemical exposures, through
-              an odds ratio, based on the ethnicity you have selected.
-              “Longitude” or “latitude” may appear in the table. While they
-              are not chemical exposures, they are included to express that
-              certain chemicals have greater exposure in certain regions of
-              the country."
-                       ),
-              p(
-                "Longitude and latitude may also be associated with racial
-              demographics given that US populations are not evenly
-              distributed – for example, Black American populations represent a 
-              higher percentage of zip codes in the South Eastern US than other areas."
-              ),
-                     ), ),
-              
-              fluidRow(
-                column(
-                  3,
-                  selectInput(
-                    "pollutionSource_determinant",
-                    "Pollution Source",
-                    choices = c("Air",
-                                "Water - non-spatial only" = "Water"),
-                    selected = "Air"
-                  ),
-                  
-                  selectInput(
-                    "dataSource_determinant",
-                    "Model Type",
-                    choices = c("Non-spatial" = "non_spatial",
-                                "Spatial" = "spatial"),
-                    selected = "non_spatial"
-                  ),
-                  
-                  selectInput(
-                    "race_determinant",
-                    "Percent _______ in zip code:",
-                    choices = c(
-                      "White" = "White",
-                      "Black" = "BlackAA",
-                      "Native American" = "NativeAmerican",
-                      "Asian & Pacific Islander" = "AAPI",
-                      "Hispanic" = "Hispanic"
-                    ),
-                    selected = "White"
-                  )
-                ),
-                column(6, plotlyOutput("viewPlots_race_determinant"),),
-              ),
-              br(),
-              div(class = "center-container",
-                  column(
-                    6, DT::dataTableOutput("viewTable_race_determinant")
-                  ), ),
-              br(),
+             sidebarPanel(
+               id    = "determinantsPanel",
+               class = "paddle-sidebar",
+               
+               div(class = "sidebar-header",
+                   h3("Search Determinants", class = "sidebar-title")
                ),
-              
-              tabPanel(
-                "Deprivation",
-                br(),
-                div(class = 'center-container',
-                    column(
-                      6,
-                      p(
-                        "The Area Deprivation Index (ADI) is a widely used and well-validated
-           composite measure of 17 different variables of education, employment,
-           housing-quality, and income. The ADI uses data from the American Community
-           Survey to assign census block groups a number denoting its level of
-           neighborhood socioeconomic disadvantage. Higher numbers on the ADI indicate
-           greater disadvantage. It is currently maintained and regularly updated by
-           the University of Wisconsin’s School of Medicine and Public Health"
-                      ),
-                    ), ),
-           
-           div(class = "center-container",
-               column(
-                 6, plotlyOutput("viewPlots_deprivation_determinant")
-               ), ),
-           
-           br(),
-           
-           div(class = "center-container",
-               column(
-                 6, DT::dataTableOutput("viewTable_deprivation_determinant")
-               ), ),
-           
-           br(),
-           
-              ),
-           
-           tabPanel(
-             "Historic Red Lining",
-             br(),
-             div(class = 'center-container',
-                 column(
-                   6,
-                   p(
-                     "The Historic Redlining Score is a metric to express the
-                   extent to which historic redlining practices in the 20th
-                   century have affected concentrated inequality and racial
-                   disparities today. Redlining was a discriminatory practice
-                   describing the government sanctioned denial of financial
-                   services, such as mortgage loans and insurance, to minority
-                   communities, especially Black communities. Redlining practices
-                   sequestered minority communities into neighborhoods deemed
-                   “hazardous” and were  a key mechanism by which the United
-                   States maintained and deepened social inequities over time.
-                   The Historic Redling Score was determined by overlaying
-                   historic Home Owners’ Loan Corporation (HOLC) redlining maps
-                   with the 2020 census tracts and assigning the neighborhood
-                   classification grades a numerical score. A higher HRS conveys
-                   more redlining in a given census tract. The scores are weighted
-                   to account for spatial discrepancies between historic maps
-                   and the 2020 census tracts. "
+               
+               hr(class = "sidebar-divider"),
+               
+               # ── Pollution Source ──────────────────────────────────────────
+               div(class = "input-group-paddle",
+                   tags$label("Pollution Source", class = "input-label"),
+                   div(class = "toggle-pill-group",
+                       tags$input(type = "radio", name = "pollutionSource_determinant",
+                                  id = "pd_air", value = "Air", checked = NA,
+                                  class = "toggle-pill-input", `data-target` = "pollutionSource_determinant"),
+                       tags$label(`for` = "pd_air",   class = "toggle-pill", "Air"),
+                       tags$input(type = "radio", name = "pollutionSource_determinant",
+                                  id = "pd_water", value = "Water",
+                                  class = "toggle-pill-input", `data-target` = "pollutionSource_determinant"),
+                       tags$label(`for` = "pd_water", class = "toggle-pill", "Water")
                    ),
-                 ),),
-             
-             fluidRow(column(
-               3,
-               
-               selectInput(
-                 "pollutionSource_hrs_determinant",
-                 "Pollution Source",
-                 choices = c("Air",
-                             "Water - non-spatial only" = "Water"),
-                 selected = "Air"
+                   div(style = "display:none;",
+                       selectInput("pollutionSource_determinant", NULL,
+                                   choices  = c("Air", "Water - non-spatial only" = "Water"),
+                                   selected = "Air")
+                   )
                ),
+               
+               # ── Model Type ────────────────────────────────────────────────
+               div(class = "input-group-paddle",
+                   tags$label("Model Type", class = "input-label"),
+                   div(class = "toggle-pill-group",
+                       tags$input(type = "radio", name = "dataSource_determinant",
+                                  id = "dt_nonspatial", value = "non_spatial", checked = NA,
+                                  class = "toggle-pill-input", `data-target` = "dataSource_determinant"),
+                       tags$label(`for` = "dt_nonspatial", class = "toggle-pill", "Non-spatial"),
+                       tags$input(type = "radio", name = "dataSource_determinant",
+                                  id = "dt_spatial",    value = "spatial",
+                                  class = "toggle-pill-input", `data-target` = "dataSource_determinant"),
+                       tags$label(`for` = "dt_spatial",    class = "toggle-pill", "Spatial")
+                   ),
+                   div(style = "display:none;",
+                       selectInput("dataSource_determinant", NULL,
+                                   choices  = c("Non-spatial" = "non_spatial", "Spatial" = "spatial"),
+                                   selected = "non_spatial")
+                   )
+               ),
+               
+               # ── Determinant ───────────────────────────────────────────────
+               div(class = "input-group-paddle",
+                   tags$label("Determinant", class = "input-label"),
+                   div(class = "toggle-pill-group",
+                       tags$input(type = "radio", name = "determinant_tab",
+                                  id = "dt_ethnicity",  value = "Ethnicity", checked = NA,
+                                  class = "toggle-pill-input", `data-target` = "determinant_tab"),
+                       tags$label(`for` = "dt_ethnicity",  class = "toggle-pill", "Ethnicity"),
+                       tags$input(type = "radio", name = "determinant_tab",
+                                  id = "dt_deprivation", value = "Deprivation",
+                                  class = "toggle-pill-input", `data-target` = "determinant_tab"),
+                       tags$label(`for` = "dt_deprivation", class = "toggle-pill", "Deprivation"),
+                       tags$input(type = "radio", name = "determinant_tab",
+                                  id = "dt_hrs",        value = "HRS",
+                                  class = "toggle-pill-input", `data-target` = "determinant_tab"),
+                       tags$label(`for` = "dt_hrs",        class = "toggle-pill", "Red Lining")
+                   ),
+                   div(style = "display:none;",
+                       selectInput("determinant_tab", NULL,
+                                   choices  = c("Ethnicity", "Deprivation", "HRS"),
+                                   selected = "Ethnicity")
+                   )
+               ),
+               
+               # ── Ethnicity (shown only when Ethnicity selected) ────────────
+               uiOutput("ethnicity_select_ui"),
+               
              ),
              
-             column(
-               6, plotlyOutput("viewPlots_hrs_determinant")
-             ),),
-             
-             br(),
-             
-             div(class = "center-container",
-                 column(
-                   6, DT::dataTableOutput("viewTable_hrs_determinant")
-                 ),),
-           ),
-             ),
-           ),
-),
+             mainPanel(
+               class = "paddle-main",
 
-
-# Summary Data ----
-tabPanel("Summary Data",
-         
-         fluidPage(
-           tags$head(
-             tags$style('
-                          ul.nav-pills{
-                            display: flex !important;
-                            justify-content: center !important;
-                          }')
-           ),
-           align = "center",
-           
-           h3("Summary Data"),
-           
-           
-           tabsetPanel(
-             type="pills",
-             tabPanel(
-               "Adult Diagnosis Data",
-               br(),
-               div(class = 'center-container',
-                   column(
-                     6,
-                     p(
-                       "Download heat maps (nonspatial only) or full spread sheets of the various associations identified by P.A.D.D.L.E."
-                     ),
-                     p(
-                       "Note that heat maps are limited to only the associations that are >5 standard deviations removed from 
-                       the mean of all associations."
-                     ),
-                   ), 
-               ),
+               div(class = "content-section",
+                   
+                   div(class = "section-header",
+                       div(class = "section-num", "01"),
+                       div(class = "section-title-block",
+                           h3("Chemical Associations", class = "section-title"),
+                           p("Chemicals whose exposures correlate with this determinant.", class = "section-subtitle")
+                       )
+                   ),
+                   
+                   div(class = "collapsible-body",
+                       div(id = "det-about-section", class = "collapsible-body",
+                           div(class = "legend-note",
+                               uiOutput("determinant_about_text")
+                           )
+                       ),
+                       div(class = "plot-container",
+                           plotlyOutput("viewPlots_determinant_main")
+                       ),
+                       br(),
+                       div(class = "center-container",
+                           column(10,
+                                  DT::dataTableOutput("viewTable_determinant_main"),
+                                  br(),
+                                  downloadButton("downloadSDOH", "Download",
+                                                 class = "download-btn")
+                           )
+                       )
+                   )
+                   
+               ) # /section 02
                
-               fluidPage(
-                 align = "center",
-                 
-                 fluidRow(
-                   h3("Air Pollution and Adults (18-54 yrs old)"),
-                   img(src = "Summary Data Images/Diseases_hm/Adult_Air_nonspatial_5SD.png", align = "center", width='850px'),
-                 ),
-                 
-                 br(),
-                 br(),
-                 
-                 fluidRow(
-                   h3("Water Pollution and Adults (18-54 yrs old)"),
-                   img(src = "Summary Data Images/Diseases_hm/Adult_Water_nonspatial_5SD.png", align = "center", width='850px'),
-                 ),
-                 
-                 br(),
-                 
-                 fluidRow(
-                   h3("Air Pollution and Adults (55-74 yrs old)"),
-                   img(src = "Summary Data Images/Diseases_hm/Retirement_Air_nonspatial_5SD.png", align = "center", width='850px'),
-                 ),
-                 
-                 br(),
-                 
-                 fluidRow(
-                   h3("Water Pollution and Adults (55-74 yrs old)"),
-                   img(src = "Summary Data Images/Diseases_hm/Retirement_Water_nonspatial_5SD.png", align = "center", width='850px'),
-                 ),
-                 
-                 br(),
-                 
-                 fluidRow(
-                   h3("Air Pollution and Adults (75+ yrs)"),
-                   img(src = "Summary Data Images/Diseases_hm/Geriatric_Air_nonspatial_5SD.png", align = "center", width='850px'),
-                 ),
-                 
-                 br(),
-                 
-                 fluidRow(
-                   h3("Water Pollution and Adults (75+ yrs)"),
-                   img(src = "Summary Data Images/Diseases_hm/Geriatric_Water_nonspatial_5SD.png", align = "center", width='850px'),
-                 ),
-                 
-                 br(),
-                 br(),
-                 
-                 
-                 fluidRow(
-                   h3("Download Adult Nonspatial Data"),
-                   downloadButton("downloadNonspatialad", "Download")
-                 ),
-               ),
-               
-               br(),
-               br(),
-               
-               fluidRow(
-                 h3("Download Adult/Peds Spatial Data"),
-                 downloadButton("downloadSpatialad", "Download")
-               )
-             ),
-             
-             
-             
-             tabPanel(
-               "Pediatric Diagnosis Data",
-               br(),
-               div(class = 'center-container',
-                   column(
-                     6,
-                     p(
-                       "Download heat maps (nonspatial only) or full spread sheets of the various associations identified by P.A.D.D.L.E."
-                     ),
-                     p(
-                       "Note that heat maps are limited to only the associations that are >5 standard deviations removed from 
-                       the mean of all associations."
-                     ),
-                   ), 
-               ),
-               
-               fluidPage(
-                 align = "center",
-                 
-                 fluidRow(
-                   h3("Air Pollution and Children (0-5 yrs old)"),
-                   img(src = "Summary Data Images/Diseases_hm/Youth_Air_nonspatial_5SD.png", align = "center", width='850px'),
-                 ),
-                 
-                 br(),
-                 br(),
-                 
-                 fluidRow(
-                   h3("Water Pollution and Children (0-5 yrs old)"),
-                   img(src = "Summary Data Images/Diseases_hm/Youth_Water_nonspatial_5SD.png", align = "center", width='850px'),
-                 ),
-                 
-                 br(),
-                 
-                 fluidRow(
-                   h3("Air Pollution and Children (6-17 yrs old)"),
-                   img(src = "Summary Data Images/Diseases_hm/Pediatric_Air_nonspatial_5SD.png", align = "center", width='850px'),
-                 ),
-                 
-                 br(),
-                 
-                 fluidRow(
-                   h3("Water Pollution and Children (6-17 yrs old)"),
-                   img(src = "Summary Data Images/Diseases_hm/Pediatric_Water_nonspatial_5SD.png", align = "center", width='850px'),
-                 ),
-                 
-                 br(),
-                 br(),
-                 br(),
-
-                 fluidRow(
-                   h3("Download Pediatric Nonspatial Data"),
-                   downloadButton("downloadNonspatial", "Download")
-                 ),
-               ),
-               
-               br(),
-               br(),
-               
-               fluidRow(
-                 h3("Download Adult/Peds Spatial Data"),
-                 downloadButton("downloadSpatial", "Download")
-               ),
-             ),
-             
-             
-             tabPanel(
-               "Social Determinants Data",
-               br(),
-               
-               div(class = 'center-container',
-                   column(
-                     6,
-                     p(
-                       "Download heat maps or full spread sheets of the various associations identified by P.A.D.D.L.E."
-                     ),
-                     p(
-                       "Note that top hits heat maps are limited to only the associations that are >2 standard deviations removed from 
-                       the mean of all associations."
-                     ),
-                   ), 
-               ),
-               
-               fluidPage(
-                 align = "center",
-                 
-                 fluidRow(
-                   h3("Top Hits for Air & Water Pollution and Deprivation (nonspatial)"),
-                   img(src = "Summary Data Images/Social_Determinants/Deprivation/Deprivation_combined_nonspatial_2SD.png", align = "center", width='850px'),
-                 ),
-                 
-                 br(),
-                 br(),
-                 
-                 fluidRow(
-                   h3("Full set for Air & Water Pollution and Deprivation (nonspatial)"),
-                   img(src = "Summary Data Images/Social_Determinants/Deprivation/Deprivation_combined_nonspatial_Full.png", align = "center", width='850px'),
-                 ),
-                 
-                 br(),
-                 
-                 fluidRow(
-                   h3("Pollution linked to Historic Redlining Score (HRS)(nonspatial)"),
-                   img(src = "Summary Data Images/Social_Determinants/HRS_air_water_nonspatial.png", align = "center", width='850px'),
-                 ),
-                 
-                 br(),
-                 
-                 fluidRow(
-                   h3("Top hits for air pollutants associated with increased % of population of given ethnicity (nonspatial)"),
-                   img(src = "Summary Data Images/Social_Determinants/Ethnicity/Ethnicity_air_nonspatial_2SD.png", align = "center", width='850px'),
-                 ),
-                 
-                 br(),
-                 
-                 fluidRow(
-                   h3("Full set for air pollutants associated with increased % of population of given ethnicity  (nonspatial)"),
-                   img(src = "Summary Data Images/Social_Determinants/Ethnicity/Ethnicity_air_nonspatial.png", align = "center", width='850px'),
-                 ),
-                 
-                 br(),
-                 
-                 fluidRow(
-                   h3("Water pollutants associated with increased % of population of given ethnicity (nonspatial)"),
-                   img(src = "Summary Data Images/Social_Determinants/Ethnicity/Ethnicity_water_nonspatial.png", align = "center", width='850px'),
-                 ),
-                 
-                 br(),
-                 
-                 fluidRow(
-                   h3("Top hits for air pollutants associated with increased % of population of given ethnicity  (spatial)"),
-                   img(src = "Summary Data Images/Social_Determinants/Ethnicity/Ethnicity_air_spatial_2SD.png", align = "center", width='850px'),
-                 ),
-                 
-                 br(),
-                 
-                 fluidRow(
-                   h3("Full set for air pollutants associated with increased % of population of given ethnicity  (spatial)"),
-                   img(src = "Summary Data Images/Social_Determinants/Ethnicity/Ethnicity_air_spatial.png", align = "center", width='850px'),
-                 ),
-                 
-                 br(),
-                 br(),
-                 
-                 fluidRow(
-                   h3("Download Social Determinants Data"),
-                   downloadButton("downloadSDOH", "Download"))
-               ),
-             ),
-           ),
-         ),
-    ),
-
-# Summary Data ----
-tabPanel("Additional Links",
-         
-         fluidPage(
-           tags$head(
-             tags$style('
-                          ul.nav-pills{
-                            display: flex !important;
-                            justify-content: center !important;
-                          }')
-           ),
-           align = "center",
-           
-           h3("EPA Where You Live"),
-           
-           div(class = 'center-container',
-               column(
-                 6,
-                 HTML("<p><a href = 'https://www.epa.gov/trinationalanalysis/where-you-live'>https://www.epa.gov/trinationalanalysis/where-you-live</a></p>"),
-                 p(
-                   "This site reports the specific chemicals released by factories, 
-                   and the amounts released.  Search for your state or zip code to 
-                   see the sources of industrial pollution in your area.  Note, 
-                   this site does not collect data on road/automobile exhaust.  
-                   Using this site would allow one to assess the pollutants in 
-                   their area, which can then be searched in PADDLE for disease 
-                   associations of concern." 
-                   ), 
-               ), 
-           ),
-           
-           h3("EPA TRI Toxin Tracker"),
-           
-           div(class = 'center-container',
-               column(
-                 6,
-                 HTML("<p><a href = 'https://edap.epa.gov/public/extensions/TRIToxicsTracker/TRIToxicsTracker.html'>https://edap.epa.gov/public/extensions/TRIToxicsTracker/TRIToxicsTracker.html</a></p>"),
-                 p("This site reports the exact locations for factories releasing 
-                   toxic substances.  Search by address, state, or zip code to see 
-                   the facilities in your area.  Note, this site does not collect
-                   data on road/automobile exhaust."
-                   ), 
-               ), 
-           ),
-           
-
-           
-         ),
+             ) # /mainPanel
+           ) # /sidebarLayout
   ),
+  
 )
