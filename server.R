@@ -713,7 +713,7 @@ server <- function(input, output, session) {
           y = ~reorder(Variable, abs(Odds)),  # Order by extremity
           color = ~Source,  # Different colors for each dataset
           text = ~paste("<b>Chemical:</b>", Variable, 
-                        "<br><b>Source:</b>", Source, 
+                        "<br><b>Source:</b>", gsub("<br>", " ", Source), 
                         "<br><b>Odds Ratio:</b>", signif(Odds, 5)),
           hoverinfo = "text",
           type = "scatter",
@@ -812,7 +812,7 @@ server <- function(input, output, session) {
           y = ~reorder(Variable, abs(Odds)),  # Order by extremity
           color = ~Source,  # Different colors for each dataset
           text = ~paste("<b>Chemical:</b>", Variable, 
-                        "<br><b>Source:</b>", Source, 
+                        "<br><b>Source:</b>", gsub("<br>", " ", Source), 
                         "<br><b>Odds Ratio:</b>", signif(Odds, 5)),
           hoverinfo = "text",
           type = "scatter",
@@ -964,7 +964,9 @@ server <- function(input, output, session) {
     
     # Filter the data to be viewed
     dataToView_disease <- reactive({
-      df_name <- paste(req(input$dataSource_chem), req(input$ageGroup_chem), req(input$pollutionSource_chem), sep = "_")
+      
+      df_name <- paste(req(input$dataSource_disease), req(input$ageGroup_disease), req(input$pollutionSource_disease), sep = "_")
+      
       validate(need(exists(df_name), paste("Dataset not found:", df_name)))
       
       get(df_name) %>%
