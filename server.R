@@ -607,39 +607,31 @@ server <- function(input, output, session) {
       
       
     output$comb_or_strat_disease_out <- renderUI({
+      req(input$comb_or_strat_disease)  # just ensure it exists, don't branch on it
       
-      # Check if the chemical is in the dataset
-      if (req(input$comb_or_strat_disease) == "Combined") {
-        
-        tagList(
-          div(
-            class = "center-container", 
-            uiOutput("viewHistogram_disease_ui_adults"),
-            br()
-          ), 
-          
-          div(
-            class = "center-container", 
-            uiOutput("viewHistogram_disease_ui_kids"),
-            br()
-          ),
-          
-          downloadButton("download_combined_disease_chem_disease",
-                         class = "download-btn"),
-        )
-        
-      } else {
-        
-        tagList(
-          div(class="center-container", column(8, plotlyOutput("viewPlots_disease"),),),
-          br(),
-          DT::dataTableOutput("viewTable_disease"),
-          br(),
-          downloadButton("download_stratified_disease_chem_disease",
-                         class = "download-btn"),
-        )
-        
-      }
+      tagList(
+        # Combined view
+        div(id = "combined-view",
+            div(class = "center-container", uiOutput("viewHistogram_disease_ui_adults"), br()),
+            div(class = "center-container", uiOutput("viewHistogram_disease_ui_kids"), br()),
+            downloadButton("download_combined_disease_chem_disease", class = "download-btn")
+        ),
+        # Stratified view
+        div(id = "stratified-view",
+            div(class = "center-container", column(8, plotlyOutput("viewPlots_disease"))),
+            br(),
+            DT::dataTableOutput("viewTable_disease"),
+            br(),
+            downloadButton("download_stratified_disease_chem_disease", class = "download-btn")
+        ),
+        # JS to toggle visibility immediately without re-render
+        tags$script(HTML(sprintf(
+          "var isStrat = '%s' === 'Stratified';
+       document.getElementById('combined-view').style.display  = isStrat ? 'none' : '';
+       document.getElementById('stratified-view').style.display = isStrat ? '' : 'none';",
+          input$comb_or_strat_disease
+        )))
+      )
     })
         
       
@@ -965,7 +957,8 @@ server <- function(input, output, session) {
     # Filter the data to be viewed
     dataToView_disease <- reactive({
       
-      df_name <- paste(req(input$dataSource_disease), req(input$ageGroup_disease), req(input$pollutionSource_disease), sep = "_")
+      data_source <- if (req(input$pollutionSource_disease) == "Water") "non_spatial" else req(input$dataSource_disease)
+      df_name <- paste(data_source, req(input$ageGroup_disease), req(input$pollutionSource_disease), sep = "_")
       
       validate(need(exists(df_name), paste("Dataset not found:", df_name)))
       
