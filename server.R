@@ -239,9 +239,9 @@ server <- function(input, output, session) {
           marker = list(symbol = "x-thin-open", size = 6, color = "black"),  # Corrected symbol
           hoverinfo = "text",
           text = ~paste0(Description, 
-                         "<br><b>Mean:</b> ", round(Mean, 2), 
-                         "<br><b>± 1 Standard Deviation:</b> ", round(Mean - `Standard Deviation`, 2), "-", round(Mean + `Standard Deviation`, 2),
-                         "<br><b>Range:</b> ", round(Min, 2), "-", round(Max, 2)
+                         "<br><b>Mean:</b> ", round(Mean, 4), 
+                         "<br><b>± 1 Standard Deviation:</b> ", round(Mean - `Standard Deviation`, 4), "-", round(Mean + `Standard Deviation`, 4),
+                         "<br><b>Range:</b> ", round(Min, 4), "-", round(Max, 4)
                          ),
           name = "Mean Disease Odds"
         ) %>%
@@ -252,7 +252,7 @@ server <- function(input, output, session) {
           marker = list(color = "red", size = 6),
           hoverinfo = "text",
           text = ~paste0(Description, "<br>association with<br>", req(input$searchChemical_chem),
-                         "<br><b>Odds Ratio:</b> ", round(Odds, 2)),
+                         "<br><b>Odds Ratio:</b> ", round(Odds, 4)),
           name = "Chemical Odds"
         ) %>%
 
@@ -350,10 +350,6 @@ server <- function(input, output, session) {
       # Build summary text 
       summary_text <- paste0(
         "<b>", max_row$county[[1]], ", ", max_row$state[[1]], "</b> had the <br>highest levels of <br>",
-        req(input$searchChemical_chem), ". <br>This was <b>",
-        ratio, " times higher</b> <br>than the levels in <br><b>",
-        min_row$county[[1]], ", ", min_row$state[[1]],
-        "</b>, which had <br>the lowest non-zero <br>detected levels of <br>",
         req(input$searchChemical_chem), "."
       )
       
@@ -1614,7 +1610,7 @@ server <- function(input, output, session) {
             class = "viewing-banner", htmlOutput("toxin_pathway_text_disease"),),
           br(),
           div(
-            class = "center-container", DT::dataTableOutput("toxin_pathway_disease"),),
+            class = "center-container", DT::dataTableOutput("toxin_pathway_disease", width = "75%"),),
           
           downloadButton("download_pathway_enrichment_disease",
                          class = "download-btn"),
