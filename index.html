@@ -50,7 +50,7 @@
     .navbar-nav > li > a:hover { background-color: rgba(255,255,255,0.1) !important; }
 
     .navbar-nav > li.launch > a {
-      background-color: rgba(255,255,255,0.15);
+      background-color: #00425A;
       border-radius: 4px;
       margin: 10px 4px;
       padding: 5px 14px !important;
@@ -130,28 +130,11 @@
 </head>
 <body>
 
-  <!-- Navbar -->
-  <nav class="navbar navbar-default navbar-fixed-top">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-nav">
-          <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
-        </button>
-      </div>
-      <div class="collapse navbar-collapse" id="main-nav">
-        <ul class="nav navbar-nav navbar-right">
-          <li><a href="https://doi.org/10.1038/s41598-026-39836-2" target="_blank">Paper &#8599;</a></li>
-          <li><a href="https://github.com/ratleyge/PADDLE" target="_blank">GitHub &#8599;</a></li>
-          <li class="launch"><a href="https://ratleyg-paddle.share.connect.posit.cloud/" target="_blank">Launch App &#8599;</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
 
   <div class="container-fluid" style="max-width: fit-content; margin-left: auto; margin-right: auto;">
 
     <!-- Sidebar -->
-    <div class="col-sm-3 paddle-sidebar" style="position: fixed; top: 70px; padding: 10px;">
+    <div class="col-sm-3 paddle-sidebar" style="position: fixed; top: 40px; padding: 30px;">
       <div class="sidebar-header">
         <h3 class="sidebar-title">Contents</h3>
       </div>
@@ -171,6 +154,9 @@
       <a href="https://edap.epa.gov/public/extensions/TRIToxicsTracker/TRIToxicsTracker.html" target="_blank" style="font-size:14px;">TRI Toxics Tracker &#8599;</a><br/>
       <a href="#citation" style="font-size:14px;">Citation</a><br/>
       <a href="#about_us" style="font-size:14px;">About Us</a><br/>
+      </br>
+      </br>
+      <a href="https://ratleyg-paddle.share.connect.posit.cloud/" target="_blank" style="background-color: #00425A; border-radius: 4px; padding: 10px 20px !important; line-height: 20px; font-size: 18px; color: white;">Launch App &#8599;</a>
     </div>
 
     <!-- Spacer -->
@@ -181,9 +167,17 @@
 
       <!-- Logo -->
       <div class="row">
-        <img src="www/PADDLE Black Background.png" align="center" width="650px" alt="PADDLE" style="max-width:100%;" />
+        <img src="www/PADDLE Black Background.png" align="center" width="650px" alt="PADDLE" style="max-width:100%; margin-top: -10px !important; padding-top: 0px;" />
       </div>
-
+      
+      <div class="row">
+        <ul class="nav navbar-nav navbar-right">
+            <li class="launch"><a href="https://ratleyg-paddle.share.connect.posit.cloud/" target="_blank">Launch App &#8599;</a></li>
+            <li><a href="https://doi.org/10.1038/s41598-026-39836-2" target="_blank">Paper &#8599;</a></li>
+            <li><a href="https://github.com/ratleyge/PADDLE" target="_blank">GitHub &#8599;</a></li>
+          </ul>
+      </div>
+      
       <!-- Intro -->
       <div class="teal-bar" style="margin-top: 10px;"></div>
       <div class="white-block">
@@ -382,7 +376,7 @@
       </div><!-- /methods white-block -->
 
       <!-- Additional Links -->
-      <h3 id="additional_links" class="syncopate-bold" style="font-size: 30px; color: white; margin-top: 60px;">Additional Links</h3>
+      <h3 id="additional_links" class="syncopate-bold" style="font-size: 30px; color: white; margin-top: 40px;">Additional Links</h3>
       <div class="teal-bar"></div>
       <div class="white-block" style="margin-bottom: 40px;">
         <div style="margin-top: 5px;">
