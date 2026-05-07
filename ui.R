@@ -61,22 +61,13 @@ ui <- navbarPage(
           
           function toggleAbout(el, id) {
             el.querySelector('.icon-filter').classList.toggle('active');
-            
             var target = document.getElementById(id);
             var isAlreadyOpen = target.classList.contains('open');
-            
-            // Close all (including target if open)
-            document.querySelectorAll('.about-hidden.open').forEach(function(div) {
-              div.classList.remove('open');
-            });
+            document.querySelectorAll('.about-hidden.open').forEach(function(div) { div.classList.remove('open'); });
             document.querySelectorAll('.image-cropper .icon-filter.active').forEach(function(img) {
               if (img !== el.querySelector('.icon-filter')) img.classList.remove('active');
             });
-            
-            // Open the new one simultaneously (skip if it was already open)
-            if (!isAlreadyOpen) {
-              target.classList.add('open');
-            }
+            if (!isAlreadyOpen) { target.classList.add('open'); }
           }
                 
           document.addEventListener('DOMContentLoaded', function() {
