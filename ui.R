@@ -1,8 +1,9 @@
 ## UI ##
 
-
 # Sets up nav bar layout for a shiny app
 ui <- navbarPage(
+  
+  windowTitle = "PADDLE",
   
   # Set my custom Css to make sure that the nav bar layout is compatible with the side bar layout
   header = tags$head(
@@ -57,7 +58,27 @@ ui <- navbarPage(
               Shiny.setInputValue('pollutionSource_determinant', 'Air', {priority: 'event'});
             }
           }
-      
+          
+          function toggleAbout(el, id) {
+            el.querySelector('.icon-filter').classList.toggle('active');
+            
+            var target = document.getElementById(id);
+            var isAlreadyOpen = target.classList.contains('open');
+            
+            // Close all (including target if open)
+            document.querySelectorAll('.about-hidden.open').forEach(function(div) {
+              div.classList.remove('open');
+            });
+            document.querySelectorAll('.image-cropper .icon-filter.active').forEach(function(img) {
+              if (img !== el.querySelector('.icon-filter')) img.classList.remove('active');
+            });
+            
+            // Open the new one simultaneously (skip if it was already open)
+            if (!isAlreadyOpen) {
+              target.classList.add('open');
+            }
+          }
+                
           document.addEventListener('DOMContentLoaded', function() {
       
             // Sync all toggle pills to Shiny
@@ -80,7 +101,6 @@ ui <- navbarPage(
           "
       )
     )
-
   ), 
   
   # Nice theme, but others can be found here: https://rstudio.github.io/shinythemes/
@@ -93,58 +113,67 @@ ui <- navbarPage(
   title = div(
     class = "customNavbar-title",
     img(src="PADDLE Blue Background.png", style="margin: -3px -20px",
-    height = "55px")
+        height = "55px")
   ),
   
   
   tabPanel("Home", fluidPage(style = "max-width: fit-content; margin-left: auto; margin-right: auto;",
-    column(3,
-      class = "paddle-sidebar",
-      style = "position: fixed; top: 70px; padding: 10px;",
-
-      #div(style = "max-width: fit-content; margin-inline: auto;", img(src = "PADDLE Icon.png", height = '200px'),),
-      h4(class = 'syncopate-bold', "Contents"),
-      a("How to Use PADDLE Video", href="#how_to_paddle", style = "font-size:14px;"),
-      br(),
-      a("Citation", href="#citation", style = "font-size:14px; "),
-      br(),
-      
-      h4(style="margin-top: 20px", "Methods"),
-      a("Derivation of Disease Rates", href="#Derivation_of_disease_rates", style = "font-size:14px;"),
-      br(),
-      a("Identification of Pollution Exposures and Modeling", href="#Identification_of_pollution_exposures_and_modeling", style = "font-size:14px;"),
-      br(),
-      a("Additional Comparisons", href="#Additional_comparisons", style = "font-size:14px;"),
-      br(),
-      a("Limitations", href="#Limitations", style = "font-size:14px;"),
-      
-      h4(style="margin-top: 20px", "Additional Links"),
-      a("EPA Where You Live", href="#epa_where_you_live", style = "font-size:14px;"),
-      br(),
-      a("TRI Toxics Tracker", href="#toxics_tracker", style = "font-size:14px;"),
-      br(),
-      a("Download Data", href="#download_data", style = "font-size:14px;"),
-      br(),
-    ),
-    
-    
-    column(4,),
-    
-    column(8,
-      align = "center",
-      class = 'center-container',
-
-      fluidRow(
-        img(src = "PADDLE Black Background.png", align = "center", width='650px'),
-      ),
-      
-      HTML(
-        "
+                             
+     # Contents Section -----------------------------------------------------------------
+     column(3,
+        class = "paddle-sidebar",
+        style = "position: fixed; top: 70px; padding: 10px;",
+        
+        div(class = "sidebar-header",
+            h3("Contents", class = "sidebar-title", style = "font-size: 25px !important; margin-top: 5px; margin-bottom: 5px;")
+        ),
+        a("To Top", href="#top", style = "font-size:14px;"),
+        br(),
+        
+        hr(class = "sidebar-divider"),
+        
+        p(style="margin-top: 20px; margin-bottom: 10px;", a("Methods", href="#methods", class = "h4", style="font-size: 21px"),),
+        a("Derivation of Disease Rates", href="#Derivation_of_disease_rates", style = "font-size:14px;"),
+        br(),
+        a("Pollution Exposures and Modeling", href="#Identification_of_pollution_exposures_and_modeling", style = "font-size:14px;"),
+        br(),
+        a("Additional Comparisons", href="#Additional_comparisons", style = "font-size:14px;"),
+        br(),
+        a("Limitations", href="#Limitations", style = "font-size:14px;"),
+        br(),
+        a("Download Data", href="#download_data",  style = "font-size:14px;"),
+        
+        p(style="margin-top: 20px; margin-bottom: 10px", a("Additional Links", href="#additional_links", class = "h4", style="font-size: 21px")),
+        a(HTML("EPA Where You Live &#8599;"), target="_blank", href="https://www.epa.gov/trinationalanalysis/where-you-live", style = "font-size:14px;"),
+        br(),
+        a(HTML("TRI Toxics Tracker &#8599;"), target="_blank", href="https://edap.epa.gov/public/extensions/TRIToxicsTracker/TRIToxicsTracker.html", style = "font-size:14px; margin-bottom: 20px"),
+        br(),
+        a("Citation", href="#citation", style = "font-size:14px;"),
+        br(),
+        a("About Us", href="#about_us", style = "font-size:14px;"),
+        br(),
+     ),
+     
+     column(4),
+     
+     
+     # Main Panel -----------------------------------------------------------------
+     column(8,
+        align = "center",
+        class = 'center-container',
+        
+        fluidRow(
+          img(src = "PADDLE Black Background.png", align = "center", width='650px'),
+        ),
+        
+        # Intro Section ----------------------------------------------------------------------
+        HTML(
+          "
         <div style='background-color: #00425A; width: 100%; margin-top: 10px; height: 20px'>
         </div>
         <div style='background-color: white; color: black; width: 100%; padding: 10px 40px 10px 40px; margin-top: 0px;'>
         <div>
-          <h4 style='color: black'>A tool for assessing pollution’s potential role in disease</h4>
+          <h4 style='color: black'>A Tool For Assessing Pollution’s Potential Role in Disease</h4>
           <p>Since the 1960s, tens of thousands of chemicals have been added to the global market, yet the vast majority
           lack comprehensive health risk assessments. During this same period, industrialized nations have experienced 
           dramatic increases in inflammatory diseases, raising concerns about environmental contributors. We aim to 
@@ -194,25 +223,20 @@ ui <- navbarPage(
         <h4 style='color: white'>An Introduction to Using PADDLE</h4>
         <iframe width='560' height='315' src='https://www.youtube.com/embed/CksOqC-zP9s?si=B3fuRay7T1ufTuey' title='YouTube video player' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share' referrerpolicy='strict-origin-when-cross-origin' allowfullscreen></iframe>
         </div>
+        "),
         
-        
-        <h3 id='citation' class='syncopate-bold' style='font-size: 50px; color: white; margin-top: 60px'>Cite PADDLE</h3>
-        <div style='background-color: #00425A; width: 100%; margin-top: 0px; height: 20px'>
-        </div>
-        <div style='background-color: white; color: black; width: 100%; padding: 10px 200px 10px 200px; margin-top: 0px;'>
-         <h4 style='color: black'></h4>
-         <p>Grace Ratley, Aditi Vijendra, Jalin Jordan, Pranav Thota, Jordan Zeldin, 
-         Prem Prashant Chaudhary, Ian A Myles. <a href='https://doi.org/10.1038/s41598-026-39836-2'><i>P.A.D.D.L.E.: a hypothesis generation tool for 
-         assessing pollution’s potential role in disease.</i></a> Scientific Reports. 16, 8808 (2026). </p>
-        </div>
-        
+        # Methods Section -----------------------------------------------------------------------
+        HTML("
         <div>
-        <h3 class='syncopate-bold' style='font-size: 50px; color: white; margin-top: 60px'>Methods</h3>
+        <h3 id='methods' class='syncopate-bold' style='font-size: 50px; color: white; margin-top: 60px'>Methods</h3>
         </div>
         
         <div style='background-color: #00425A; width: 100%;  height: 20px; margin-top: 0px;'></div>
-        
         <div style='background-color: white; color: black; padding: 10px 40px 10px 40px; margin-top: 0px; margin-bottom: 40px'>
+        "),
+        
+        # Disease Rates
+        HTML("
         <div style='margin-top: 5px;'>
             <h4 id='Derivation_of_disease_rates' style='color: black'>Derivation of Disease Rates</h4>
             <p style='text-align: left'>&emsp;&emsp;Disease rates were taken from the Agency for Healthcare Research and Quality
@@ -250,7 +274,10 @@ ui <- navbarPage(
         </div>
         
         <img style='width: 90%; margin-bottom: -20px; height: 45px' src='Paddle divider.png'>
+        "),
         
+        # Modeling
+        HTML("
         <div style='margin-top: 20px;'>
             <h4 id='Identification_of_pollution_exposures_and_modeling' style='color: black'>Identification of Pollution Exposures and Modeling</h4>
             <p style='text-align: left'>&emsp;&emsp;Air pollution exposure was derived from the EPA databases <a href='https://www.epa.gov/rsei' target='_blank'>
@@ -304,7 +331,10 @@ ui <- navbarPage(
         </div>
         
         <img style='width: 90%; margin-bottom: -20px; height: 45px' src='Paddle divider.png'>
+        "),
         
+        # Additional Comparisons
+        HTML("
         <div style='margin-top: 20px;'>
             <h4 id='Additional_comparisons' style='color: black'>Additional Comparisons</h4>
             <p style='text-align: left'>&emsp;&emsp;Racial disparities were calculated by taking the percentage
@@ -334,7 +364,10 @@ ui <- navbarPage(
         </div>
         
         <img style='width: 90%; margin-bottom: -20px; height: 45px' src='Paddle divider.png'>
+        "),
         
+        # Limitations
+        HTML("
         <div style='margin-top: 20px;'>
             <h4 id='Limitations' style='color: black'>Limitations</h4>
             <p style='text-align: left'>&emsp;&emsp;The major limitation of this work is that the AHRQ database was only
@@ -380,10 +413,67 @@ ui <- navbarPage(
             </div>
             
             </div>
-            
-            
+          "
+       ),
+                                    
+                                    
+       # Downloads Section --------------------------------------------------                         
+        HTML("
+          <div>
+            <h3 id='download_data' class='syncopate-bold' style='font-size: 50px; color: white; margin-top: 20px'>Download Data</h3>
+          </div>
+          
+          <div style='background-color: #00425A; width: 100%; height: 20px;'></div>
+          
+          <div style='background-color: white; color: black; padding: 10px; margin-bottom: 0px'>
+            <div class='col-sm-6' style='padding: 15px;'>
+              <h4 style='color: #026285;'>Adult Non-Spatial Odds Ratios</h4>
+              <p style='font-size: 14px;'>Download the full table of adult non-spatial elastic net regression coefficients across all diagnoses and pollutants.</p>
+
+        "),
+                                    
+        downloadButton("downloadNonspatialad", "Download", class = "download-btn"),
+                                    
+        HTML("
+            </div>
+            <div class='col-sm-6' style='padding: 15px;'>
+              <h4 style='color: #026285;'>Adult Spatial Odds Ratios</h4>
+              <p style='font-size: 14px;'>Download the full table of adult spatial mixed-effects model coefficients across all diagnoses and pollutants.</p>
+        
+        "),
+                                    
+        downloadButton("downloadSpatialad", "Download", class = "download-btn"),
+                                    
+        HTML("
+            </div>
+            </div>
+            <div style='background-color: white; color: black; padding: 10px; margin-bottom: 0px'>
+            <div class='col-sm-6' style='padding: 15px;'>
+              <h4 style='color: #026285;'>Pediatric Non-Spatial Odds Ratios</h4>
+              <p style='font-size: 14px;'>Download the full table of pediatric non-spatial elastic net regression coefficients across all diagnoses and pollutants.</p>
+        
+        "),
+                                    
+        downloadButton("downloadNonspatial", "Download", class = "download-btn"),
+                                    
+        HTML("
+            </div>
+            <div class='col-sm-6' style='padding: 15px;'>
+              <h4 style='color: #026285;'>Pediatric Spatial Odds Ratios</h4>
+              <p style='font-size: 14px;'>Download the full table of pediatric spatial mixed-effects model coefficients across all diagnoses and pollutants.</p>
+        
+        "),
+                                    
+        downloadButton("downloadSpatial", "Download", class = "download-btn"),
+       
+       HTML("</div></div>"), 
+       
+       
+       
+      # Additional Links Section --------------------------------------------------             
+      HTML("
         <div>
-        <h3 class='syncopate-bold' style='font-size: 50px; color: white; margin-top: 20px'>Additional Links</h3>
+        <h3 id='additional_links' class='syncopate-bold' style='font-size: 50px; color: white; margin-top: 60px'>Additional Links</h3>
         </div>
         
         <div style='background-color: #00425A; width: 100%;  height: 20px; margin-top: 0px;'></div>
@@ -411,78 +501,186 @@ ui <- navbarPage(
         </div>
         
         </div>
-          "
-      ),
+       "),
       
-      
-      
+      # Citation --------------------------------------------------------
       HTML("
-          <div>
-            <h3 id='downoad_data' class='syncopate-bold' style='font-size: 50px; color: white; margin-top: 20px'>Download Data</h3>
-          </div>
-          
-          <div style='background-color: #00425A; width: 100%; height: 20px;'></div>
-          
-          <div style='background-color: white; color: black; padding: 10px; margin-bottom: 0px'>
-            <div class='col-sm-6' style='padding: 15px;'>
-              <h4 style='color: #026285;'>Adult Non-spatial Odds Ratios</h4>
-              <p style='font-size: 14px;'>Download the full table of adult non-spatial elastic net regression coefficients across all diagnoses and pollutants.</p>
-
+        <h3 id='citation' class='syncopate-bold' style='font-size: 50px; color: white; margin-top: 20px'>Cite PADDLE</h3>
+        <div style='background-color: #00425A; width: 100%; margin-top: 0px; height: 20px'>
+        </div>
+        <div style='background-color: white; color: black; width: 100%; padding: 10px 200px 10px 200px; margin-top: 0px;'>
+         <h4 style='color: black'></h4>
+         <p>Grace Ratley, Aditi Vijendra, Jalin Jordan, Pranav Thota, Jordan Zeldin, 
+         Prem Prashant Chaudhary, Ian A Myles. <a href='https://doi.org/10.1038/s41598-026-39836-2' target='_blank'><i>P.A.D.D.L.E.: a hypothesis generation tool for 
+         assessing pollution’s potential role in disease.</i></a> Scientific Reports. 16, 8808 (2026). </p>
+        </div>
         "),
-      
-      downloadButton("downloadNonspatialad", "Download", class = "download-btn"),
+       
+      # About Us Section -----------------------------------------------------
       
       HTML("
-            </div>
-            <div class='col-sm-6' style='padding: 15px;'>
-              <h4 style='color: #026285;'>Adult Spatial Odds Ratios</h4>
-              <p style='font-size: 14px;'>Download the full table of adult spatial mixed-effects model coefficients across all diagnoses and pollutants.</p>
+      <div>
+        <h3 id='about_us' class='syncopate-bold' style='font-size: 50px; color: white; margin-top: 40px'>About Us</h3>
+        </div>
         
-        "),
+        <div style='background-color: #00425A; width: 100%;  height: 20px; margin-top: 0px;'></div>
+        <div style='background-color: white; color: black; padding: 10px 40px 10px 40px; margin-top: 0px; margin-bottom: 40px; width: 100%;'>
+          "),
+      
+      # Insert Pranav after Jalin when he sends his stuff
+      # <div style='width: 25%; text-align: center;'>
+      #   <div class='image-cropper' onclick='toggleAbout(this, &apos;pranav-about&apos;)'>
+      #   <img class='icon-filter' src='PADDLE icon.png'>
+      #   </div>
+      #   <p class='about-name'>Pranav Thota<span style='font-size: 12px; color: #15aee5'>  BS</span></p>
+      #   </div>
+      
+      # Top row
+      HTML("
+          <div style='margin-top: 20px;'>
+            <div style='margin-bottom: 20px; display: flex; justify-content: center; align-items: flex-start;'>
+              <div style='width: 25%; text-align: center;'>
+                <div class='image-cropper' onclick='toggleAbout(this, &apos;grace-about&apos;)'>
+                  <img class='icon-filter' src='Headshots/Grace_Ratley.jpg'>
+                </div>
+                <p class='about-name'>Grace Ratley<span style='font-size: 12px; color: #15aee5'>  BSPH</span></p>
+              </div>
+              <div style='width: 25%; text-align: center;'>
+                <div class='image-cropper' onclick='toggleAbout(this, &apos;aditi-about&apos;)'>
+                  <img class='icon-filter' src='Headshots/Aditi_Vijendra.jpg'>
+                </div>
+                <p class='about-name'>Aditi Vijendra<span style='font-size: 12px; color: #15aee5'>  BA</span></p>
+              </div>
+              <div style='width: 25%; text-align: center;'>
+                <div class='image-cropper' onclick='toggleAbout(this, &apos;jalin-about&apos;)'>
+                  <img class='icon-filter' src='Headshots/Jalin_Jordan.jpg'>
+                </div>
+                <p class='about-name'>Jalin Jordan<span style='font-size: 12px; color: #15aee5'> MD</span></p>
+              </div>
               
-      downloadButton("downloadSpatialad", "Download", class = "download-btn"),
+            </div>
+            
+            <div id='grace-about' class='about-hidden'>
+                <p style='padding: 20px 40px 20px 40px; margin-bottom: 0px'>Grace is a PhD candidate 
+                originally from Niceville, Florida. She earned a Bachelor of Science in Public Health 
+                in nutrition from the University of North Carolina at Chapel Hill. 
+                During her undergraduate studies, she served as Operations Manager for The Bioinformatics 
+                CRO, a remote computational biology company, and following graduation, spent a year working and 
+                traveling across 17 countries. In 2022, Grace joined the Epithelial Therapeutics Unit (ETU) at 
+                the National Institute of Allergy and Infectious Diseases as a postbaccalaureate fellow, 
+                where she developed an interest in environmental medicine. Through a graduate partnership program, 
+                she now splits her time between the Karolinska Institutet in Stockholm, Sweden, and the 
+                ETU Lab in Bethesda, Maryland. Her doctoral research focuses on the 
+                environmental drivers of allergic diseases, employing a range of bioinformatics and 
+                epidemiological methods.</p>
+            </div>
+            <div id='aditi-about' class='about-hidden'>
+                <p style='padding: 20px 40px 20px 40px; margin-bottom: 0px'>Aditi grew up in Toledo, Ohio and received her Bachelor 
+                of Arts in Public Policy at the University of Michigan. After graduating, she completed a postbaccalaureate
+                fellowship in Dr. Ian Myles’s lab at the National Institutes of Allergy and Infectious Disease. She is now 
+                an MD/MPH student in the Miller School of Medicine at the University of Miami with a strong interest in 
+                addressing disparities in the burden of chronic inflammatory disease.</p>
+            </div>
+            <div id='jalin-about' class='about-hidden'>
+                <p style='padding: 20px 40px 20px 40px; margin-bottom: 0px'>Dr. Jordan, is originally from Michigan and was raised 
+                in the Metro Detroit area. He completed medical school at the Perelman School of Medicine at the University 
+                of Pennsylvania. He will begin residency training as a preliminary internal medicine resident at Howard 
+                University Hospital before continuing as a dermatology resident at Howard University. As a medical student, 
+                he trained in the laboratory of Dr. Ian Myles through the NIH Medical Research Scholars Program. His work 
+                has included projects involving hidradenitis suppurativa, atopy, and pollution-related disease associations. 
+                He will ultimately continue training as a clinical-scientist with a research focus on inflammatory skin diseases.</p>
+            </div>
+            <div id='pranav-about' class='about-hidden'>
+                <p style='padding: 20px 40px 20px 40px; margin-bottom: 0px'>Pranav's bio will go here</p>
+            </div>"),
+       
+      # <div style='width: 25%; text-align: center;'>
+      #   <div class='image-cropper' onclick='toggleAbout(this, &apos;jordan-about&apos;)'>
+      #   <img class='icon-filter' src='PADDLE icon.png'>
+      #   </div>
+      #   <p class='about-name'>Jordan Zeldin<span style='font-size: 12px; color: #15aee5'> MD</span></p>
+      #   </div>
       
+      
+      # Bottom Row
       HTML("
-    </div>
-    </div>
-    <div style='background-color: white; color: black; padding: 10px; margin-bottom: 0px'>
-    <div class='col-sm-6' style='padding: 15px;'>
-      <h4 style='color: #026285;'>Pediatric Non-spatial Odds Ratios</h4>
-      <p style='font-size: 14px;'>Download the full table of pediatric non-spatial elastic net regression coefficients across all diagnoses and pollutants.</p>
+            <div style='margin-top: 20px; display: flex; justify-content: center; align-items: flex-start; margin-bottom: 10px'>
+              
+              <div style='width: 25%; text-align: center;'>
+                <div class='image-cropper' onclick='toggleAbout(this, &apos;prem-about&apos;)'>
+                  <img class='icon-filter' src='Headshots/Prem_Prashant_Chaudhary.jpg'>
+                </div>
+                <p class='about-name'>Prem Prashant Chaudhary<span style='font-size: 12px; color: #15aee5'> PhD</span></p>
+              </div>
+              
+              <div style='width: 25%; text-align: center;'>
+              <div class='image-cropper' onclick='toggleAbout(this, &apos;ian-about&apos;)'>
+                <img class='icon-filter' src='Headshots/Ian_Myles.png'>
+              </div>
+              <p class='about-name'>Ian A. Myles<span style='font-size: 12px; color: #15aee5'>  MD MPH</span></p>
+              </div>
+            </div>
+            
+            
+            <div id='jordan-about' class='about-hidden'>
+                <p style='padding: 20px 40px 20px 40px; margin-bottom: 0px'>Jordan's bio will go here</p>
+            </div>
+            <div id='prem-about' class='about-hidden'>
+                <p style='padding: 20px 40px 20px 40px; margin-bottom: 0px'>Dr. Chaudhary is a Staff Scientist in the Epithelial 
+                Therapeutics Unit at the National Institute of Allergy and Infectious Diseases (NIAID). He earned 
+                his PhD in Biotechnology from India and has over a decade of international research experience 
+                spanning the United States, Europe, and Asia. 
+                Dr. Chaudhary’s research focuses on understanding the complex interactions between the microbiome, 
+                metabolome, and environmental factors in human health and disease, with a particular emphasis on 
+                skin biology and atopic dermatitis. He applies systems biology and multi-omics integration approaches 
+                to uncover disease mechanisms, identify biomarkers, and develop translational therapeutic strategies. 
+                He has extensive expertise in microbiome and metabolomics data analysis, including next-generation 
+                sequencing, machine learning, network biology, and high-performance computing. His work integrates 
+                diverse datasets such as 16S, shotgun metagenomics, metatranscriptomics, and LC-MS/GC-MS metabolomics 
+                to study host–microbe–environment interactions. Dr. Chaudhary has authored more than 60 peer-reviewed 
+                publications and contributed to multiple interdisciplinary projects across institutions including 
+                The Ohio State University, Nanyang Technological University, and Université d’Auvergne. His work has 
+                advanced understanding of microbiome-driven disease processes and supports precision medicine approaches. 
+                In addition to his research, he develops open-source computational tools for multi-omics integration and
+                actively mentors trainees in computational biology and microbiome research. His work continues to bridge 
+                fundamental biology with clinical applications, contributing to innovative strategies for managing 
+                inflammatory and microbiome-associated diseases. </p>
+            </div>
+            <div id='ian-about' class='about-hidden'>
+                <p style='padding: 20px 40px 20px 40px; margin-bottom: 0px'>Dr. Myles grew up in Colorado.  After completing medical school at the Univ of Colorado, he trained in 
+                internal medicine at The Ohio State Univ. Medical Center.  He then began training in allergy and clinical 
+                immunology at the National Institutes of Allergy and Infectious Diseases, part of the National Institutes 
+                of Health.  He has worked as a researcher for over 15 years, investigating how environmental factors impact 
+                allergic disease.  He has authored more than 80 peer-reviewed publications on eczema, allergies, and 
+                topical steroid withdrawal.  Dr. Myles has also authored a book, GATTACA Has Fallen, which is about the 
+                harms of researchers looking for the “gene for” common diseases like eczema at the expense of researching 
+                environmental causes.  His research lab has partnered with numerous patient advocacy groups over the years. 
+                Overall, his work has educated the public on the environmental causes of allergic disease and produced the 
+                first topical probiotic targeted for eczema treatment.  He continues to serve as the chief of The Epithelial 
+                Therapeutics Unit and as a medical officer in the United States Public Health Service.</p>
+            </div>
 
-"),
+          </div>
+        </div>
+        "),
       
-      downloadButton("downloadNonspatial", "Download", class = "download-btn"),
-      
-      HTML("
-    </div>
-    <div class='col-sm-6' style='padding: 15px;'>
-      <h4 style='color: #026285;'>Pediatric Spatial Odds Ratios</h4>
-      <p style='font-size: 14px;'>Download the full table of pediatric spatial mixed-effects model coefficients across all diagnoses and pollutants.</p>
-
-"),
-      
-      downloadButton("downloadSpatial", "Download", class = "download-btn"),
-      
-      HTML("
-    </div>
-  </div>
-  
-          
-        <div style='padding: 10px 40px 10px 40px; margin-top: 40px; margin-bottom: 40px'>
+      # Retired Logo -----------------------------------------------------------------
+        HTML("
+        <div style='padding: 10px 40px 10px 40px; margin-top: 20px; margin-bottom: 40px'>
         <div class='col-sm-8'>
           <p class='syncopate-bold' style='font-size: 30px; margin-bottom: 0px'>Retired logo</p>
         </div>
         <div class='col-sm-2'>
         <img height='50px' src='White no background paddle logo.png'></img>
+        
         </div>
         </div>
-            
-"),
+        
+        "),
       
+      ),
     ),
-  ), 
-  ), 
+  ),
   
   # Search chemicals ----
   tabPanel(
@@ -502,13 +700,13 @@ ui <- navbarPage(
         # ── Pollution Source ────────────────────────────────────────────────
         div(class = "input-group-paddle",
             tags$label("Pollution Source",
-                       class = "input-label",
-                       # Inline tooltip trigger
-                       tags$span(
-                         class = "tooltip-trigger",
-                         `data-tooltip` = "Air: 571 TRI/RSEI chemicals. Water: 42 UCMR drinking-water contaminants (non-spatial only).",
-                         HTML("&#9432;")   # ⓘ
-                       )
+                   class = "input-label",
+                   # Inline tooltip trigger
+                   tags$span(
+                     class = "tooltip-trigger",
+                     `data-tooltip` = "Air: 571 TRI/RSEI chemicals.\nWater: 42 UCMR drinking-water contaminants (non-spatial only).",
+                     HTML("&#9432;")   # ⓘ
+                   )
             ),
             div(class = "toggle-pill-group",
                 tags$input(type = "radio", name = "pollutionSource_chem", id = "ps_air",
@@ -542,7 +740,7 @@ ui <- navbarPage(
                        class = "input-label",
                        tags$span(
                          class = "tooltip-trigger",
-                         `data-tooltip` = "Spatial: negative-binomial GLMM with nested geographic random effects (air only). Non-spatial: elastic net regression with lat/lon as covariates.",
+                         `data-tooltip` = "Spatial: negative-binomial GLMM with nested geographic random effects (air only).\nNon-spatial: elastic net regression with lat/lon as covariates.",
                          HTML("&#9432;")
                        )
             ),
@@ -680,24 +878,24 @@ ui <- navbarPage(
                         div(class = "legend-swatch swatch-dashed"), "No association (OR = 1)"
                     )
                 ),
-                div(class = "legend-note",
-                    HTML("If the red dot sits far right of the grey band, this chemical is one of 
-            the strongest contributors to that disease. Odds ratios below 1 most likely reflect 
-            <em>visit displacement</em> (this chemical drives other diagnoses that crowd out this one) 
-            rather than a protective effect.")
-                )
-            ),
-            
-            div(class = "plot-container",
-                plotlyOutput("viewPlots_chem") %>% withSpinner(color = "transparent", type = 6),
                 
                 div(class = "legend-note",
-                    HTML("<p style='text-align: left;'><b>Note: </b>If a diagnosis is presented, then the chemical interactions with that diagnosis are potentially important. any association presented should be evaluated for molecular or epidemiologic connections beyond this analysis alone.</p>")
+                    HTML("If the red dot sits far right of the grey band, this chemical is one of 
+                    the strongest contributors to that disease. Odds ratios below 1 most likely reflect 
+                    <em>visit displacement</em> (this chemical drives other diagnoses that crowd out this one) 
+                    rather than a protective effect.")
                 )
+            ), # / End of How to read this chart
+            div(class = "collapsible-body",
+              div(class = "plot-container",
+                  plotlyOutput("viewPlots_chem") %>% withSpinner(color = "transparent", type = 6),
+                  
+                  div(class = "legend-note",
+                      HTML("<p style='text-align: left;'><b>Note: </b>If a diagnosis is presented, then the chemical interactions with that diagnosis are potentially important. Any association presented should be evaluated for molecular or epidemiologic connections beyond this analysis alone.</p>")
+                  )
+              ),
             ),
-            
-            
-            
+
         ), # /section 01
         
         # ════════════════════════════════════════════════════════════════════
@@ -717,7 +915,7 @@ ui <- navbarPage(
             
             div(id = "table-section", class = "collapsible-body",
                 div(class = "legend-note",
-                  HTML("The <b>Total Predictors</b> column shows how many chemicals were associated with a change 
+                    HTML("The <b>Total Predictors</b> column shows how many chemicals were associated with a change 
                        in risk in each diagnosis. The <b>Mean, Standard Deviation, Max,</b> and <b>Min</b> columns show 
                        summary statistics for the chemicals associated with each diagnosis, so you can guage 
                        the relative importance of the chemical in moderating diagnosis risk.")
@@ -751,15 +949,15 @@ ui <- navbarPage(
                 div(class = "legend-note",
                     HTML("Results are min-max scaled (The county with the highest release is 1). Click <b>Generate Map</b> to load (may take ~1 min).")
                 ),
-        
+                
                 div(class = "map-warning",
                     HTML("&#9888; Generating this map reads large CSV files and may temporarily 
             slow other sections of the app.")
                 ),
                 div(style="margin-bottom: 10px;",
-                  actionBttn("generate_map_chem",
-                             label = HTML("Generate Map<br/><span style='font-size:12px; font-weight:400;'>Re-click after changing inputs to refresh</span>"),
-                             style = "fill", color = "primary", size = "sm"),
+                    actionBttn("generate_map_chem",
+                               label = HTML("Generate Map<br/><span style='font-size:12px; font-weight:400;'>Re-click after changing inputs to refresh</span>"),
+                               style = "fill", color = "primary", size = "sm"),
                 ),
                 plotlyOutput("US_map_chem")  %>% withSpinner(color = "transparent", type = 6),
                 
@@ -848,7 +1046,7 @@ ui <- navbarPage(
                        class = "input-label",
                        tags$span(
                          class = "tooltip-trigger",
-                         `data-tooltip` = "Air: 571 TRI/RSEI chemicals. Water: 42 UCMR drinking-water contaminants (non-spatial only).",
+                         `data-tooltip` = "Air: 571 TRI/RSEI chemicals.\nWater: 42 UCMR drinking-water contaminants (non-spatial only).",
                          HTML("&#9432;")
                        )
             ),
@@ -890,7 +1088,7 @@ ui <- navbarPage(
                        class = "input-label",
                        tags$span(
                          class = "tooltip-trigger",
-                         `data-tooltip` = "Combined: single model pooling all ages. Stratified: separate models by age group and model type.",
+                         `data-tooltip` = "Combined: single model pooling all ages.\nStratified: separate models by age group and model type.",
                          HTML("&#9432;")
                        )
             ),
@@ -914,7 +1112,7 @@ ui <- navbarPage(
         
         uiOutput("strat_select_input_disease"),
         
-      
+        
       ),
       
       mainPanel(
@@ -990,13 +1188,13 @@ ui <- navbarPage(
                     HTML("Note: rates are derived from the <em>provider's</em> location, not the patient's. Diagnoses requiring a specialist may artificially inflate that county's rate.")
                 ),
                 div(style="margin-bottom: 10px;",
-                  actionBttn("generate_map_disease",
-                             label = HTML("Generate Map<br/><span style='font-size:12px; font-weight:400;'>Re-click after changing inputs to refresh</span>"),
-                             style = "fill", color = "primary", size = "sm")
+                    actionBttn("generate_map_disease",
+                               label = HTML("Generate Map<br/><span style='font-size:12px; font-weight:400;'>Re-click after changing inputs to refresh</span>"),
+                               style = "fill", color = "primary", size = "sm")
                 ),
                 plotlyOutput("US_map_disease") %>% withSpinner(color = "transparent", type = 6),
                 br(),
-               
+                
                 div(class = "legend-note", 
                     h3(class='section-title', "Top 10 Counties in Each Age Group"),
                     HTML("The following counties had the highest clinical visit rates for the selected diesease for each age group. If an age group does not appear in the table, that means no visits were recorded for the selected diagnosis in that age group.")
@@ -1155,9 +1353,11 @@ ui <- navbarPage(
                
              ),
              
+             
+             # Determinants Main Panel -------------------------------
              mainPanel(
                class = "paddle-main",
-
+               
                div(class = "content-section",
                    
                    div(class = "section-header",
@@ -1168,28 +1368,29 @@ ui <- navbarPage(
                        )
                    ),
                    
-                   div(class = "collapsible-body",
-                       div(id = "det-about-section", class = "collapsible-body",
-                           div(class = "legend-note",
-                               uiOutput("determinant_about_text")
-                           )
-                       ),
-                       div(class = "plot-container",
-                           plotlyOutput("viewPlots_determinant_main")
-                       ),
-                       br(),
-                       div(class = "center-container",
-                           column(10,
-                                  DT::dataTableOutput("viewTable_determinant_main"),
-                                  br(),
-                                  downloadButton("downloadSDOH", "Download",
-                                                 class = "download-btn")
-                           )
-                       )
-                   )
                    
-               ) # /section 02
-               
+                   div(id = "det-about-section", class = "collapsible-body",
+                       
+                     div(class = "legend-note",
+                         uiOutput("determinant_about_text")
+                     ),
+                   
+                     div(class = "plot-container",
+                         plotlyOutput("viewPlots_determinant_main")
+                     ),
+                     
+                     br(),
+                     
+                     div(class = "center-container",
+                       column(10,
+                          DT::dataTableOutput("viewTable_determinant_main"),
+                          br(),
+                          downloadButton("downloadSDOH", "Download", class = "download-btn")
+                       )
+                     )
+                   ),
+                   
+               ) # / Graph and table
              ) # /mainPanel
            ) # /sidebarLayout
   ),

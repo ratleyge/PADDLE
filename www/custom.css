@@ -941,106 +941,10 @@ General Styles - Owlcarousel
   font-size: 48px;
 }
 
-/* Agency Page Header */
-.agency-page-header:before {
-  background: transparent;
-}
-
-/* About us Page Header */
-.about-page-header:before {
-  background: rgba(2, 2, 2, 0.2);
-}
-
-/* Service Page Header */
-.service-page-header:before {
-  background: rgba(2, 2, 2, 0.1);
-}
-
-/* Pricing Page Header */
-.pricing-page-header {
-  background-position: 40% 14%;
-  background-repeat: no-repeat;
-}
-
-.pricing-page-header:before {
-  background: rgba(2, 2, 2, 0.6);
-}
-
-/* Gallery Page Header */
-.gallery-page-header {
-  background-position: 50% 0%;
-  background-repeat: no-repeat;
-}
-
-.gallery-page-header:before {
-  background: rgba(2, 2, 2, 0.2);
-}
-
-/* Contact Page Header */
-.contact-page-header {
-  background-position: 13% 45%;
-  background-repeat: no-repeat;
-}
-
-.contact-page-header:before {
-  background: rgba(2, 2, 2, 0.5);
-}
-
-/* FAQ Page Header */
-.faq-page-header:before {
-  background: rgba(2, 2, 2, 0.15);
-}
-
-/* Blog Page Header */
-.blog-page-header {
-  background-position: 50% 24%;
-  background-repeat: no-repeat;
-}
-
-.blog-page-header:before {
-  background: rgba(2, 2, 2, 0.3);
-}
-
-/* Restaurant menu Page Header */
-.restaurant-menu-bg:before {
-  background: rgba(2, 2, 2, 0.4);
-}
-
-.restaurant-page-header:before {
-  background: rgba(0, 0, 0, 0.45);
-}
-
-.restaurant-image-overlay:before {
-  background-color: rgba(2, 2, 2, 0.25);
-}
-
-/* Portfolio Page Header */
-.portfolio-page-header {
-  background-position: 50% 50%;
-}
-
-.portfolio-page-header:before {
-  background: rgba(45, 45, 45, 0.45);
-}
-
-/* Landing Page Header */
-.landing-header:before {
-  position: absolute;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(119, 47, 109, 0.52) 95%, rgba(115, 35, 105, 0.58) 100%);
-  content: " ";
-  height: 100%;
-  width: 100%;
-  left: 0;
-  top: 0;
-}
-
 .banner-img {
   margin-top: -145px;
 }
 
-.shop-page-header:before {
-  background: rgba(34, 34, 34, 0.3);
-}
 
 /*--------------------------------------------------------------
 	Footer
@@ -1505,36 +1409,7 @@ Google map
     right: 7px;
     content: "\f106";
   }
-  /* Shop navbar */
-  .navbar-custom .navbar-nav > li:last-child.navbar-cart > a {
-    padding-left: 15px;
-  }
-  .navbar-custom .cart-item-number {
-    display: none;
-  }
-  .navbar-custom .navbar-cart > a:after {
-    content: "\f107";
-  }
-  .navbar-custom .navbar-cart-item a {
-    border: 0 !important;
-  }
-  .dropdown-menu.cart-list {
-    text-align: left;
-    border-bottom: 1px solid rgba(73, 71, 71, 0.15) !important;
-  }
-  .navbar-cart-item {
-    border: none;
-    border-bottom: 1px solid rgba(73, 71, 71, 0.15) !important;
-    padding-bottom: 10px;
-  }
-  .navbar-cart-img {
-    display: none;
-  }
-  .navbar-cart-title {
-    white-space: normal;
-    padding: 0;
-    margin-left: 0;
-  }
+  
   /* Headers */
   .titan-title-size-1 {
     letter-spacing: 2px;
@@ -1712,7 +1587,15 @@ Google map
     color: #00425a !important;
   }
 
-
+  .image-cropper {
+    width: 150px;
+    height: 150px;
+    overflow: hidden;
+    border-radius: 50%;
+    margin: 0 auto;
+    margin-bottom: 15px;
+   cursor: pointer;
+  }
   
   div#relevelRow {
     display: flex !important;
@@ -1895,7 +1778,7 @@ Google map
   border-radius: 5px;
   padding: 8px 12px;
   width: 220px;
-  white-space: normal;
+  white-space: pre-line;
   box-shadow: 0 4px 16px rgba(0,0,0,0.6);
   opacity: 0;
   pointer-events: none;
@@ -2081,6 +1964,43 @@ Google map
 .collapsible-body.hidden {
   display: none;
 }
+
+
+/* ── About Us Section ─────────────────────────── */
+.about-hidden {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease-in-out;
+  text-align: left;
+  background-color: #bbbbbb;
+}
+
+.about-hidden.open {
+  max-height: 1000px;
+  background-color: #eeeeee;
+}
+
+.icon-filter {
+  filter: grayscale(1);
+  width: 150px; 
+  height: 150px; 
+  margin-bottom: 10px; 
+  background-color: black;
+}
+
+.icon-filter.active {
+  filter: grayscale(0);
+}
+
+.about-name {
+  font-size: 21px; 
+  font-weight: 700; 
+  line-height: 1.2; 
+  color: #026285; 
+  margin-bottom: 0px;
+}
+
+
  
 /* ── Chart legend (collapsible) ─────────────────────────── */
 .legend-toggle-btn {

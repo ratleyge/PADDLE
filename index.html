@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PADDLE</title>
+  <meta name="description" content="PADDLE Pollution Associated Disease Diagnosis Likelihood Estimator. An interactive hypothesis-generation tool for assessing pollution's potential role in disease across 61.9 million US healthcare visits." />
+  <meta name="keywords" content="pollution, disease, environmental health, toxicants, PADDLE, epidemiology, air pollution, water pollution, AHRQ" />
+  <meta property="og:title" content="PADDLE: Pollution &amp; Disease Explorer" />
+  <meta property="og:description" content="An interactive tool for assessing pollution's potential role in disease across 61.9M US healthcare visits." />
+  <meta property="og:url" content="https://ratleyge.github.io/PADDLE/" />
+  <meta property="og:type" content="website" />
+
+  <!-- Bootstrap 3 (matches the Shiny app) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+  <style>
+    body {
+      padding-top: 70px;
+      background-color: #060606;
+      color: #ffffff;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    html { scroll-padding-top: 70px; }
+
+    @font-face {
+      font-family: "Syncopate";
+      src: url('www/Syncopate-Bold.ttf') format('truetype');
+      font-weight: 700;
+    }
+
+    .syncopate-bold {
+      font-family: "Syncopate", sans-serif;
+      font-weight: 700;
+    }
+
+    h3 { font-size: 30px; color: #ffffff; letter-spacing: 1px; }
+
+    /* ── Navbar ── */
+    .navbar {
+      background-color: #00425A !important;
+      border: none;
+      min-height: 60px;
+    }
+
+    .navbar-nav > li > a { color: #fff !important; }
+    .navbar-nav > li > a:hover { background-color: rgba(255,255,255,0.1) !important; }
+
+    .navbar-nav > li.launch > a {
+      background-color: rgba(255,255,255,0.15);
+      border-radius: 4px;
+      margin: 10px 4px;
+      padding: 5px 14px !important;
+      line-height: 20px;
+      font-weight: 600;
+    }
+    .navbar-nav > li.launch > a:hover { background-color: rgba(255,255,255,0.3) !important; }
+
+    /* ── Sidebar ── */
+    .paddle-sidebar {
+      background-color: #1a1a1a;
+      border-right: 1px solid #2e2e2e;
+      padding: 24px 24px 32px;
+      border-radius: 0 8px 8px 0;
+    }
+    .paddle-sidebar a { color: #00a8d4; text-decoration: none; }
+    .paddle-sidebar a:hover { color: #aaa; }
+    .sidebar-title { 
+      color: #ffffff; 
+      letter-spacing: 1px; 
+      font-size: 25px !important;
+      margin-top: 5px; 
+      margin-bottom: 5px;
+      font-family: "Syncopate", sans-serif;
+      font-weight: 700;
+    }
+    .sidebar-divider { border-color: #2e2e2e; margin: 12px 0; }
+
+    /* ── Layout ── */
+    .center-container { display: grid; place-items: center; text-align: center; }
+
+    .white-block {
+      background-color: white;
+      color: black;
+      width: 100%;
+      padding: 10px 40px;
+      margin-top: 0;
+    }
+    .white-block h4 { color: #026285; font-size: 21px; font-face: bold;}
+    .white-block p  { color: black; }
+    .white-block a  { color: #00a8d4; }
+
+    .teal-bar { background-color: #00425A; width: 100%; height: 20px; }
+
+    /* ── Stats ── */
+    #summary p.syncopate-bold { font-size: 30px; color: #026285; margin-bottom: 0; }
+
+    /* ── About / headshots ── */
+    .image-cropper {
+      width: 100px; height: 100px;
+      border-radius: 50%; overflow: hidden;
+      margin: 0 auto 8px; cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .image-cropper:hover { border-color: #00a8d4; }
+    .image-cropper img {
+      width: 100%; height: 100%; object-fit: cover;
+      filter: grayscale(100%); transition: filter 0.2s;
+    }
+    .image-cropper:hover img,
+    .image-cropper img.active { filter: none; }
+
+    .about-name { font-size: 14px; font-weight: 600; margin-top: 4px; color: #000; }
+
+    .about-hidden {
+      display: none;
+      background-color: #f5f5f5;
+      border-left: 3px solid #00a8d4;
+      margin: 8px 0 16px;
+      border-radius: 0 4px 4px 0;
+    }
+    .about-hidden.open { display: block; }
+    .about-hidden p { color: #222; }
+
+    .divider-img { width: 90%; height: 45px; margin-bottom: -20px; display: block; margin-left: auto; margin-right: auto; }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-nav">
+          <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+        </button>
+      </div>
+      <div class="collapse navbar-collapse" id="main-nav">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="https://doi.org/10.1038/s41598-026-39836-2" target="_blank">Paper &#8599;</a></li>
+          <li><a href="https://github.com/ratleyge/PADDLE" target="_blank">GitHub &#8599;</a></li>
+          <li class="launch"><a href="https://ratleyg-paddle.share.connect.posit.cloud/" target="_blank">Launch App &#8599;</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid" style="max-width: fit-content; margin-left: auto; margin-right: auto;">
+
+    <!-- Sidebar -->
+    <div class="col-sm-3 paddle-sidebar" style="position: fixed; top: 70px; padding: 10px;">
+      <div class="sidebar-header">
+        <h3 class="sidebar-title">Contents</h3>
+      </div>
+      <a href="#top" style="font-size:14px;">To Top</a><br/>
+      <hr class="sidebar-divider" />
+      <p style="margin-top: 20px; margin-bottom: 10px;">
+        <a href="#methods" class="h4" style="font-size: 21px; color: white">Methods</a>
+      </p>
+      <a href="#Derivation_of_disease_rates" style="font-size:14px;">Derivation of Disease Rates</a><br/>
+      <a href="#Identification_of_pollution_exposures_and_modeling" style="font-size:14px;">Pollution Exposures and Modeling</a><br/>
+      <a href="#Additional_comparisons" style="font-size:14px;">Additional Comparisons</a><br/>
+      <a href="#Limitations" style="font-size:14px;">Limitations</a><br/>
+      <p style="margin-top: 20px; margin-bottom: 10px;">
+        <a href="#additional_links" class="h4" style="font-size: 21px; color: white">Additional Links</a>
+      </p>
+      <a href="https://www.epa.gov/trinationalanalysis/where-you-live" target="_blank" style="font-size:14px;">EPA Where You Live &#8599;</a><br/>
+      <a href="https://edap.epa.gov/public/extensions/TRIToxicsTracker/TRIToxicsTracker.html" target="_blank" style="font-size:14px;">TRI Toxics Tracker &#8599;</a><br/>
+      <a href="#citation" style="font-size:14px;">Citation</a><br/>
+      <a href="#about_us" style="font-size:14px;">About Us</a><br/>
+    </div>
+
+    <!-- Spacer -->
+    <div class="col-sm-4"></div>
+
+    <!-- Main content -->
+    <div id="top" class="col-sm-8 center-container" style="text-align: center;">
+
+      <!-- Logo -->
+      <div class="row">
+        <img src="www/PADDLE Black Background.png" align="center" width="650px" alt="PADDLE" style="max-width:100%;" />
+      </div>
+
+      <!-- Intro -->
+      <div class="teal-bar" style="margin-top: 10px;"></div>
+      <div class="white-block">
+        <h4>A Tool For Assessing Pollution's Potential Role in Disease</h4>
+        <p>Since the 1960s, tens of thousands of chemicals have been added to the global market, yet the vast majority
+        lack comprehensive health risk assessments. During this same period, industrialized nations have experienced
+        dramatic increases in inflammatory diseases, raising concerns about environmental contributors. We aim to
+        provide a tool for researchers to explore associations between environmental toxicant releases and diseases
+        of interest, assess impacts of the route of exposure, connect findings to protein targets and biological
+        pathways, map geographic "hot spots", and identify at-risk populations.</p>
+
+        <img class="divider-img" src="www/Paddle divider.png" alt="" />
+
+        <div id="summary" class="col-sm-12" style="margin-top: 20px;">
+          <div>
+            <div class="col-sm-4">
+              <p class="syncopate-bold">61.9M</p>
+              <p style="font-size: 15px;">Healthcare Visits</p>
+            </div>
+            <div class="col-sm-4">
+              <p class="syncopate-bold">4,533</p>
+              <p style="font-size: 15px;">Diagnoses</p>
+            </div>
+            <div class="col-sm-4">
+              <p class="syncopate-bold">16,451</p>
+              <p style="font-size: 15px;">Zip Codes</p>
+            </div>
+          </div>
+          <div style="margin-top: 10px;">
+            <div class="col-sm-4">
+              <p class="syncopate-bold">571</p>
+              <p style="font-size: 15px;">Air Pollutants</p>
+            </div>
+            <div class="col-sm-4">
+              <p class="syncopate-bold">42</p>
+              <p style="font-size: 15px;">Water Pollutants</p>
+            </div>
+            <div class="col-sm-4">
+              <p class="syncopate-bold">21</p>
+              <p style="font-size: 15px;">Sociodemographic Covariates</p>
+            </div>
+          </div>
+        </div>
+      </div><!-- /intro white-block -->
+
+      <!-- Video -->
+      <div id="how_to_paddle" style="margin-bottom: 0; background-color: #1f1f1f; width: 100%; padding: 10px 0 20px;">
+        <h4 style="color: white; font-size: 21px;">An Introduction to Using PADDLE</h4>
+        <iframe width="560" height="315"
+          src="https://www.youtube.com/embed/CksOqC-zP9s?si=B3fuRay7T1ufTuey"
+          title="YouTube video player" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin" allowfullscreen
+          style="max-width:100%;"></iframe>
+      </div>
+
+      <!-- Methods -->
+      <h3 id="methods" class="syncopate-bold" style="font-size: 30px; color: white; margin-top: 60px;">Methods</h3>
+      <div class="teal-bar"></div>
+      <div class="white-block" style="margin-bottom: 40px;">
+
+        <div style="margin-top: 5px;">
+          <h4 id="Derivation_of_disease_rates">Derivation of Disease Rates</h4>
+          <p style="text-align: left;">&emsp;&emsp;Disease rates were taken from the Agency for Healthcare Research and Quality
+          (AHRQ) <a href="https://www.ahrq.gov/data/innovations/syh-dr.html" target="_blank">Synthetic Healthcare Database for Research (SyH-DR)</a>.
+          The database collected all billable clinical visits in the United States which occurred in 2016. Rates for each International Classification
+          of Diseases (ICD) included in the SyH-DR were calculated by taking the incidence of diagnosis and dividing by the total billed diagnoses
+          for each included zip code. The SyH-DR anonymizes diagnoses in zip codes with less than 10,000 people and the locations for disease
+          diagnoses occurring less than 10,000 times. Therefore, these rare disorders and small towns were pre-excluded from the analysis.
+          We further excluded ICD codes that occurred in less than 2% of zip codes to reduce the risk that an ICD would be used only by a few
+          providers in a localized region. Converting ICD codes to their respective names was performed using the
+          <a href="https://www.cms.gov/medicare/coordination-benefits-recovery/overview/icd-code-lists" target="_blank">ICD code list</a>
+          provided by the Centers for Medicare and Medicaid Services (CMS).</p>
+
+          <p style="text-align: left;">&emsp;&emsp;For any given healthcare visit, up to 10 ICD diagnoses could be assigned in addition to a
+          primary diagnosis. Because the ordering of diagnoses can sometimes reflect administrative rather than clinical priorities, we counted
+          each diagnosis separately rather than relying solely on the primary diagnosis. This approach makes the models more resistant to
+          arbitrary coding decisions and captures disease prevalence more completely. However, we acknowledge this may inflate the apparent
+          frequency of common, chronic, or multi-system diseases (such as diabetes) that generate multiple related diagnostic codes per visit.
+          Multiple visits by the same patient were treated as separate events, as this may reflect greater symptom severity.</p>
+
+          <p style="text-align: left;">&emsp;&emsp;For non-spatial analysis, billing visits were separated into categories of 'Pre-K' (ages 0–5),
+          'pediatric' (6–17 years), 'adult' (18–54 years), 'retirement age' (55–74 years), and 'geriatric' (75 years and older). Each age cohort
+          was modeled independently. Because of the increased computational power required for spatial analysis, subjects were grouped as either
+          adult (18 and over) or pediatric (under 18 years of age).</p><br/>
+        </div>
+
+        <img class="divider-img" src="www/Paddle divider.png" alt="" />
+
+        <div style="margin-top: 20px;">
+          <h4 id="Identification_of_pollution_exposures_and_modeling">Identification of Pollution Exposures and Modeling</h4>
+          <p style="text-align: left;">&emsp;&emsp;Air pollution exposure was derived from the EPA databases
+          <a href="https://www.epa.gov/rsei" target="_blank">Risk-Screening Environmental Indicators (RSEI)</a> and
+          <a href="https://www.epa.gov/toxics-release-inventory-tri-program" target="_blank">Toxics Release Inventory (TRI)</a>.
+          Outdoor concentrations of O<sub>3</sub>, CO, SO<sub>2</sub>, NO<sub>2</sub>, PM<sub>10</sub>, and PM<sub>2.5</sub> were
+          derived from the <a href="https://www.caces.us/" target="_blank">Center for Air, Climate, &amp; Energy Solutions (CACES)</a>
+          using their Land Use Regression (LUR) model, with census tract-level data averaged for overlapping zip codes. Water pollution
+          was separately evaluated using the <a href="https://www.epa.gov/dwucmr" target="_blank">Monitoring Unregulated Contaminants
+          in Drinking Water (UCMR)</a> data from the EPA. The UCMR data from UCMR 3–5 was combined to contrast against the 2016 AHRQ
+          data. If differing measurements of the same chemical were reported in different UCMR databases, the results were averaged
+          prior to analysis. Exposures were collated from the years 2010–2016 to contrast with the AHRQ data from 2016.</p>
+
+          <p style="text-align: left;">&emsp;&emsp;Feature matrices were constructed by the same method as previously described<sup>
+          <a href="https://pubmed.ncbi.nlm.nih.gov/38637696/" target="_blank">1</a>,
+          <a href="https://pubmed.ncbi.nlm.nih.gov/36608129/" target="_blank">2</a>,
+          <a href="https://pubmed.ncbi.nlm.nih.gov/37692200/" target="_blank">3</a></sup>.
+          In brief, for each zip code in the AHRQ database, a 30-mile catchment area was defined around the zip code centroid. The total
+          amount of each pollutant released by facilities within that catchment area was summed. A Gaussian distance-weighting function
+          was applied to account for the fact that the zip code reflects the location of the healthcare provider, not necessarily the
+          patient's residence. Water pollution was attributed only to the zip code of the EPA measurement device, as cross-zip
+          dissemination patterns are not captured in the UCMR data.</p>
+
+          <p style="text-align: left;">&emsp;&emsp;Two complementary modeling approaches were used to assess associations between
+          environmental toxicant exposures and disease diagnosis rates: a non-spatial penalized regression and a spatial penalized
+          regression. Both approaches were applied separately to each of 5,984 disease diagnoses. The predictor matrix for air
+          pollution models included 592 variables: 571 environmental exposures and 21 sociodemographic covariates (census age
+          distributions, deprivation index, population density, and for non-spatial models, latitude and longitude). The water
+          pollution model contained 42 environmental exposures alongside the same sociodemographic covariates. All predictors
+          were standardized prior to modeling to allow comparison across variables with different measurement scales.</p>
+
+          <p style="text-align: left;">&emsp;&emsp;Non-spatial analysis was performed as previously described<sup>
+          <a href="https://pubmed.ncbi.nlm.nih.gov/36608129/" target="_blank">2</a>,
+          <a href="https://pubmed.ncbi.nlm.nih.gov/37692200/" target="_blank">3</a></sup>,
+          using the glmnet package in R. For each disease-age combination, an elastic net regression model was fit (alpha = 0.5)
+          with the regularization parameter tuned via 10-fold cross-validation. Because elastic net regression does not produce
+          p-values, we filtered associations to those with beta-coefficients more than two standard deviations (2SD) from the mean.
+          Correlations more than 5SD from the mean are displayed on the website to improve readability, but all correlations are
+          available in the underlying data.</p>
+
+          <p style="text-align: left;">&emsp;&emsp;For spatial modeling, a negative binomial generalized linear mixed effects model
+          was fit with nested spatial random effects, applied only to air pollution data and the two collapsed age strata (pediatric
+          and adult) due to computational demands. A four-level nested spatial hierarchy was constructed using hierarchical clustering
+          on distances between zip code centroids, generating clusters of approximately 81, 27, 9, and 3 zip codes at each successive
+          level. These clusters were included as random effects to capture spatial autocorrelation at multiple geographic scales.</p><br/>
+        </div>
+
+        <img class="divider-img" src="www/Paddle divider.png" alt="" />
+
+        <div style="margin-top: 20px;">
+          <h4 id="Additional_comparisons">Additional Comparisons</h4>
+          <p style="text-align: left;">&emsp;&emsp;Racial disparities were calculated by taking the percentage representation of
+          each race/ethnicity from the <a href="https://www.census.gov/" target="_blank">US Census of 2020</a>. Deprivation index
+          was collected from the <a href="https://www.neighborhoodatlas.medicine.wisc.edu/" target="_blank">Neighborhood Atlas</a>
+          from the Center of Health Disparities Research at the University of Wisconsin.
+          <a href="https://redivis.com/datasets/rnef-d56dafea8?v=1.0" target="_blank">Historic redlining scores for 2020</a> US
+          census tracts were used after registration from the Environmental Impact Data Collective. Exposure rates for social
+          determinants were collected from the years 2013–2019 to compare against the 2020 census.</p>
+
+          <p style="text-align: left;">&emsp;&emsp;Connecting which commercial products contain any indicated chemical was taken from
+          the <a href="https://comptox.epa.gov/chemexpo/get_data/" target="_blank">EPA ChemExpo databases</a>. Spatial and
+          non-spatial modeling was performed as for diseases. Mapping functions were performed using the ggmap and viridis packages in R.</p>
+
+          <p style="text-align: left;">&emsp;&emsp;Protein-toxicant interactions were accessed from the
+          <a href="http://www.t3db.ca/" target="_blank">Toxin-Target Database (T3DB)</a>. Protein-level enrichment analysis was
+          performed using Fisher's exact test to identify proteins disproportionately targeted by disease-associated toxicants.
+          Pathway enrichment analysis was performed using the enrichR package, referencing GO Biological Process, GO Molecular
+          Function, KEGG, and WikiPathways databases. Enriched proteins are indicated on the website where FDR-corrected p-values
+          are less than 0.05.</p><br/>
+        </div>
+
+        <img class="divider-img" src="www/Paddle divider.png" alt="" />
+
+        <div style="margin-top: 20px;">
+          <h4 id="Limitations">Limitations</h4>
+          <p style="text-align: left;">&emsp;&emsp;The major limitation of this work is that the AHRQ database was only a pilot
+          program encompassing visits in the US in 2016. The inability to assess disease-chemical associations over time likely
+          limits our accuracy. For example, our prior work on Alzheimer's disease used a commercial database spanning 2017–2019
+          and identified slightly different specific chemicals; although the fact that the same chemical class was identified speaks
+          to the value of using pathway and chemical class aggregation in our assessments. One advantage of the AHRQ data is that,
+          unlike most commercial databases, it contains both inpatient and outpatient visit information. Furthermore, should the
+          AHRQ or other agency collect updated disease visit information, P.A.D.D.L.E. could be updated to incorporate the new data.</p>
+
+          <p style="text-align: left;">&emsp;&emsp;The use of zip code-aggregated data introduces important caveats, including the
+          ecological fallacy (population-level associations may not reflect individual risk), the possibility that a patient's zip
+          code of care differs from their home zip code, and potential inflation of results from densely zip-coded urban areas.
+          Despite these limitations, aggregated data enables nationwide analysis while protecting individual privacy, and our
+          penalized regression approach and spatial smoothing terms help mitigate some of these effects. This approach is consistent
+          with our goal of designing a hypothesis-generating tool to identify associations warranting further investigation with
+          individual-level data.</p>
+
+          <p style="text-align: left;">&emsp;&emsp;Another limitation is that our databases assessing functional consequences of
+          chemical exposure are not fully congruent. For example, the database for known protein-pollutant interactions covers only
+          a subset of the overall pollutant data and is enriched for targets that have received greater investigative attention. The
+          pathway analysis offered by P.A.D.D.L.E. may still serve hypothesis generation for researchers. Finally, the authors
+          stress that the data outputs from P.A.D.D.L.E. are correlations and associations only and should not be assumed to be
+          causal, even when statistically significant. Any association identified should either be assessed against the established
+          literature or be experimentally modeled before drawing any conclusions. Notably, negative associations could theoretically
+          represent a protective effect, but because our clinical data derives from healthcare visits rather than individual
+          diagnoses, it is more likely that a given chemical generates other diseases that displace visits for certain ailments,
+          similar to how areas with the highest rates of COVID-19 saw a drop in outpatient visits for non-COVID
+          conditions.<sup><a href="https://pubmed.ncbi.nlm.nih.gov/36893413/" target="_blank">4</a></sup>
+          Both negative and positive associations should spur mechanistic follow-up studies rather than be assumed to reflect
+          causal relationships.</p>
+        </div>
+
+      </div><!-- /methods white-block -->
+
+      <!-- Additional Links -->
+      <h3 id="additional_links" class="syncopate-bold" style="font-size: 30px; color: white; margin-top: 60px;">Additional Links</h3>
+      <div class="teal-bar"></div>
+      <div class="white-block" style="margin-bottom: 40px;">
+        <div style="margin-top: 5px;">
+          <h4 id="epa_where_you_live">EPA Where You Live</h4>
+          <p><a href="https://www.epa.gov/trinationalanalysis/where-you-live" target="_blank">https://www.epa.gov/trinationalanalysis/where-you-live</a></p>
+          <p style="text-align: left;">This site reports the specific chemicals released by factories, and the amounts released. Search for your
+          state or zip code to see the sources of industrial pollution in your area. Note, this site does not collect data on road/automobile
+          exhaust. Using this site would allow one to assess the pollutants in their area, which can then be searched in PADDLE for disease
+          associations of concern.</p>
+        </div>
+        <div style="margin-top: 20px;">
+          <h4 id="toxics_tracker">EPA TRI Toxics Tracker</h4>
+          <p><a href="https://edap.epa.gov/public/extensions/TRIToxicsTracker/TRIToxicsTracker.html" target="_blank">https://edap.epa.gov/public/extensions/TRIToxicsTracker/TRIToxicsTracker.html</a></p>
+          <p style="text-align: left;">This site reports the exact locations for factories releasing toxic substances. Search by address,
+          state, or zip code to see the facilities in your area. Note, this site does not collect data on road/automobile exhaust.</p>
+        </div>
+      </div>
+
+      <!-- Citation -->
+      <h3 id="citation" class="syncopate-bold" style="font-size: 30px; color: white; margin-top: 20px;">Cite PADDLE</h3>
+      <div class="teal-bar"></div>
+      <div class="white-block" style="padding: 10px 200px;">
+        <p>Grace Ratley, Aditi Vijendra, Jalin Jordan, Pranav Thota, Jordan Zeldin, Prem Prashant Chaudhary, Ian A Myles.
+        <a href="https://doi.org/10.1038/s41598-026-39836-2" target="_blank">
+        <i>P.A.D.D.L.E.: a hypothesis generation tool for assessing pollution's potential role in disease.</i></a>
+        Scientific Reports. 16, 8808 (2026).</p>
+      </div>
+
+      <!-- About Us -->
+      <div>
+        <h3 id="about_us" class="syncopate-bold" style="font-size: 30px; color: white; margin-top: 40px;">About Us</h3>
+      </div>
+      <div class="teal-bar"></div>
+      <div class="white-block" style="margin-bottom: 40px; width: 100%;">
+        <div style="margin-top: 20px;">
+
+          <!-- Top row -->
+          <div style="margin-bottom: 20px; display: flex; justify-content: center; align-items: flex-start;">
+            <div style="width: 25%; text-align: center;">
+              <div class="image-cropper" onclick="toggleAbout(this, 'grace-about')">
+                <img class="icon-filter" src="www/Headshots/Grace_Ratley.jpg" alt="Grace Ratley" />
+              </div>
+              <p class="about-name">Grace Ratley<span style="font-size: 12px; color: #15aee5;">  BSPH</span></p>
+            </div>
+            <div style="width: 25%; text-align: center;">
+              <div class="image-cropper" onclick="toggleAbout(this, 'aditi-about')">
+                <img class="icon-filter" src="www/Headshots/Aditi_Vijendra.jpg" alt="Aditi Vijendra" />
+              </div>
+              <p class="about-name">Aditi Vijendra<span style="font-size: 12px; color: #15aee5;">  BA</span></p>
+            </div>
+            <div style="width: 25%; text-align: center;">
+              <div class="image-cropper" onclick="toggleAbout(this, 'jalin-about')">
+                <img class="icon-filter" src="www/Headshots/Jalin_Jordan.jpg" alt="Jalin Jordan" />
+              </div>
+              <p class="about-name">Jalin Jordan<span style="font-size: 12px; color: #15aee5;"> MD</span></p>
+            </div>
+          </div>
+
+          <div id="grace-about" class="about-hidden">
+            <p style="padding: 20px 40px; margin-bottom: 0;">Grace is a PhD candidate originally from Niceville, Florida. She earned a
+            Bachelor of Science in Public Health in nutrition from the University of North Carolina at Chapel Hill. During her undergraduate
+            studies, she served as Operations Manager for The Bioinformatics CRO, a remote computational biology company, and following
+            graduation, spent a year working and traveling across 17 countries. In 2022, Grace joined the Epithelial Therapeutics Unit (ETU)
+            at the National Institute of Allergy and Infectious Diseases as a postbaccalaureate fellow, where she developed an interest in
+            environmental medicine. Through a graduate partnership program, she now splits her time between the Karolinska Institutet in
+            Stockholm, Sweden, and the ETU Lab in Bethesda, Maryland. Her doctoral research focuses on the environmental drivers of allergic
+            diseases, employing a range of bioinformatics and epidemiological methods.</p>
+          </div>
+          <div id="aditi-about" class="about-hidden">
+            <p style="padding: 20px 40px; margin-bottom: 0;">Aditi grew up in Toledo, Ohio and received her Bachelor of Arts in Public Policy
+            at the University of Michigan. After graduating, she completed a postbaccalaureate fellowship in Dr. Ian Myles's lab at the
+            National Institutes of Allergy and Infectious Disease. She is now an MD/MPH student in the Miller School of Medicine at the
+            University of Miami with a strong interest in addressing disparities in the burden of chronic inflammatory disease.</p>
+          </div>
+          <div id="jalin-about" class="about-hidden">
+            <p style="padding: 20px 40px; margin-bottom: 0;">Dr. Jordan is originally from Michigan and was raised in the Metro Detroit area.
+            He completed medical school at the Perelman School of Medicine at the University of Pennsylvania. He will begin residency training
+            as a preliminary internal medicine resident at Howard University Hospital before continuing as a dermatology resident at Howard
+            University. As a medical student, he trained in the laboratory of Dr. Ian Myles through the NIH Medical Research Scholars Program.
+            His work has included projects involving hidradenitis suppurativa, atopy, and pollution-related disease associations. He will
+            ultimately continue training as a clinical-scientist with a research focus on inflammatory skin diseases.</p>
+          </div>
+
+          <!-- Bottom row -->
+          <div style="margin-top: 20px; display: flex; justify-content: center; align-items: flex-start; margin-bottom: 10px;">
+            <div style="width: 25%; text-align: center;">
+              <div class="image-cropper" onclick="toggleAbout(this, 'prem-about')">
+                <img class="icon-filter" src="www/Headshots/Prem_Prashant_Chaudhary.jpg" alt="Prem Prashant Chaudhary" />
+              </div>
+              <p class="about-name">Prem Prashant Chaudhary<span style="font-size: 12px; color: #15aee5;"> PhD</span></p>
+            </div>
+            <div style="width: 25%; text-align: center;">
+              <div class="image-cropper" onclick="toggleAbout(this, 'ian-about')">
+                <img class="icon-filter" src="www/Headshots/Ian_Myles.png" alt="Ian A. Myles" />
+              </div>
+              <p class="about-name">Ian A. Myles<span style="font-size: 12px; color: #15aee5;">  MD MPH</span></p>
+            </div>
+          </div>
+
+          <div id="prem-about" class="about-hidden">
+            <p style="padding: 20px 40px; margin-bottom: 0;">Dr. Chaudhary is a Staff Scientist in the Epithelial Therapeutics Unit at the
+            National Institute of Allergy and Infectious Diseases (NIAID). He earned his PhD in Biotechnology from India and has over a decade
+            of international research experience spanning the United States, Europe, and Asia. Dr. Chaudhary's research focuses on understanding
+            the complex interactions between the microbiome, metabolome, and environmental factors in human health and disease, with a particular
+            emphasis on skin biology and atopic dermatitis. He applies systems biology and multi-omics integration approaches to uncover disease
+            mechanisms, identify biomarkers, and develop translational therapeutic strategies. He has extensive expertise in microbiome and
+            metabolomics data analysis, including next-generation sequencing, machine learning, network biology, and high-performance computing.
+            His work integrates diverse datasets such as 16S, shotgun metagenomics, metatranscriptomics, and LC-MS/GC-MS metabolomics to study
+            host–microbe–environment interactions. Dr. Chaudhary has authored more than 60 peer-reviewed publications and contributed to multiple
+            interdisciplinary projects across institutions including The Ohio State University, Nanyang Technological University, and Université
+            d'Auvergne. In addition to his research, he develops open-source computational tools for multi-omics integration and actively mentors
+            trainees in computational biology and microbiome research.</p>
+          </div>
+          <div id="ian-about" class="about-hidden">
+            <p style="padding: 20px 40px; margin-bottom: 0;">Dr. Myles grew up in Colorado. After completing medical school at the Univ of
+            Colorado, he trained in internal medicine at The Ohio State Univ. Medical Center. He then began training in allergy and clinical
+            immunology at the National Institutes of Allergy and Infectious Diseases, part of the National Institutes of Health. He has worked
+            as a researcher for over 15 years, investigating how environmental factors impact allergic disease. He has authored more than 80
+            peer-reviewed publications on eczema, allergies, and topical steroid withdrawal. Dr. Myles has also authored a book, GATTACA Has
+            Fallen, which is about the harms of researchers looking for the "gene for" common diseases like eczema at the expense of researching
+            environmental causes. His research lab has partnered with numerous patient advocacy groups over the years. Overall, his work has
+            educated the public on the environmental causes of allergic disease and produced the first topical probiotic targeted for eczema
+            treatment. He continues to serve as the chief of The Epithelial Therapeutics Unit and as a medical officer in the United States
+            Public Health Service.</p>
+          </div>
+
+        </div>
+      </div><!-- /about -->
+
+    </div><!-- /main col -->
+  </div><!-- /container -->
+
+  <script>
+    function toggleAbout(el, id) {
+      el.querySelector('.icon-filter').classList.toggle('active');
+      var target = document.getElementById(id);
+      var isAlreadyOpen = target.classList.contains('open');
+      document.querySelectorAll('.about-hidden.open').forEach(function(div) { div.classList.remove('open'); });
+      document.querySelectorAll('.image-cropper .icon-filter.active').forEach(function(img) {
+        if (img !== el.querySelector('.icon-filter')) img.classList.remove('active');
+      });
+      if (!isAlreadyOpen) { target.classList.add('open'); }
+    }
+  </script>
+
+</body>
+</html>
