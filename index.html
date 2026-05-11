@@ -463,6 +463,12 @@
           <!-- Bottom row -->
           <div style="margin-top: 20px; display: flex; justify-content: center; align-items: flex-start; margin-bottom: 10px;">
             <div style="width: 25%; text-align: center;">
+              <div class="image-cropper" onclick="toggleAbout(this, 'jordan-about')">
+                <img class="icon-filter" src="www/Headshots/Jordan_Zeldin.jpg" alt="Jordan Zeldin" />
+              </div>
+              <p class="about-name">Jordan Zeldin<span style="font-size: 12px; color: #15aee5;"> MD</span></p>
+            </div>
+            <div style="width: 25%; text-align: center;">
               <div class="image-cropper" onclick="toggleAbout(this, 'prem-about')">
                 <img class="icon-filter" src="www/Headshots/Prem_Prashant_Chaudhary.jpg" alt="Prem Prashant Chaudhary" />
               </div>
@@ -474,6 +480,16 @@
               </div>
               <p class="about-name">Ian A. Myles<span style="font-size: 12px; color: #15aee5;">  MD MPH</span></p>
             </div>
+          </div>
+          
+          <div id="jordan-about" class="about-hidden">
+            <p style="padding: 20px 40px; margin-bottom: 0;">Dr. Zeldin is an internal medicine resident 
+                at NYU Brooklyn with a background in epidemiology and environmental health. He studied interdisciplinary 
+                medicine and mathematics at University of Florida, completed medical school at University of Florida, earned 
+                a masters in medical anthropology via scholarship at University of Oxford, and was part of the Medical Research
+                Scholars Program at the National Institutes of Health. He is interested in leveraging large-scale environmental
+                and health datasets with mechanistic studies to understand the etiologies of diseases classically considered
+                idiopathic.</p>
           </div>
 
           <div id="prem-about" class="about-hidden">

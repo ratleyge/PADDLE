@@ -585,18 +585,18 @@ ui <- navbarPage(
                 <p style='padding: 20px 40px 20px 40px; margin-bottom: 0px'>Pranav's bio will go here</p>
             </div>"),
        
-      # <div style='width: 25%; text-align: center;'>
-      #   <div class='image-cropper' onclick='toggleAbout(this, &apos;jordan-about&apos;)'>
-      #   <img class='icon-filter' src='PADDLE icon.png'>
-      #   </div>
-      #   <p class='about-name'>Jordan Zeldin<span style='font-size: 12px; color: #15aee5'> MD</span></p>
-      #   </div>
-      
+
       
       # Bottom Row
       HTML("
             <div style='margin-top: 20px; display: flex; justify-content: center; align-items: flex-start; margin-bottom: 10px'>
-              
+              <div style='width: 25%; text-align: center;'>
+                <div class='image-cropper' onclick='toggleAbout(this, &apos;jordan-about&apos;)'>
+                <img class='icon-filter' src='PADDLE icon.png'>
+                </div>
+                <p class='about-name'>Jordan Zeldin<span style='font-size: 12px; color: #15aee5'> MD</span></p>
+              </div>
+      
               <div style='width: 25%; text-align: center;'>
                 <div class='image-cropper' onclick='toggleAbout(this, &apos;prem-about&apos;)'>
                   <img class='icon-filter' src='Headshots/Prem_Prashant_Chaudhary.jpg'>
@@ -614,7 +614,13 @@ ui <- navbarPage(
             
             
             <div id='jordan-about' class='about-hidden'>
-                <p style='padding: 20px 40px 20px 40px; margin-bottom: 0px'>Jordan's bio will go here</p>
+                <p style='padding: 20px 40px 20px 40px; margin-bottom: 0px'>Dr. Zeldin is an internal medicine resident 
+                at NYU Brooklyn with a background in epidemiology and environmental health. He studied interdisciplinary 
+                medicine and mathematics at University of Florida, completed medical school at University of Florida, earned 
+                a masters in medical anthropology via scholarship at University of Oxford, and was part of the Medical Research
+                Scholars Program at the National Institutes of Health. He is interested in leveraging large-scale environmental
+                and health datasets with mechanistic studies to understand the etiologies of diseases classically considered
+                idiopathic.</p>
             </div>
             <div id='prem-about' class='about-hidden'>
                 <p style='padding: 20px 40px 20px 40px; margin-bottom: 0px'>Dr. Chaudhary is a Staff Scientist in the Epithelial 
