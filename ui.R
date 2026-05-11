@@ -592,7 +592,7 @@ ui <- navbarPage(
             <div style='margin-top: 20px; display: flex; justify-content: center; align-items: flex-start; margin-bottom: 10px'>
               <div style='width: 25%; text-align: center;'>
                 <div class='image-cropper' onclick='toggleAbout(this, &apos;jordan-about&apos;)'>
-                <img class='icon-filter' src='PADDLE icon.png'>
+                <img class='icon-filter' src='Headshots/Jordan_Zeldin.jpg'>
                 </div>
                 <p class='about-name'>Jordan Zeldin<span style='font-size: 12px; color: #15aee5'> MD</span></p>
               </div>
