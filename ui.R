@@ -518,13 +518,7 @@ ui <- navbarPage(
         <div style='background-color: white; color: black; padding: 10px 40px 10px 40px; margin-top: 0px; margin-bottom: 40px; width: 100%;'>
           "),
       
-      # Insert Pranav after Jalin when he sends his stuff
-      # <div style='width: 25%; text-align: center;'>
-      #   <div class='image-cropper' onclick='toggleAbout(this, &apos;pranav-about&apos;)'>
-      #   <img class='icon-filter' src='PADDLE icon.png'>
-      #   </div>
-      #   <p class='about-name'>Pranav Thota<span style='font-size: 12px; color: #15aee5'>  BS</span></p>
-      #   </div>
+
       
       # Top row
       HTML("
@@ -547,6 +541,13 @@ ui <- navbarPage(
                   <img class='icon-filter' src='Headshots/Jalin_Jordan.jpg'>
                 </div>
                 <p class='about-name'>Jalin Jordan<span style='font-size: 12px; color: #15aee5'> MD</span></p>
+              </div>
+              
+              <div style='width: 25%; text-align: center;'>
+                <div class='image-cropper' onclick='toggleAbout(this, &apos;pranav-about&apos;)'>
+                <img class='icon-filter' src='Headshots/Pranav_Thota.jpg'>
+                </div>
+                <p class='about-name'>Pranav Thota<span style='font-size: 12px; color: #15aee5'>  BS</span></p>
               </div>
               
             </div>
@@ -582,7 +583,12 @@ ui <- navbarPage(
                 He will ultimately continue training as a clinical-scientist with a research focus on inflammatory skin diseases.</p>
             </div>
             <div id='pranav-about' class='about-hidden'>
-                <p style='padding: 20px 40px 20px 40px; margin-bottom: 0px'>Pranav's bio will go here</p>
+                <p style='padding: 20px 40px 20px 40px; margin-bottom: 0px'>
+                Pranav grew up in Edison, New Jersey and earned his Bachelor of Science in Biology at George Washington University. 
+                Following his undergraduate studies, he began his medical education at the George Washington University School of 
+                Medicine and Health Sciences, where he is currently an MD candidate. He is a member of the Clinical and Translational 
+                Research (CTR) track at GW, with a strong interest in utilizing large-scale healthcare databases to investigate 
+                surgical outcomes and patient recovery within orthopaedic trauma.</p>
             </div>"),
        
 
