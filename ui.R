@@ -290,8 +290,9 @@ ui <- navbarPage(
             <a href='https://pubmed.ncbi.nlm.nih.gov/37692200/' target='_blank'>3</a>
             </sup>. In brief, for each zip code in the AHRQ database, a 30-mile catchment area was defined around the 
             zip code centroid. The total amount of each pollutant released by facilities within that catchment area was 
-            summed. A Gaussian distance-weighting function was applied to account for the fact that the zip code reflects 
-            the location of the healthcare provider, not necessarily the patient's residence. Water pollution was 
+            summed. summed. A Gaussian distance-weighting function was applied to account for the fact that pollutants 
+disperse beyond the boundaries of the zip code in which an emitting facility is located, and nearby facilities 
+should contribute more to a given zip code's estimated exposure than distant ones. Water pollution was 
             attributed only to the zip code of the EPA measurement device, as cross-zip dissemination patterns are not captured in the UCMR data.</p>
 
             <p style='text-align: left'>&emsp;&emsp;Two complementary modeling approaches were used to assess 
@@ -373,11 +374,9 @@ ui <- navbarPage(
             disease visit information, P.A.D.D.L.E. could be updated to incorporate
             the new data.</p>
 
-            <p style='text-align: left'>&emsp;&emsp;The use of zip code-aggregated data 
-            introduces important caveats, including the ecological fallacy (population-level 
-            associations may not reflect individual risk), the possibility that a patient's 
-            zip code of care differs from their home zip code, and potential inflation of results 
-            from densely zip-coded urban areas. Despite these limitations, aggregated data enables 
+            <p style='text-align: left'>&emsp;&emsp;The use of zip code-aggregated data introduces important caveats, including the
+ecological fallacy (population-level associations may not reflect individual risk) and the possibility that a patient's
+home zip code differs from where they work or are otherwise exposed during the day. Despite these limitations, aggregated data enables 
             nationwide analysis while protecting individual privacy, and our penalized regression 
             approach and spatial smoothing terms help mitigate some of these effects. This approach 
             is consistent with our goal of designing a hypothesis-generating tool to identify 
@@ -1188,7 +1187,7 @@ ui <- navbarPage(
                     HTML("&#9888; Generating this map reads large files and may temporarily slow other sections of the app.")
                 ),
                 div(class = "legend-note",
-                    HTML("Note: rates are derived from the <em>provider's</em> location, not the patient's. Diagnoses requiring a specialist may artificially inflate that county's rate.")
+                    HTML("Note: Rates are derived from the patient's home zip code.")
                 ),
                 div(style="margin-bottom: 10px;",
                     actionBttn("generate_map_disease",
